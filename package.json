@@ -1,0 +1,11 @@
+{
+  "name": "faceit",
+  "version": "1.0.0",
+  "description": "Multiplayer webcam game fun for the whole family",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Anthony Clausing, Jose Sabal, Nick Plucker, Mitchell Drury",
+  "license": "ISC"
+}
