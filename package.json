@@ -1,11 +1,38 @@
 {
-  "name": "faceit",
+  "name": "moles",
   "version": "1.0.0",
-  "description": "Multiplayer webcam game fun for the whole family",
+  "description": "",
   "main": "index.js",
   "scripts": {
+    "build-watch": "webpack -w",
+    "start-dev": "npm run build-watch & npm run start-server",
+    "start-server": "NODE_ENV='development' nodemon ./server -e html,js,scss --ignore public",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Anthony Clausing, Jose Sabal, Nick Plucker, Mitchell Drury",
-  "license": "ISC"
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "create-react-app": "^1.4.3",
+    "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "morgan": "^1.9.0",
+    "path": "^0.12.7",
+    "prop-types": "^15.6.0",
+    "react": "^16.1.0",
+    "react-dom": "^16.1.0",
+    "react-redux": "^5.0.6",
+    "redux": "^3.7.2",
+    "session": "^0.1.0",
+    "socketio": "^1.0.0",
+    "webpack": "^2.2.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.22.1",
+    "babel-eslint": "^8.0.1",
+    "babel-loader": "^6.2.10",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-react": "^6.22.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-register": "^6.24.1"
+  }
 }
