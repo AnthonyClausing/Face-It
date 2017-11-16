@@ -14,7 +14,7 @@ app.get('*', function (req, res, next) {
     res.status(200).send('../public/index.html');
 })
 
-const server = app.listen(port, () => console.log('Ready to Whack \'em'));
+const server = app.listen(port, () => console.log('Facing It'));
 const io = socketio(server);
 
 require('../socket/socket.js')(io);
