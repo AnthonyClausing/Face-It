@@ -2,3 +2,14 @@ html, body{
     margin:0;
     padding:0;
 }
+
+canvas{
+    position: relative;
+    left: 405px;
+    z-index:10;
+}
+
+.videoFeed{
+    width:400px;
+    height:300px;
+}
