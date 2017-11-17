@@ -977,7 +977,7 @@ var Main = function (_Component) {
             userVidSource: ''
         };
 
-        _this.handleVideo = _this.handleVideo.bind(_this);
+        _this.handleVideoSource = _this.handleVideoSource.bind(_this);
         return _this;
     }
 
@@ -989,12 +989,12 @@ var Main = function (_Component) {
                 console.log('Vid Error');
             };
             if (navigator.getUserMedia) {
-                navigator.getUserMedia({ video: true, audio: true }, this.handleVideo, error);
+                navigator.getUserMedia({ video: true, audio: true }, this.handleVideoSource, error);
             }
         }
     }, {
-        key: 'handleVideo',
-        value: function handleVideo(mediaStream) {
+        key: 'handleVideoSource',
+        value: function handleVideoSource(mediaStream) {
             this.setState({ userVidSource: window.URL.createObjectURL(mediaStream) });
         }
     }, {
@@ -1105,12 +1105,52 @@ var VideoFeed = function (_Component) {
     _createClass(VideoFeed, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-            //buildDraw();
+            this.canvasInput = document.getElementById('drawCanvas');
+            var cc = this.canvasInput.getContext('2d');
+            var ec = new emotionClassifier();
+            ec.init(emotionModel);
+            var emotionData = ec.getBlank();
+
+            var ctracker = new clm.tracker({ useWebGL: true });
+            ctracker.init(pModel);
+
+            this.ctracker = ctracker;
+            this.ec = ec;
+            this.cc = cc;
+            this.drawLoop = this.drawLoop.bind(this);
+        }
+    }, {
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate() {
+            this.ctracker.start(this.video);
+            this.drawLoop();
+        }
+    }, {
+        key: 'startVideo',
+        value: function startVideo() {
+            console.log('starting');
+            if (navigator.getUserMedia) {
+                navigator.getUserMedia({ video: true, audio: true }, this.ctracker.start(media), error);
+            }
+            this.ctracker.start();
+            this.drawLoop();
+        }
+    }, {
+        key: 'drawLoop',
+        value: function drawLoop() {
+            requestAnimationFrame(this.drawLoop);
+            this.cc.clearRect(0, 0, this.canvasInput.width, this.canvasInput.height);
+            this.ctracker.draw(this.canvasInput);
+
+            var cp = this.ctracker.getCurrentParameters();
+            var er = this.ec.meanPredict(cp);
+            console.log(cp);
         }
     }, {
         key: 'render',
         value: function render() {
-            console.log(this.props);
+            var _this2 = this;
+
             return _react2.default.createElement(
                 'div',
                 null,
@@ -1120,7 +1160,11 @@ var VideoFeed = function (_Component) {
                     ' This is a video feed '
                 ),
                 _react2.default.createElement('canvas', { id: 'drawCanvas', width: '400', height: '300' }),
-                _react2.default.createElement('video', { src: this.props.videoSource, className: 'videoInput', autoPlay: 'true' })
+                _react2.default.createElement('video', { src: this.props.videoSource, className: 'videoInput', autoPlay: 'true',
+                    ref: function ref(video) {
+                        _this2.video = video;
+                    }
+                })
             );
         }
     }]);
@@ -18421,7 +18465,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = buildDraw;
-function buildDraw() {
+function buildDraw(videoSource) {
     var error = function error(e) {
         console.log('video error');
     };
@@ -18434,7 +18478,8 @@ function buildDraw() {
 
     var ctracker = new clm.tracker({ useWebGL: true });
     ctracker.init(pModel);
-    ctracker.start(videoInput);
+    ctracker.start(videoSource);
+    console.log(ctracker);
 
     function drawLoop() {
         requestAnimationFrame(drawLoop);
@@ -18443,10 +18488,10 @@ function buildDraw() {
 
         var cp = ctracker.getCurrentParameters();
         var er = ec.meanPredict(cp);
-        document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
-        document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[5].value;
-        document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[3].value;
-        document.getElementById('surprised').innerHTML = '<span> Surprised </span>' + er[4].value;
+        //     document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
+        //     document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[5].value;
+        //     document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[3].value;
+        //     document.getElementById('surprised').innerHTML = '<span> Surprised </span>' + er[4].value;
     }
 
     var ec = new emotionClassifier();

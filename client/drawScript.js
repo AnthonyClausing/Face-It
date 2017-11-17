@@ -1,4 +1,6 @@
-export default function buildDraw () {
+
+
+export default function buildDraw (videoSource) {
     let error = function (e) {
         console.log('video error');
     }
@@ -11,7 +13,8 @@ export default function buildDraw () {
 
     var ctracker = new clm.tracker({useWebGL: true});
     ctracker.init(pModel);
-    ctracker.start(videoInput);
+    ctracker.start(videoSource);
+    console.log(ctracker);
 
     function drawLoop() {
         requestAnimationFrame(drawLoop);
@@ -20,11 +23,11 @@ export default function buildDraw () {
 
         let cp = ctracker.getCurrentParameters();
         let er = ec.meanPredict(cp);
-        document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
-        document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[5].value;
-        document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[3].value;
-        document.getElementById('surprised').innerHTML = '<span> Surprised </span>' + er[4].value;
-    }
+    //     document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
+    //     document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[5].value;
+    //     document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[3].value;
+    //     document.getElementById('surprised').innerHTML = '<span> Surprised </span>' + er[4].value;
+     }
 
     let ec = new emotionClassifier();
     ec.init(emotionModel);

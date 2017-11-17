@@ -8,7 +8,7 @@ export default class Main extends Component {
             userVidSource: ''
         }
 
-        this.handleVideo = this.handleVideo.bind(this);
+        this.handleVideoSource = this.handleVideoSource.bind(this);
     }
 
     componentDidMount () {
@@ -17,11 +17,11 @@ export default class Main extends Component {
             console.log('Vid Error');
         }
         if (navigator.getUserMedia) {
-            navigator.getUserMedia({video: true, audio: true},this.handleVideo, error);
+            navigator.getUserMedia({video: true, audio: true},this.handleVideoSource, error);
         }
     }
 
-    handleVideo (mediaStream) {
+    handleVideoSource (mediaStream) {
         this.setState({userVidSource: window.URL.createObjectURL(mediaStream)})
     }
 
