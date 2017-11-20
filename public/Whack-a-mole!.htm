@@ -1,0 +1,82 @@
+
+<!-- saved from url=(0022)http://localhost:3000/ -->
+<html class="gr__localhost"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style class="vjs-styles-defaults">
+      .video-js {
+        width: 300px;
+        height: 150px;
+      }
+
+      .vjs-fluid {
+        padding-top: 56.25%
+      }
+    </style>
+    <title>Whack-a-mole!</title>
+
+    
+        <link href="./Whack-a-mole!_files/video-js.css" rel="stylesheet">
+        <script src="./Whack-a-mole!_files/video.js"></script>
+        <meta name="viewport" content="width=device-width, user-scalable=0">
+
+        <link rel="icon" href="http://localhost:3000/favicon-32x32png" type="image/png">
+        <link rel="stylesheet" href="./Whack-a-mole!_files/styles.css">
+        <script defer="" src="./Whack-a-mole!_files/bundle.js"></script>
+    </head>
+
+    <body data-gr-c-s-loaded="true">
+        <div id="app"></div>
+        <div id="p1">
+            <video class="myVideo" width="480" height="240" autoplay="">
+            </video>
+            <canvas class="myCanvas" width="480" id="canvas" height="240"></canvas>
+        </div>
+        <div id="p2">
+            <video class="myVideo" width="480" height="240" autoplay="">
+            </video>
+            <canvas class="myCanvas" width="480" id="canvas" height="240"></canvas>
+        </div>
+        <div id="p3">
+            <video class="myVideo" width="480" height="240" autoplay="">
+            </video>
+            <canvas class="myCanvas" width="480" id="canvas" height="240"></canvas>
+        </div>
+        <div id="p4">
+            <video class="myVideo" width="480" height="240" autoplay="">
+            </video>
+            <canvas class="myCanvas" width="480" id="canvas" height="240"></canvas>
+        </div>
+
+
+        <script src="./Whack-a-mole!_files/socket.io.js"></script>
+        <script>
+            navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: 480,
+                        height: 270
+                    }
+                })
+                .then(function (stream) {
+                    var canvases = document.getElementsByClassName("myCanvas");
+                    var videos = document.getElementsByClassName('myVideo');
+                    console.log(canvases);
+                    canvases.array.forEach(canvas => {
+                        console.log('hey from canvas')
+                        var base_image = new Image();
+                        base_image.src = '38343-200.png';
+                        base_image.onload = function () {
+                            var ctx = canvas.getContext('2d');
+                            console.log('HELLO')
+                            ctx.drawImage(base_image, 75, -25, 300, 300);
+                        }
+                    })
+
+                })
+                .catch(function (err) {
+                    console.log(err.name + ': ' + err.message)
+                })
+        </script>
+        <script>
+            var socket = io();
+        </script>
+    
+
+</body></html>
