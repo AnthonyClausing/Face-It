@@ -1139,10 +1139,20 @@ var Main = function (_Component) {
         var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this));
 
         _this.state = {
-            userVidSource: ''
+            emotions: ['angry', 'happy', 'sad', 'surprised'],
+            targetEmotion: '',
+            userVidSource: '',
+            gameState: null,
+            score: 0,
+            count: 0,
+            interval: '',
+            matching: false
         };
 
         _this.handleVideoSource = _this.handleVideoSource.bind(_this);
+        _this.changeTargetEmotion = _this.changeTargetEmotion.bind(_this);
+        _this.matchedEmotion = _this.matchedEmotion.bind(_this);
+        _this.startGame = _this.startGame.bind(_this);
         return _this;
     }
 
@@ -1163,6 +1173,29 @@ var Main = function (_Component) {
             this.setState({ userVidSource: window.URL.createObjectURL(mediaStream) });
         }
     }, {
+        key: 'startGame',
+        value: function startGame(event) {
+            event.preventDefault();
+            this.changeTargetEmotion();
+            this.setState({ interval: setInterval(this.changeTargetEmotion, 1000), gameState: 'active', count: event.target.numRounds.value });
+        }
+    }, {
+        key: 'changeTargetEmotion',
+        value: function changeTargetEmotion() {
+            console.log(this.state.gameState);
+            if (this.state.count > 0) {
+                this.setState({ targetEmotion: this.state.emotions[Math.floor(Math.random() * this.state.emotions.length)], matching: false, count: this.state.count - 1 });
+            } else {
+                clearInterval(this.state.interval);
+                this.setState({ gameState: 'stopped' });
+            }
+        }
+    }, {
+        key: 'matchedEmotion',
+        value: function matchedEmotion() {
+            this.setState({ matching: true });
+        }
+    }, {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
@@ -1173,7 +1206,34 @@ var Main = function (_Component) {
                     null,
                     ' This is the main '
                 ),
-                _react2.default.createElement(_videoFeed2.default, { videoSource: this.state.userVidSource })
+                _react2.default.createElement(_videoFeed2.default, { matchedEmotion: this.matchedEmotion, videoSource: this.state.userVidSource, target: this.state.targetEmotion }),
+                _react2.default.createElement(
+                    'div',
+                    { id: 'targetEmotion' },
+                    ' Target: ',
+                    this.state.targetEmotion,
+                    ' '
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { id: 'success' },
+                    this.state.matching ? 'Success' : 'Failing'
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { id: 'gameControls' },
+                    _react2.default.createElement(
+                        'form',
+                        { onSubmit: this.startGame },
+                        _react2.default.createElement(
+                            'label',
+                            null,
+                            'Number of Rounds to Play:',
+                            _react2.default.createElement('input', { name: 'numRounds', type: 'text' })
+                        ),
+                        _react2.default.createElement('input', { id: 'startGame', type: 'submit', disabled: this.state.gameState === 'active' ? true : false, value: 'Start Game' })
+                    )
+                )
             );
         }
     }]);
@@ -2711,6 +2771,15 @@ var ReactFacialFeatureTracker = function (_React$Component) {
 
 			// Die Emotionen in darstellbare Form bringen
 			var er = this.ec.meanPredict(cp);
+			if (this.props.target === 'angry' && er[0].value > .5) {
+				this.props.matchedEmotion();
+			} else if (this.props.target === 'happy' && er[3].value > .5) {
+				this.props.matchedEmotion();
+			} else if (this.props.target === 'sad' && er[1].value > .5) {
+				this.props.matchedEmotion();
+			} else if (this.props.target === 'surprised' && er[2].value > .5) {
+				this.props.matchedEmotion();
+			}
 			document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
 			document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[3].value;
 			document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[1].value;
@@ -2755,68 +2824,6 @@ var ReactFacialFeatureTracker = function (_React$Component) {
 module.exports = ReactFacialFeatureTracker;
 
 window.ReactFacialFeatureTracker = ReactFacialFeatureTracker;
-
-// import React, {Component} from 'react';
-// import buildDraw from '../drawScript.js'
-
-// export default class VideoFeed extends Component {
-//     constructor () {
-//         super ();
-//     }
-
-//     componentDidMount () {
-//         this.canvasInput = document.getElementById('drawCanvas');
-//         let cc = this.canvasInput.getContext('2d');
-//         let ec = new emotionClassifier();
-//         ec.init(emotionModel);
-//         let emotionData = ec.getBlank();
-
-//         let ctracker = new clm.tracker({useWebGL: true});
-//         ctracker.init(pModel);
-
-//         this.ctracker = ctracker;
-//         this.ec = ec;
-//         this.cc = cc;
-//         this.drawLoop = this.drawLoop.bind(this);
-//     }
-
-//     componentDidUpdate () {
-//         this.ctracker.start(this.video)
-//         this.drawLoop();
-//     }
-
-//     startVideo () {
-//         console.log('starting');
-//         if (navigator.getUserMedia) {
-//             navigator.getUserMedia({video: true, audio: true}, this.ctracker.start(media), error);
-//         }
-//         this.ctracker.start()
-//         this.drawLoop();
-//     }
-
-//     drawLoop () {
-//         requestAnimationFrame(this.drawLoop);
-//         this.cc.clearRect(0, 0, this.canvasInput.width, this.canvasInput.height);
-//         this.ctracker.draw(this.canvasInput);
-
-//         let cp = this.ctracker.getCurrentParameters();
-//         let er = this.ec.meanPredict(cp);
-//         console.log(cp);
-//     }
-
-//     render () {
-//         return (
-
-//             <div>
-//                 <h1> This is a video feed </h1>
-//                 <canvas id='drawCanvas' width='400' height='300'></canvas>
-//                 <video src={this.props.videoSource} className='videoInput' autoPlay='true'
-//                 ref = {(video) => {this.video = video}}
-//                 ></video>
-//             </div>
-//         )
-//     }
-// }
 
 /***/ }),
 /* 23 */
