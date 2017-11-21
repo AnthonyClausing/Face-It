@@ -12,65 +12,10 @@
 
     <body>
         <div id='app'></div>
-
-        
-            <div id='angry'></div>
-            <div id='happy'></div>
-            <div id='sad'></div>
-            <div id='surprised'></div>
-
-            <div id="hotSpots">
-                
-                            <div id="one">
-                                <audio
-                                    class="loop" 
-                                    loop
-                                    src= "https://api.soundcloud.com/tracks/233116497/stream?client_id=0b6cfb2f09b2bc8c0345d9579914a1b9"
-                                    muted="true">                  
-                                </audio>
-                            </div>
-            </div>
-         <!-- <script type="text/javascript">
-            let error = function (e) {
-                console.log('video error');
-            }
-            let videoInput = document.getElementById('inputVideo');
-            let canvasInput = document.getElementById('drawCanvas');
-            let cc = canvasInput.getContext('2d');
-        
-            navigator.getUserMedia({video: true, audio: true}, function (mediaStream) {
-                videoInput.src = window.URL.createObjectURL(mediaStream);
-            }, error)
-
-            pModel.shapeModel.nonRegularizedVectors.push(9);
-			pModel.shapeModel.nonRegularizedVectors.push(11);
+<!-- 
+            <div id="hotSpots"></div>
             
-            var ctracker = new clm.tracker({useWebGL: true});
-            ctracker.init(pModel);
-            ctracker.start(videoInput);
-
-            function drawLoop() {
-                requestAnimationFrame(drawLoop);
-                cc.clearRect(0, 0, canvasInput.width, canvasInput.height);
-                ctracker.draw(canvasInput);
-
-                let cp = ctracker.getCurrentParameters();
-                let er = ec.meanPredict(cp);
-                document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
-                document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[5].value;
-                document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[3].value;
-                document.getElementById('surprised').innerHTML = '<span> Surprised </span>' + er[4].value;
-            }
-
-            let ec = new emotionClassifier();
-            ec.init(emotionModel);
-            let emotionData = ec.getBlank();
-
-            drawLoop(); -->
-
-            
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-
-        <script src="motionsensing.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script> -->
+        <!-- <script src="motionsensing.js"></script> -->
     </body>
 </html>

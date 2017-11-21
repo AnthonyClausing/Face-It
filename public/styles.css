@@ -4,11 +4,12 @@ html, body{
 }
 
 canvas{
-    position: absolute;
     z-index:10;
+    background-color: black;
 }
 
-.videoFeed{
-    width:400px;
-    height:300px;
+.player-videos{
+    display: none;
+    z-index : 0;
+    position: absolute;
 }

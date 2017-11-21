@@ -1,3 +1,53 @@
+
+export function checkDiff(currentImage, lastImage, output){
+  var i = 0;
+  while(i < (current.length / 4)){
+    var average1 = (currentImage[4*i] + currentImage[4*i] + currentImage[4*i+2])/3;
+    var average2 = (lastImage[4*i] + lastImage[4*i] + lastImage[4*i+2])/3;
+    var diff = average1 - average2;
+    output[4*i] = diff;
+    output[4*i+1] = diff;
+    output[4*i+2] = diff;
+    output[4*i*3] = 0xff;
+    i++ 
+
+  }
+}
+export function checkHotSpots(context){
+  var blendedData = context.getImageData(0,0,50,50);
+  var i = 0;
+  var sum = 0;
+  var countPixels = blendedData.length / 4 ;
+  while(i < countPixels){
+    sum += (blendedData.data[i*4] + blendedData.data[i*4+1]+ blendedData.data[i*4+2]);
+    ++i;
+  }
+  var average = Math.round(sum / (3 *countPixels));
+  if(average > 10){
+    console.log('WOW IM DETECTING STUFF')
+  }else{
+    console.log('WOAH im doing nothing at all, why\'d you stop moving')
+  }
+
+}
+export function animate(videoContext) 
+{
+    requestAnimationFrame( animate );
+	
+	render(videoContext);	
+	blend();	
+	checkAreas();
+}
+
+function render(videoContext) {	
+	if ( videoContext.readyState === videoContext.HAVE_ENOUGH_DATA ) 
+	{
+		videoContext.drawImage( video, 0, 0, videoCanvas.width, videoCanvas.height );
+}
+}
+
+
+
 // (function () {
   
 //     // config start
