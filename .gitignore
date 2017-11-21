@@ -2,6 +2,7 @@ node_modules
 public/bundle.js
 public/bundle.js.map
 public/images
+ClamTracker
 secrets.js
 .DS_Store
 npm-debug.log
