@@ -22,8 +22,8 @@ export default class Main extends Component {
         let error = function () {
             console.log('Vid Error');
         }
-        if (navigator.getUserMedia) {
-            navigator.getUserMedia({video: true, audio: true},this.handleVideoSource, error);
+        if (navigator.mediaDevices) {
+            navigator.mediaDevices.getUserMedia({video: true, audio: true},this.handleVideoSource, error);
         }
     }
 

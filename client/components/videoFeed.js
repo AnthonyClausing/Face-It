@@ -3,7 +3,7 @@ import getUserMedia from 'getusermedia';
 import emotionClassifier from './models/emotionclassifier.js';
 import emotionModel from './models/emotionmodel.js';
 import pModel from './models/pmodel.js';
-import clm from '../ClamTracker/build/clmtrackr.js';
+import clm from '../../public/ClamTracker/build/clmtrackr.js';
 import _ from 'lodash';
 import PubSub from 'pubsub-js';
 

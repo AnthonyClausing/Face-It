@@ -4,8 +4,7 @@ html, body{
 }
 
 canvas{
-    position: relative;
-    left: 405px;
+    position: absolute;
     z-index:10;
 }
 
