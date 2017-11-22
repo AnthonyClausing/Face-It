@@ -2662,16 +2662,20 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+function fastAbs(value) {
+	return (value ^ value >> 31) - (value >> 31);
+}
+
 //  Cross-Browser Implementierung von der URL-Funktion, eher unwichtig
 window.URL = window.URL || window.webkitURL || window.msURL || window.mozURL;
 
-var ReactFacialFeatureTracker = function (_React$Component) {
-	_inherits(ReactFacialFeatureTracker, _React$Component);
+var VideoFeed = function (_React$Component) {
+	_inherits(VideoFeed, _React$Component);
 
-	function ReactFacialFeatureTracker(props) {
-		_classCallCheck(this, ReactFacialFeatureTracker);
+	function VideoFeed(props) {
+		_classCallCheck(this, VideoFeed);
 
-		var _this = _possibleConstructorReturn(this, (ReactFacialFeatureTracker.__proto__ || Object.getPrototypeOf(ReactFacialFeatureTracker)).call(this, props));
+		var _this = _possibleConstructorReturn(this, (VideoFeed.__proto__ || Object.getPrototypeOf(VideoFeed)).call(this, props));
 
 		_this.state = {
 			emotion: { emotion: '' }
@@ -2682,37 +2686,22 @@ var ReactFacialFeatureTracker = function (_React$Component) {
 		return _this;
 	}
 
-	_createClass(ReactFacialFeatureTracker, [{
+	_createClass(VideoFeed, [{
 		key: 'componentDidMount',
 		value: function componentDidMount() {
-
-			// overlayCC ist im Prinzip eine leere Ebene zum zeichnen, soweit ich das verstanden
-			var overlayCC = this.overlay.getContext('2d');
-
-			// Der emotionClassifier wird erstellt und wird mit einem emotionModel initiert.
-			// Der Classifier ist im Prinzip der Rechner
-			// Das emotionModel ist quasi das Wörterbuch für die Werte und die Emotionen
 			var ec = new _emotionclassifier2.default();
 			ec.init(_emotionmodel2.default);
-
-			// wir erstellen hier mal ein Emotion-Wörterbuch was auf null gesetzt ist. Diese Variable wird zum Zwischenspeichern der Werte genutzt.
 			var emotionData = ec.getBlank();
+			this.ec = ec;
 
-			// Browser fragt jetzt nach der Webcam
-			// die Funktion braucht folgende Argumente navigator.getUserMedia(optionen, success);
 			(0, _getusermedia2.default)({ video: true }, this.getUserMediaCallback.bind(this));
 
-			//
-			// Hier wird das Tracking an sich implmentiert
-			//
 			var ctrack = new _clmtrackr2.default.tracker({ useWebGL: true });
-
-			// der Tracker wird mit dem pModel initiiert. magic! :)
 			ctrack.init(_pmodel2.default);
-
 			this.ctrack = ctrack;
-			this.overlayCC = overlayCC;
-			this.ec = ec;
+
+			this.blendedCtx = this.blended.getContext('2d');
+			this.canvasCtx = this.canvas.getContext('2d');
 
 			var self = this;
 
@@ -2732,42 +2721,51 @@ var ReactFacialFeatureTracker = function (_React$Component) {
 	}, {
 		key: 'getUserMediaCallback',
 		value: function getUserMediaCallback(err, stream) {
-			// Damit es auch auf allen Browsern funktioniert
-			// technisch wichtig, aber eher unwichtig für das Tracking
 			this.video.src = window.URL && window.URL.createObjectURL(stream) || stream;
 
-			// Um sicher zu gehen, dass das Video auch wirklich abgespielt wird.
 			this.video.play();
 		}
 	}, {
 		key: 'startVideo',
 		value: function startVideo() {
-
-			// start video
-			this.video.play();
-			// start tracking
+			//seems to work fine without calling play
+			//		this.video.play();
 			this.ctrack.start(this.video);
 			// start loop to draw face
 			this.drawLoop();
 		}
 	}, {
+		key: 'blend',
+		value: function blend() {
+			var width = canvasSource.width;
+			var height = canvasSource.height;
+			// get webcam image data
+			var sourceData = contextSource.getImageData(0, 0, width, height);
+			// create an image if the previous image doesn’t exist
+			if (!lastImageData) lastImageData = contextSource.getImageData(0, 0, width, height);
+			// create a ImageData instance to receive the blended result
+			var blendedData = contextSource.createImageData(width, height);
+			// blend the 2 images
+			differenceAccuracy(blendedData.data, sourceData.data, lastImageData.data);
+			// draw the result in a canvas
+			contextBlended.putImageData(blendedData, 0, 0);
+			// store the current webcam image
+			lastImageData = sourceData;
+		}
+	}, {
 		key: 'drawLoop',
 		value: function drawLoop() {
-
 			requestAnimationFrame(this.drawLoop.bind(this));
 
-			// Die numerischen Parameter
 			var cp = this.ctrack.getCurrentParameters();
 
-			// bei jedem Frame wird Ebene geleert
-			// Probier mal die untere Zeile auszukommentieren
-			this.overlayCC.clearRect(0, 0, 400, 300);
+			this.canvasCtx.clearRect(0, 0, 400, 300);
+			this.canvasCtx.drawImage(this.video, 0, 0, this.video.width, this.video.height);
 
-			// falls alles geklappt hat und es Emotion-Werte gibt
-			// soll die Maske gezeichnet werden
-			if (this.ctrack.getCurrentPosition()) {
-				this.ctrack.draw(this.overlay);
-			}
+			//this draws the wire face image on the canvas
+			// if (this.ctrack.getCurrentPosition()) {
+			// 	this.ctrack.draw(this.overlay);
+			// }
 
 			// Die Emotionen in darstellbare Form bringen
 			var er = this.ec.meanPredict(cp);
@@ -2780,6 +2778,7 @@ var ReactFacialFeatureTracker = function (_React$Component) {
 			} else if (this.props.target === 'surprised' && er[2].value > .5) {
 				this.props.matchedEmotion();
 			}
+
 			document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
 			document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[3].value;
 			document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[1].value;
@@ -2795,7 +2794,7 @@ var ReactFacialFeatureTracker = function (_React$Component) {
 		}
 	}, {
 		key: 'render',
-		value: function render() {
+		value: function render(props) {
 			var _this2 = this;
 
 			return _react2.default.createElement(
@@ -2804,26 +2803,31 @@ var ReactFacialFeatureTracker = function (_React$Component) {
 				_react2.default.createElement('video', {
 					width: '400',
 					height: '300',
-					controls: 'false',
 					ref: function ref(video) {
 						_this2.video = video;
 					} }),
-				_react2.default.createElement('canvas', {
+				_react2.default.createElement('canvas', { id: 'canvas-source',
 					width: '400',
 					height: '300',
 					ref: function ref(canvas) {
-						return _this2.overlay = canvas;
+						return _this2.canvas = canvas;
+					} }),
+				_react2.default.createElement('canvas', { id: 'blended',
+					width: '400',
+					height: '300',
+					ref: function ref(canvas) {
+						return _this2.blended = canvas;
 					} })
 			);
 		}
 	}]);
 
-	return ReactFacialFeatureTracker;
+	return VideoFeed;
 }(_react2.default.Component);
 
-module.exports = ReactFacialFeatureTracker;
+module.exports = VideoFeed;
 
-window.ReactFacialFeatureTracker = ReactFacialFeatureTracker;
+//window.ReactFacialFeatureTracker = ReactFacialFeatureTracker;
 
 /***/ }),
 /* 23 */

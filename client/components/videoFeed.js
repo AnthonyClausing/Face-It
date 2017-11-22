@@ -6,6 +6,9 @@ import pModel from './models/pmodel.js';
 import clm from '../ClamTracker/build/clmtrackr.js';
 import _ from 'lodash';
 import PubSub from 'pubsub-js';
+function fastAbs (value) {
+	return (value ^ (value >> 31)) - (value >> 31);
+}
 
 //  Cross-Browser Implementierung von der URL-Funktion, eher unwichtig
 window.URL = window.URL ||
@@ -13,8 +16,7 @@ window.webkitURL ||
 window.msURL ||
 window.mozURL;
 
-class ReactFacialFeatureTracker extends React.Component {
-
+class VideoFeed extends React.Component {
 	state = {
 		emotion: { emotion: '' }
 	}
@@ -26,39 +28,23 @@ class ReactFacialFeatureTracker extends React.Component {
 	}
 
 	componentDidMount() {
-
-		// overlayCC ist im Prinzip eine leere Ebene zum zeichnen, soweit ich das verstanden
-		let overlayCC = this.overlay.getContext('2d');
-
-		// Der emotionClassifier wird erstellt und wird mit einem emotionModel initiert.
-		// Der Classifier ist im Prinzip der Rechner
-		// Das emotionModel ist quasi das Wörterbuch für die Werte und die Emotionen
 		let ec = new emotionClassifier();
 		ec.init(emotionModel);
-
-		// wir erstellen hier mal ein Emotion-Wörterbuch was auf null gesetzt ist. Diese Variable wird zum Zwischenspeichern der Werte genutzt.
 		let emotionData = ec.getBlank();
+		this.ec = ec;
 
-		// Browser fragt jetzt nach der Webcam
-		// die Funktion braucht folgende Argumente navigator.getUserMedia(optionen, success);
 		getUserMedia({ video : true}, this.getUserMediaCallback.bind(this) );
 
-		//
-		// Hier wird das Tracking an sich implmentiert
-		//
 		let ctrack = new clm.tracker({useWebGL : true});
-
-		// der Tracker wird mit dem pModel initiiert. magic! :)
 		ctrack.init(pModel);
-
 		this.ctrack = ctrack;
-		this.overlayCC = overlayCC;
-		this.ec = ec;
+
+		this.blendedCtx = this.blended.getContext('2d');
+		this.canvasCtx = this.canvas.getContext('2d');
 
 		let self = this;
 
 		this.video.addEventListener('canplay', (this.startVideo).bind(this), false);
-
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
@@ -72,41 +58,48 @@ class ReactFacialFeatureTracker extends React.Component {
 	}
 
 	getUserMediaCallback(err, stream ) {
-		// Damit es auch auf allen Browsern funktioniert
-		// technisch wichtig, aber eher unwichtig für das Tracking
 		this.video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
 
-		// Um sicher zu gehen, dass das Video auch wirklich abgespielt wird.
 		this.video.play();
 	}
 
 	startVideo(){
-
-		// start video
-		this.video.play();
-		// start tracking
+		//seems to work fine without calling play
+//		this.video.play();
 		this.ctrack.start(this.video);
 		// start loop to draw face
 		this.drawLoop();
+	}
 
+	blend() {
+		var width = canvasSource.width;
+		var height = canvasSource.height;
+		// get webcam image data
+		var sourceData = contextSource.getImageData(0, 0, width, height);
+		// create an image if the previous image doesn’t exist
+		if (!lastImageData) lastImageData = contextSource.getImageData(0, 0, width, height);
+		// create a ImageData instance to receive the blended result
+		var blendedData = contextSource.createImageData(width, height);
+		// blend the 2 images
+		differenceAccuracy(blendedData.data, sourceData.data, lastImageData.data);
+		// draw the result in a canvas
+		contextBlended.putImageData(blendedData, 0, 0);
+		// store the current webcam image
+		lastImageData = sourceData;
 	}
 
 	drawLoop(){
-
 		requestAnimationFrame((this.drawLoop).bind(this));
-        
-		// Die numerischen Parameter
+    
 		let cp = this.ctrack.getCurrentParameters();
 
-		// bei jedem Frame wird Ebene geleert
-		// Probier mal die untere Zeile auszukommentieren
-		this.overlayCC.clearRect(0, 0, 400, 300);
+		this.canvasCtx.clearRect(0, 0, 400, 300);
+		this.canvasCtx.drawImage(this.video, 0, 0, this.video.width, this.video.height);
 
-		// falls alles geklappt hat und es Emotion-Werte gibt
-		// soll die Maske gezeichnet werden
-		if (this.ctrack.getCurrentPosition()) {
-			this.ctrack.draw(this.overlay);
-		}
+		//this draws the wire face image on the canvas
+		// if (this.ctrack.getCurrentPosition()) {
+		// 	this.ctrack.draw(this.overlay);
+		// }
 
 		// Die Emotionen in darstellbare Form bringen
 		let er = this.ec.meanPredict(cp);
@@ -119,6 +112,7 @@ class ReactFacialFeatureTracker extends React.Component {
 		} else if (this.props.target === 'surprised' && er[2].value > .5) {
 			this.props.matchedEmotion();
 		}
+		
         document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
         document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[3].value;
         document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[1].value;
@@ -132,25 +126,32 @@ class ReactFacialFeatureTracker extends React.Component {
 
 	}
 
-	render() {
+	render(props) {
 		return (
 			<div className="the-video">
 				<video
 					width="400"
 					height="300"
-					controls="false"
-					ref={ (video) => { this.video = video } } ></video>
+					ref={ (video) => { this.video = video } } >
+				</video>
 
-				<canvas
+				<canvas id='canvas-source'
 					width="400"
 					height="300"
-					ref={ (canvas) => this.overlay = canvas }></canvas>
+					ref={ (canvas) => this.canvas = canvas }>
+				</canvas>
+
+				<canvas id='blended'
+					width="400"
+					height="300"
+					ref={ (canvas) => this.blended = canvas}>
+				</canvas>
 
 			</div>
 		)
 	}
 }
 
-module.exports = ReactFacialFeatureTracker;
+module.exports = VideoFeed;
 
-window.ReactFacialFeatureTracker = ReactFacialFeatureTracker;
+//window.ReactFacialFeatureTracker = ReactFacialFeatureTracker;
