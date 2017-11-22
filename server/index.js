@@ -12,9 +12,9 @@ const app = express();
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, '..', '/public')))
 
-app.get('*', function (req, res, next) {
-    res.status(200).send('../public/index.html');
-})
+// app.get('*', function (req, res, next) {
+//     res.status(200).send('../public/index.html');
+// })
 
 
 const server = app.listen(port, () => console.log('Facing It'));
