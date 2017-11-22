@@ -12,10 +12,10 @@ const app = express();
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, '..', '/public')))
 
-// app.get('*', function (req, res, next) {
-//     res.status(200).send('../public/index.html');
-// })
-
+ // sends index.html
+ app.use('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public/index.html'))
+  })
 
 const server = app.listen(port, () => console.log('Facing It'));
 const io = socketio(server);
