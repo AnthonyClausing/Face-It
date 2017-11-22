@@ -57,7 +57,7 @@ export default class Main extends Component {
 
     render () {
         return (
-            <div>
+            <div id = "single-player">
                 <h1> This is the main </h1>
 
                 <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion}/>
