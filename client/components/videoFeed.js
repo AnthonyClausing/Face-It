@@ -76,8 +76,6 @@ class VideoFeed extends React.Component {
 
 			return true;
 		}
-
-		return false;
 	}
 
 	getUserMediaCallback(err, stream ) {
