@@ -1139,7 +1139,7 @@ var Main = function (_Component) {
         var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this));
 
         _this.state = {
-            emotions: ['angry', 'happy', 'sad', 'surprised'],
+            emotions: ['angry', 'happy', 'sad', 'surprised', 'redButton', 'blueButton'],
             targetEmotion: '',
             userVidSource: '',
             gameState: null,
@@ -2666,6 +2666,25 @@ function fastAbs(value) {
 	return (value ^ value >> 31) - (value >> 31);
 }
 
+function differenceAccuracy(target, data1, data2) {
+	if (data1.length != data2.length) return null;
+	var i = 0;
+	while (i < data1.length * 0.25) {
+		var average1 = (data1[4 * i] + data1[4 * i + 1] + data1[4 * i + 2]) / 3;
+		var average2 = (data2[4 * i] + data2[4 * i + 1] + data2[4 * i + 2]) / 3;
+		var diff = threshold(fastAbs(average1 - average2));
+		target[4 * i] = diff;
+		target[4 * i + 1] = diff;
+		target[4 * i + 2] = diff;
+		target[4 * i + 3] = 0xFF;
+		++i;
+	}
+}
+
+function threshold(value) {
+	return value > 0x15 ? 0xFF : 0;
+}
+
 //  Cross-Browser Implementierung von der URL-Funktion, eher unwichtig
 window.URL = window.URL || window.webkitURL || window.msURL || window.mozURL;
 
@@ -2683,6 +2702,9 @@ var VideoFeed = function (_React$Component) {
 
 
 		_this.PubSub = props.PubSub || _pubsubJs2.default;
+		_this.blend = _this.blend.bind(_this);
+		_this.lastImageData;
+		_this.virtualButtonPositions = [{ color: 'blue', x: 0, y: 0 }, { color: 'red', x: 32, y: 0 }];
 		return _this;
 	}
 
@@ -2722,7 +2744,6 @@ var VideoFeed = function (_React$Component) {
 		key: 'getUserMediaCallback',
 		value: function getUserMediaCallback(err, stream) {
 			this.video.src = window.URL && window.URL.createObjectURL(stream) || stream;
-
 			this.video.play();
 		}
 	}, {
@@ -2737,20 +2758,46 @@ var VideoFeed = function (_React$Component) {
 	}, {
 		key: 'blend',
 		value: function blend() {
-			var width = canvasSource.width;
-			var height = canvasSource.height;
+			var width = this.canvas.width;
+			var height = this.canvas.height;
 			// get webcam image data
-			var sourceData = contextSource.getImageData(0, 0, width, height);
+			var sourceData = this.canvasCtx.getImageData(0, 0, width, height);
 			// create an image if the previous image doesn’t exist
-			if (!lastImageData) lastImageData = contextSource.getImageData(0, 0, width, height);
+			if (!this.lastImageData) this.lastImageData = this.canvasCtx.getImageData(0, 0, width, height);
 			// create a ImageData instance to receive the blended result
-			var blendedData = contextSource.createImageData(width, height);
+			var blendedData = this.canvasCtx.createImageData(width, height);
 			// blend the 2 images
-			differenceAccuracy(blendedData.data, sourceData.data, lastImageData.data);
+			differenceAccuracy(blendedData.data, sourceData.data, this.lastImageData.data);
 			// draw the result in a canvas
-			contextBlended.putImageData(blendedData, 0, 0);
+			this.blendedCtx.putImageData(blendedData, 0, 0);
 			// store the current webcam image
-			lastImageData = sourceData;
+			this.lastImageData = sourceData;
+		}
+	}, {
+		key: 'checkAreas',
+		value: function checkAreas() {
+			// loop over the button areas
+			for (var r = 0; r < this.virtualButtonPositions.length; ++r) {
+				// get the pixels in a button area from the blended image
+				var blendedData = this.blendedCtx.getImageData(this.virtualButtonPositions[r].x, this.virtualButtonPositions[r].y, 32, 32);
+				var i = 0;
+				var average = 0;
+				// loop over the pixels
+				while (i < blendedData.data.length / 4) {
+					// make an average between the color channel
+					average += (blendedData.data[i * 4] + blendedData.data[i * 4 + 1] + blendedData.data[i * 4 + 2]) / 3;
+					++i;
+				}
+				// calculate an average between of the color values of the note area
+				average = Math.round(average / (blendedData.data.length / 4));
+				if (average > 10) {
+					// over a small limit, consider that a movement is detected
+					// do some action to indicated area touched
+					this.props.matchedEmotion();
+					console.log('detected');
+					document.getElementById(this.virtualButtonPositions[r].color + 'Button').style.cssText = "border: 3px solid yellow";
+				}
+			}
 		}
 	}, {
 		key: 'drawLoop',
@@ -2761,6 +2808,8 @@ var VideoFeed = function (_React$Component) {
 
 			this.canvasCtx.clearRect(0, 0, 400, 300);
 			this.canvasCtx.drawImage(this.video, 0, 0, this.video.width, this.video.height);
+			this.blend();
+			this.checkAreas();
 
 			//this draws the wire face image on the canvas
 			// if (this.ctrack.getCurrentPosition()) {
@@ -2806,6 +2855,12 @@ var VideoFeed = function (_React$Component) {
 					ref: function ref(video) {
 						_this2.video = video;
 					} }),
+				_react2.default.createElement(
+					'div',
+					{ id: 'virtualButtons' },
+					_react2.default.createElement('img', { id: 'blueButton', src: '/images/SquareBlue.png' }),
+					_react2.default.createElement('img', { id: 'redButton', src: '/images/SquareRed.png' })
+				),
 				_react2.default.createElement('canvas', { id: 'canvas-source',
 					width: '400',
 					height: '300',

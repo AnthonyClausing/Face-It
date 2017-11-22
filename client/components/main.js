@@ -5,7 +5,7 @@ export default class Main extends Component {
     constructor () {
         super ();
         this.state = {
-            emotions: ['angry', 'happy', 'sad', 'surprised'],
+            emotions: ['angry', 'happy', 'sad', 'surprised', 'redButton', 'blueButton'],
             targetEmotion: '',
             userVidSource: '',
             gameState: null,
