@@ -73,7 +73,6 @@ class VideoFeed extends React.Component {
 	shouldComponentUpdate(nextProps, nextState) {
 		if (this.state.emotion.emotion !== nextState.emotion.emotion) {
 			this.PubSub.publish('emotion.update', nextState.emotion);
-
 			return true;
 		}
 		return false;
