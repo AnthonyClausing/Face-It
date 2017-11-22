@@ -64,6 +64,8 @@ class VideoFeed extends React.Component {
 
 		this.blendedCtx = this.blended.getContext('2d');
 		this.canvasCtx = this.canvas.getContext('2d');
+		this.canvasCtx.translate(this.canvas.width, 0);
+		this.canvasCtx.scale(-1, 1);
 
 		let self = this;
 

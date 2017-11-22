@@ -30,8 +30,7 @@ html, body{
 button.login-items:hover{
     background-color: cornflowerblue;
 }
-.login-items:hover{
-    
+.login-items:hover{   
     border-color: snow
 }
 
@@ -52,3 +51,12 @@ canvas{
     z-index : 0;
     position: absolute;
 }
+
+video, #blended{
+    display:none;
+}
+
+#canvas-source{
+    border: 2px solid red;
+}
+
