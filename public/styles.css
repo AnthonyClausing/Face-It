@@ -43,24 +43,12 @@ button.login-items:hover{
 }
 
 canvas{
-    border: 1px solid black;
-    position: relative;
     z-index:10;
+    background-color: black;
 }
 
-.videoFeed{
-    width:400px;
-    height:300px;
-}
-
-
-#virtualButtons{
-    display:inline-block;
-    vertical-align: top;
-    width:400px;
-    height:300px;
-    position:relative;
-    left:-405px;
-    z-index: 10;
-    border:1px solid red;
+.player-videos{
+    display: none;
+    z-index : 0;
+    position: absolute;
 }

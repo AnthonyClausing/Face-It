@@ -20,4 +20,4 @@ app.get('*', function (req, res, next) {
 const server = app.listen(port, () => console.log('Facing It'));
 const io = socketio(server);
 
-require('../socket/socket.js')(io);
+require('./serverSocket.js')(io);
