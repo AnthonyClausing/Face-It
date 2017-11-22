@@ -5,16 +5,18 @@ import {Route, Switch} from 'react-router-dom';
 import { connect } from 'react-redux';
 import store from './store';
 import Main from './components/main';
-
+import Login from './components/login'
+import history from './history'
 
 ///only export default for now until containers can be made
 export default class Routes extends Component {
   render(){
     
     return (
-      <Router>
+      <Router history = {history}>
       <Switch>
-      <Route path='/' component={Main}/>
+      <Route path='/home' component={Main}/>
+      <Route component= {Login}/>
       </Switch>
       </Router>
     )
