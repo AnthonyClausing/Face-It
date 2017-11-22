@@ -26,6 +26,7 @@
     "react-konva": "^1.6.3",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0",
     "session": "^0.1.0",
     "socketio": "^1.0.0",
     "webpack": "^2.2.1"
@@ -38,6 +39,7 @@
     "babel-preset-react": "^6.22.0",
     "babel-preset-stage-2": "^6.24.1",
     "babel-register": "^6.24.1",
+    "redux-devtools-extension": "^2.13.2",
     "video.js": "^6.4.0"
   }
 }
