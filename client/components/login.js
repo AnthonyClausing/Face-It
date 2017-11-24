@@ -24,21 +24,5 @@ export default class Login extends Component {
     
 }
 
-// //text-align: center;
-// display: flex;
-// flex-direction: column;
-// justify-content: space-between;
-// align-items: center;
-// width: 100vw;
-// height: 100vh;
-// }
 
-// {
-//     display: flex;
-//     flex-direction: column;
-//     justify-content: space-between;
-//     padding: 1em;
-//     margin: .1em;
-//     border-radius: 10%;
-//     transition: all 1.5s ease-in;
-//     text-decoration: none;
+
