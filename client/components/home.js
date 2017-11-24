@@ -11,7 +11,6 @@ export default class Home extends Component {
         }
         this.handleVideoSource = this.handleVideoSource.bind(this)
         this.changeNav = this.changeNav.bind(this)
-        this.closeNav = this.closeNav.bind(this)
     }
 
     componentDidMount() {
@@ -47,9 +46,6 @@ export default class Home extends Component {
         this.setState({open:false})}
     }
     
-    closeNav() {
-        document.getElementById("mySidenav").style.width = "0";
-    }
 
     
 
