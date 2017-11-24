@@ -10,16 +10,23 @@ html, body{
 }
 
 #login-page{
+    text-align: center;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-content: center;
+    justify-content: space-between;
+    align-items: center;
     width: 100vw;
     height: 100vh;
+    }
+
+.login-header{
+    align-items: center;
 }
 
 .login-items{
-    align-self: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     padding: 1em;
     margin: .1em;
     border-radius: 10%;
