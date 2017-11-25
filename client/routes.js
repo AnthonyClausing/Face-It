@@ -7,6 +7,7 @@ import store from './store';
 import Main from './components/main';
 import Login from './components/login'
 import history from './history'
+import Home from './components/home'
 
 ///only export default for now until containers can be made
 export default class Routes extends Component {
@@ -15,7 +16,8 @@ export default class Routes extends Component {
     return (
       <Router history = {history}>
       <Switch>
-      <Route exact path='/home' component={Main}/>
+      <Route exact path='/singlePlayerMode' component={Main}/>
+      <Route exact path='/home' component={Home}/>
       <Route component= {Login}/>
       </Switch>
       </Router>
