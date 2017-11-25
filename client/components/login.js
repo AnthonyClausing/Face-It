@@ -17,10 +17,11 @@ export default class Login extends Component {
                     <p>An interactive multiplayer webcam game</p>
                 </div>
                 <div className='login-items'>
-                    <input className='login-items' placeholder='name'></input>
+                    <input className='login-items' placeholder='name' autoFocus></input>
                     <NavLink to='/home' className='login-items'>EnterGame</NavLink>
                     <ReactAudioPlayer
                         src="pokemon-black-white.mp3"
+                        loop
                         autoPlay
                         controls
                     />

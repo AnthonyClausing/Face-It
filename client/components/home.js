@@ -62,7 +62,7 @@ export default class Home extends Component {
                 <span onClick={this.changeNav}>&#9776; toggle</span>
                 <div className ='home-greeting'>
                 <h1>Hi username here</h1>
-                <video id='check-video' src={this.state.videoSource} autoPlay='true' />
+                <video src = {this.state.videoSource} autoPlay />
                 <p>Just checking if your browser supports our game.</p>
                 </div>
             </div>
