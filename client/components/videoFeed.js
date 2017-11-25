@@ -184,6 +184,7 @@ class VideoFeed extends React.Component {
 		return (
 			<div className="the-video">
 				<video
+					className = 'video-canvas'
 					width="400"
 					height="300"
 					ref={ (video) => { this.video = video } } >

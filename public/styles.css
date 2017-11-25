@@ -10,16 +10,36 @@ html, body{
 }
 
 #login-page{
+    text-align: center;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-content: center;
+    justify-content: space-between;
+    align-items: center;
     width: 100vw;
+    background-color: burlywood;
     height: 100vh;
+    background-image: url(https://ipadnotebook.files.wordpress.com/2012/10/screenshot-2012-10-10-08-26-281.png);
+    /* background-image: url(http://blog.portfolium.com/wp-content/uploads/2015/04/3020937-poster-1280-emoji.jpg); */
+    /* background-image: url(https://www.xmple.com/wallpaper/stripes-lines-white-pink-streaks-1920x1080-c2-ffffff-ffb6c1-l2-53-106-a-120-f-1.svg); */
+    background-size: initial;
+    background-position: 0px, 0px;
+    background-repeat: repeat-x;
+    animation: loginscroll 15s linear infinite;
+}
+
+@keyframes loginscroll {
+    from {background-position: 0, 0;}
+    to {background-position: 100%, 0 ;}
+}
+
+.login-header{
+    align-items: center;
 }
 
 .login-items{
-    align-self: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     padding: 1em;
     margin: .1em;
     border-radius: 10%;
@@ -52,11 +72,47 @@ canvas{
     position: absolute;
 }
 
-video, #blended{
+.video-canvas, #blended{
     display:none;
 }
+
+
 
 #canvas-source{
     border: 2px solid red;
 }
 
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    color: white;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+
+.home {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 100%; 
+    text-align: center;
+}
+
+.home-greeting{
+    display:flex;
+    flex-direction: column;
+    justify-content:space-between
+}
+
+#check-video{
+    justify-content: space-between
+}
+/* 
+ */
