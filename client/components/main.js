@@ -54,10 +54,25 @@ export default class Main extends Component {
                 console.log('received offer:', message)
                 this.pc.setRemoteDescription(new RTCSessionDescription(message))
                 this.doAnswer(socket);
+                this.pc.onaddstream = e => {
+                    console.log('onaddstream', e)
+                    this.remoteStream = e.stream;
+                    this.remote = window.URL.createObjectURL(this.remoteStream);
+                    this.setState({remoteVidSource: this.remote})
+                    // this.setState({bridge: 'established'});
+                };
             }
             else if (message.type === 'answer'){
                 console.log('received answer:', message)
                 this.pc.setRemoteDescription(new RTCSessionDescription(message))
+                // when the other side added a media stream, show it on screen
+                this.pc.onaddstream = e => {
+                    console.log('onaddstream', e)
+                    this.remoteStream = e.stream;
+                    this.remote = window.URL.createObjectURL(this.remoteStream);
+                    this.setState({remoteVidSource: this.remote})
+                    // this.setState({bridge: 'established'});
+                };
             }
             else if (message.type === 'candidate'){
 
@@ -85,9 +100,11 @@ export default class Main extends Component {
 
     handleVideoSource (mediaStream) {
         this.setState({userVidSource: window.URL.createObjectURL(mediaStream), userMediaObject: mediaStream})
+        console.log(this.state.userVidSource)
     }
 
     render () {
+        console.log('HEREEEEE',this.state.userVidSource, this.state.remoteVidSource)
         return (
             <div>
                 <form onSubmit={this.handleNewRoom}>
@@ -111,8 +128,8 @@ export default class Main extends Component {
 
                 <div id='roomTaken'></div>
 
-                <VideoFeed id='localStream' videoSource={this.state.userVidSource}/>
-                <VideoFeed id='remoteStream' videoSource={this.state.remoteVidSource}/>
+                <VideoFeed id='localStream' videoSource={this.state.userVidSource} />
+                <VideoFeed id='remoteStream' remoteVidSource={this.state.remoteVidSource}/>
             </div>
         )
     }

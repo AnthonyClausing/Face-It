@@ -4672,9 +4672,24 @@ var Main = function (_Component) {
                     console.log('received offer:', message);
                     _this2.pc.setRemoteDescription(new RTCSessionDescription(message));
                     _this2.doAnswer(socket);
+                    _this2.pc.onaddstream = function (e) {
+                        console.log('onaddstream', e);
+                        _this2.remoteStream = e.stream;
+                        _this2.remote = window.URL.createObjectURL(_this2.remoteStream);
+                        _this2.setState({ remoteVidSource: _this2.remote });
+                        // this.setState({bridge: 'established'});
+                    };
                 } else if (message.type === 'answer') {
                     console.log('received answer:', message);
                     _this2.pc.setRemoteDescription(new RTCSessionDescription(message));
+                    // when the other side added a media stream, show it on screen
+                    _this2.pc.onaddstream = function (e) {
+                        console.log('onaddstream', e);
+                        _this2.remoteStream = e.stream;
+                        _this2.remote = window.URL.createObjectURL(_this2.remoteStream);
+                        _this2.setState({ remoteVidSource: _this2.remote });
+                        // this.setState({bridge: 'established'});
+                    };
                 } else if (message.type === 'candidate') {}
             });
         }
@@ -4703,10 +4718,12 @@ var Main = function (_Component) {
         key: 'handleVideoSource',
         value: function handleVideoSource(mediaStream) {
             this.setState({ userVidSource: window.URL.createObjectURL(mediaStream), userMediaObject: mediaStream });
+            console.log(this.state.userVidSource);
         }
     }, {
         key: 'render',
         value: function render() {
+            console.log('HEREEEEE', this.state.userVidSource, this.state.remoteVidSource);
             return _react2.default.createElement(
                 'div',
                 null,
@@ -4740,7 +4757,7 @@ var Main = function (_Component) {
                 ),
                 _react2.default.createElement('div', { id: 'roomTaken' }),
                 _react2.default.createElement(_videoFeed2.default, { id: 'localStream', videoSource: this.state.userVidSource }),
-                _react2.default.createElement(_videoFeed2.default, { id: 'remoteStream', videoSource: this.state.remoteVidSource })
+                _react2.default.createElement(_videoFeed2.default, { id: 'remoteStream', remoteVidSource: this.state.remoteVidSource })
             );
         }
     }]);
@@ -4904,19 +4921,16 @@ var VideoFeed = function (_Component) {
         value: function render() {
             var _this2 = this;
 
+            console.log('PROPS!!!!!!!!!!', this.props);
             return _react2.default.createElement(
                 'div',
                 null,
-                _react2.default.createElement(
-                    'h1',
-                    null,
-                    ' This is a video feed '
-                ),
                 _react2.default.createElement('video', { id: this.props.id, src: this.props.videoSource, className: 'videoInput', autoPlay: 'true',
                     ref: function ref(video) {
                         _this2.video = video;
                     }
-                })
+                }),
+                _react2.default.createElement('video', { id: this.props.id, src: this.props.remoteVidSource, className: 'videoInput', autoPlay: 'true' })
             );
         }
     }]);

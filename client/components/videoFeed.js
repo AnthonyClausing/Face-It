@@ -7,12 +7,13 @@ export default class VideoFeed extends Component {
 
 
     render () {
+        console.log('PROPS!!!!!!!!!!',this.props)
         return (           
             <div>
-                <h1> This is a video feed </h1>
                 <video id={this.props.id} src={this.props.videoSource} className='videoInput' autoPlay='true'
                 ref = {(video) => {this.video = video}}
                 ></video>
+                <video id={this.props.id} src={this.props.remoteVidSource} className='videoInput' autoPlay='true'></video>
             </div>
         )
     }
