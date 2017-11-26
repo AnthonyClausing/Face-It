@@ -181,13 +181,32 @@ class VideoFeed extends React.Component {
 	}
 
 	render(props) {
+		console.log('REMOTE', this.props.remoteVidSource)
 		return (
 			<div className="the-video">
 				<video
 					width="400"
 					height="300"
+					id={this.props.id}
+					src={this.props.videoSource}
+					autoPlay="true"
 					ref={ (video) => { this.video = video } } >
 				</video>
+
+				{
+					!(this.props.remoteVidSource)
+						? 
+							false
+						:	
+							<video
+								width="400"
+								height="300"
+								id={this.props.id}
+								src={this.props.remoteVidSource}
+								autoPlay="true">
+							</video>
+				}
+			
 
 				<div id='virtualButtons'>
 					<img id='blueButton' src="/images/SquareBlue.png" />
