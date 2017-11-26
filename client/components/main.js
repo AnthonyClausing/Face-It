@@ -6,6 +6,8 @@ export default class Main extends Component {
         super ();
         this.state = {
             emotions: ['angry', 'happy', 'sad', 'surprised'],
+            coinPositions: [],
+            numberOfCoins: 2,
             targetEmotion: '',
             gameState: null,
             score: 0,
@@ -37,13 +39,17 @@ export default class Main extends Component {
     startGame (event) {
         event.preventDefault();
         this.changeTargetEmotion();
-        this.setState({interval: setInterval(this.changeTargetEmotion, 1000), gameState: 'active', count: event.target.numRounds.value});
+        this.setState({interval: setInterval(this.changeTargetEmotion, 5000), gameState: 'active', count: event.target.numRounds.value});
     }
 
     changeTargetEmotion () {
-        console.log(this.state.gameState)
+        let positions = [];
+        let possiblePositions = [1,2,3,4,5,6,7];
+        for (let i=0; i<this.state.numberOfCoins; i++){
+            positions.push(possiblePositions.splice(Math.floor(Math.random()*possiblePositions.length), 1)[0]);
+        }
         if (this.state.count > 0){
-            this.setState({targetEmotion: this.state.emotions[Math.floor(Math.random()*this.state.emotions.length)], matching:false, count: this.state.count-1});
+            this.setState({targetEmotion: this.state.emotions[Math.floor(Math.random()*this.state.emotions.length)], matching:false, count: this.state.count-1, coinPositions:positions});
         }  else {
             clearInterval(this.state.interval);
             this.setState({gameState: 'stopped'})
@@ -57,9 +63,8 @@ export default class Main extends Component {
     render () {
         return (
             <div id = "single-player">
-                <h1> This is the main </h1>
 
-                <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion}/>
+                <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion} coins={this.state.coinPositions}/>
 
                 <div id='targetEmotion'> Target: {this.state.targetEmotion} </div>
 
