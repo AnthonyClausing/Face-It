@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const session = require('express-session');
 const passport = require('passport');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
+const bodyParser = require('body-parser');
 
 
 
@@ -24,6 +25,9 @@ passport.deserializeUser((id, done) =>
     .catch(done));
 
 app.use(morgan('dev'));
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
 
 app.use(session({

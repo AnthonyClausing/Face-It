@@ -3,10 +3,10 @@ import {composeWithDevTools} from 'redux-devtools-extension';
 import thunkMiddleWare from "redux-thunk";
 import roundReducer from './round';
 import queueReducer from './queue';
-import userReducer from './user';
+import user from './user';
 
 
-const reducer = combineReducers({roundReducer, queueReducer,userReducer});
+const reducer = combineReducers({roundReducer, queueReducer,user});
 
 let middleware = composeWithDevTools(applyMiddleware(thunkMiddleWare));
 
