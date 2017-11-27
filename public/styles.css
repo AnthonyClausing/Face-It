@@ -41,9 +41,7 @@ button.login-items:hover{
 
 }
 
-.remote-stream {
-    z-index: 11;
-}
+
 
 canvas{
     z-index:10;
@@ -56,11 +54,14 @@ canvas{
     position: absolute;
 }
 
-video, #blended{
+video, .blended{
     display:none;
 }
+#test-remote {
+    display: inline
+}
 
-#canvas-source{
+.canvas-source{
     border: 2px solid red;
 }
 

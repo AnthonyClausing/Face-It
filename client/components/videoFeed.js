@@ -184,27 +184,27 @@ class VideoFeed extends React.Component {
 		console.log('REMOTE in video feed', this.props.remoteVidSource)
 		return (
 			<div className="the-video">
-				<video
-					width="400"
-					height="300"
-					id={this.props.id}
-					src={this.props.videoSource}
-					autoPlay="true"
-					muted
-					ref={(video) => { this.video = video }} >
-				</video>
-
-
 				{
-					this.props.remoteVidSource && (
-				<video
+					this.props.remoteVidSource ?
+					<video
 					width="400"
 					height="300"
-					id={this.props.id}
+					id='remoteVidFeed'
 					src={this.props.remoteVidSource}
+					ref={(video) => { this.video = video }}					
 					autoPlay="true">
-				</video>
-				)}
+				</video> :
+				<video
+				width="400"
+				height="300"
+				id={this.props.id}
+				src={this.props.videoSource}
+				autoPlay="true"
+				muted
+				ref={(video) => { this.video = video }} >
+			</video>
+				}
+			
 
 
 				<div id='virtualButtons'>
@@ -212,13 +212,13 @@ class VideoFeed extends React.Component {
 					<img id='redButton' src="/images/SquareRed.png" />
 				</div>
 
-				<canvas id='canvas-source'
+				<canvas className='canvas-source'
 					width="400"
 					height="300"
 					ref={ (canvas) => this.canvas = canvas }>
 				</canvas>
 
-				<canvas id='blended'
+				<canvas className='blended'
 					width="400"
 					height="300"
 					ref={ (canvas) => this.blended = canvas}>

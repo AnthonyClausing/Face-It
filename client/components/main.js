@@ -47,42 +47,42 @@ export default class Main extends Component {
       }
 
     socket.on('connect', () => {
-      console.log('Connected!, My Socket Id:', socket.id)
-    })
+      console.log('Connected!, My Socket Id:', socket.id);
+    });
     socket.on('roomTaken', (msg) => {
       console.log(msg);
       document.getElementById('roomTaken').innerHTML = msg;
-    })
+    });
     socket.on('someoneJoinedTheRoom', () => {
       console.log('someone joined');
       this.isInitiator = true;
       this.createPeerConnection(this.state, socket);
-      console.log('pc after someone joined:', this.pc)
-    })
+      console.log('pc after someone joined:', this.pc);
+    });
 
     socket.on('signal', message => {
       if (message.type === 'offer') {
-        console.log('received offer:', message)
-        this.pc.setRemoteDescription(new RTCSessionDescription(message))
+        console.log('received offer:', message);
+        this.pc.setRemoteDescription(new RTCSessionDescription(message));
         this.doAnswer(socket);
         this.pc.onaddstream = e => {
-          console.log('onaddstream', e)
+          console.log('onaddstream', e);
           this.remoteStream = e.stream;
           this.remote = window.URL.createObjectURL(this.remoteStream);
-          this.setState({ remoteVidSource: this.remote })
+          this.setState({ remoteVidSource: this.remote });
           // this.setState({bridge: 'established'});
 
         };
       }
       else if (message.type === 'answer') {
-        console.log('received answer:', message)
-        this.pc.setRemoteDescription(new RTCSessionDescription(message))
+        console.log('received answer:', message);
+        this.pc.setRemoteDescription(new RTCSessionDescription(message));
         // when the other side added a media stream, show it on screen
         this.pc.onaddstream = e => {
-          console.log('onaddstream', e)
+          console.log('onaddstream', e);
           this.remoteStream = e.stream;
           this.remote = window.URL.createObjectURL(this.remoteStream);
-          this.setState({ remoteVidSource: this.remote })
+          this.setState({ remoteVidSource: this.remote });
           // this.setState({bridge: 'established'});
         };
       }
@@ -92,8 +92,8 @@ export default class Main extends Component {
             sdpMLineIndex: message.mlineindex,
             candidate: message.candidate
         })
-        )}
-    })
+        );}
+    });
     }
 
     roomTaken (msg) {
@@ -102,16 +102,16 @@ export default class Main extends Component {
 
   handleNewRoom (event) {
       event.preventDefault();
-      socket.emit('newRoom', event.target.newRoom.value, socket.id)
-      console.log('NEW ROOM', event.target.newRoom.value)
+      socket.emit('newRoom', event.target.newRoom.value, socket.id);
+      console.log('NEW ROOM', event.target.newRoom.value);
       event.target.newRoom.value = '';
   }
 
   handleJoinRoom (event) {
       event.preventDefault();
       this.createPeerConnection(this.state);
-      console.log('pc after join room:', this.pc, this.state)
-      socket.emit('joinRoom', event.target.joinRoom.value)
+      console.log('pc after join room:', this.pc, this.state);
+      socket.emit('joinRoom', event.target.joinRoom.value);
       event.target.joinRoom.value = '';
   }
     // roomTaken (msg) {
@@ -159,7 +159,7 @@ export default class Main extends Component {
 		// 	controls: false,
     //             src: this.state.videoSource
         // };
-        // console.log('MAIN USER',this.state.userVidSource)
+        console.log('MAIN remote',this.state.remoteVidSource)
         return (
             <div id = "single-player">
                 <h1> This is the main </h1>
@@ -167,30 +167,33 @@ export default class Main extends Component {
                 <form onSubmit={this.handleNewRoom}>
                   <label>
                     Create Room:
-                    <input type='text' name='newRoom' />
+                    <input type="text" name="newRoom" />
                   </label>
-                  <input type='submit' name='submitNew' />
+                  <input type="submit" name="submitNew" />
                 </form>
                 <form onSubmit={this.handleJoinRoom}>
                   <label>
                     Join Room:
-                    <input type='text' name='joinRoom' />
+                    <input type="text" name="joinRoom" />
                   </label>
                   <label>
                     Name:
-                    <input type='text' name='userName' />
+                    <input type="text" name="userName" />
                   </label>
-                  <input type='submit' name='submitJoin' />
+                  <input type="submit" name="submitJoin" />
                 </form>
+
                 {
                     this.state.userVidSource &&
-                
+
                 <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion} />
                 }
                 {
                     this.state.remoteVidSource &&
-                <VideoFeed id='remoteStream' remoteVidSource={this.state.remoteVidSource} />
+                <VideoFeed remoteVidSource={this.state.remoteVidSource} />
                 }
+             
+
                 <div id="targetEmotion"> Target: {this.state.targetEmotion} </div>
 
                 <div id="success">

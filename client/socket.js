@@ -30,7 +30,6 @@ function handleIceCandidate (event) {
             type: 'candidate',
             candidate: event.candidate.candidate
         })
-        console.log('after addIceCandidate')
     } else {
         console.log('End of candidates.');
     }
