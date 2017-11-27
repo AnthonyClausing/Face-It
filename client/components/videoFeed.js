@@ -8,7 +8,7 @@ import _ from 'lodash';
 import PubSub from 'pubsub-js';
 import store from '../store/index.js';
 import {connect} from 'react-redux';
-import {collectCoin} from '../store/round.js';
+import {setCoins, incrementScore} from '../store/round.js';
 
 const coinCoords = [{x:0, y:0}, {x:300, y:0}, {x:568, y:0}, {x:0, y:230}, {x:568, y:230}, {x:0, y:450}, {x:568, y:450}]
 
@@ -76,22 +76,6 @@ class VideoFeed extends React.Component {
 
 		this.video.addEventListener('canplay', (this.startVideo).bind(this), false);
 	}
-
-	shouldComponentUpdate(nextProps, nextState) {
-		// if (this.state.emotion.emotion !== nextState.emotion.emotion) {
-		// 	this.PubSub.publish('emotion.update', nextState.emotion);
-		// 	return true;
-		// }
-		// return false;
-		if (nextProps.videoSource) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	componentWillUpdate(nextProps, nextState) {
-		console.log("WILL I UPDATED?", nextProps)
-	}
 	
 	getUserMediaCallback(err, stream ) {
 		this.video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
@@ -127,11 +111,13 @@ class VideoFeed extends React.Component {
 
 	checkAreas() {
 		// loop over the button areas
-		for (var r=0; r<this.props.coins.length; ++r) {
+		let coinArr = this.props.coinPositions.split('');
+		let newPositions = '';
+		for (var r=0; r<coinArr.length; ++r) {
 			//get the pixels in a button area from the blended image
 			var blendedData = this.blendedCtx.getImageData(
-				coinCoords[this.props.coins[r]].x,
-				coinCoords[this.props.coins[r]].y,
+				coinCoords[coinArr[r]].x,
+				coinCoords[coinArr[r]].y,
 				32,
 				32
 			);
@@ -148,9 +134,12 @@ class VideoFeed extends React.Component {
 			if (average > 10) {
 				// over a small limit, consider that a movement is detected
 				// do some action to indicated area touched
-				this.props.collectCoin(r);
-				console.log('detected');
-				
+
+				newPositions = this.props.coinPositions.slice(0,this.props.coinPositions.indexOf(r)) + this.props.coinPositions.slice(this.props.coinPositions.indexOf(r));
+				console.log(newPositions)
+				this.props.setCoins(newPositions);
+				this.props.incrementScore();
+				console.log('detected');				
 			}
 		}
 	}
@@ -170,11 +159,6 @@ class VideoFeed extends React.Component {
 			this.checkAreas();
 		}
 
-		//this draws the wire face image on the canvas
-		// if (this.ctrack.getCurrentPosition()) {
-		// 	this.ctrack.draw(this.overlay);
-		// }
-
 		// Die Emotionen in darstellbare Form bringen
 		let er = this.ec.meanPredict(cp);
 		if (this.props.target === 'angry' && er[0].value > .5) {
@@ -191,7 +175,6 @@ class VideoFeed extends React.Component {
 			document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[3].value;
 			document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[1].value;
 			document.getElementById('surprised').innerHTML = '<span> Surprised </span>' + er[2].value;
-	
 		}
        
 		if (er) {
@@ -199,7 +182,6 @@ class VideoFeed extends React.Component {
 			// this.setState({ emotion: emotion });
 			this.PubSub.publish('emotions.loop', er);
 		}
-
 	}
 
 	render() {
@@ -212,8 +194,8 @@ class VideoFeed extends React.Component {
 						ref={ (canvas) => this.canvas = canvas }>
 					</canvas>
 					<div id='virtualButtons'>
-						{
-							this.props.pos.length ? (this.props.pos.map((position,index) => {
+						{	
+							this.props.coinPositions.split('').map((position,index) => {
 								let coinStyles = {
 									position: 'absolute',
 									height: '32px',
@@ -225,7 +207,7 @@ class VideoFeed extends React.Component {
 									<img src='/images/coin.gif' style={coinStyles}
 									key={index} />
 								)
-							})) : null
+							})
 						}
 					</div>
 				</div>
@@ -250,8 +232,20 @@ class VideoFeed extends React.Component {
 const mapStateToProps = state => {
     return {
 		coinPositions: state.roundReducer.coinPositions,
-		numberOfCoins: state.roundReducer.numberOfCoins
+		numberOfCoins: state.roundReducer.numberOfCoins,
+		gameState: state.roundReducer.gameState
     }
 }
 
-export default connect(mapStateToProps)(VideoFeed);
+const mapDispatchToProps = dispatch => {
+	return {
+		setCoins: (positions) => {
+			dispatch(setCoins(positions))
+		},
+		incrementScore: () => {
+			dispatch(incrementScore())
+		}
+	}
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(VideoFeed);

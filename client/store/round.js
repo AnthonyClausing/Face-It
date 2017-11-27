@@ -2,7 +2,7 @@
 const initialState = {
   rounds: 0,
   numberOfCoins: 2,
-  coinPositions: [],
+  coinPositions: '',
   gameState: null,
   targetEmotion: '',
   score: 0,
@@ -15,7 +15,7 @@ const initialState = {
 const SET_ROUNDS = 'SET_ROUNDS';
 const DECREMENT_ROUNDS = "DECREMENT ROUNDS";
 const CHECK_ROUND = "CHECK_ROUND";
-const COLLECT_COIN = "COLLECT_COIN";
+const INCREMENT_SCORE = "INCREMENT_SCORE";
 const SET_COINS = "SET_COINS";
 const CREATE_INTERVAL = "CREATE_INTERVAL";
 const DESTROY_INTERVAL = "DESTROY_INTERVAL";
@@ -27,16 +27,16 @@ export function setRounds(num){
   return {type: SET_ROUNDS, rounds: num}
 }
 
-export function decrementRound(){
-  return {type: DECREMENT_ROUNDS}
+export function decrementRound(num){
+  return {type: DECREMENT_ROUNDS, rounds: num}
 }
 
 export function checkRound(){
   return {type: CHECK_ROUND}
 }
 
-export function collectCoin(position){  
-  return {type: COLLECT_COIN, newPositions: newPositions}
+export function incrementScore(){
+  return {type: INCREMENT_SCORE}
 }
 
 export function setCoins(positions){
@@ -66,11 +66,11 @@ const reducer = function(state = initialState, action){
       case SET_ROUNDS:
         return Object.assign({}, state, {rounds : action.rounds});
       case DECREMENT_ROUNDS:
-        return Object.assign({}, state, {rounds: rounds--});
+        return Object.assign({}, state, {rounds: state.rounds-1});
       case CHECK_ROUND:
         return state.rounds
-      case COLLECT_COIN:
-        return Object.assign({}, state, {coinPositions: state.coinPositions.splice(state.coinPositions.indexOf(action.position),1)})
+      case INCREMENT_SCORE:
+        return Object.assign({}, state, {score: state.score+1})
       case SET_COINS:
         return Object.assign({}, state, {coinPositions: action.coinPositions})
       case SET_EMOTION:

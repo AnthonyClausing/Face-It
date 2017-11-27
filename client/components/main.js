@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import VideoFeed from './videoFeed';
 import store from '../store/index.js';
-import {collectCoin, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval} from '../store/round.js';
+import {collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval} from '../store/round.js';
 import {connect} from 'react-redux';
 
 class Main extends Component {
@@ -14,7 +14,6 @@ class Main extends Component {
         this.matchedEmotion = this.matchedEmotion.bind(this);
         this.startGame = this.startGame.bind(this);
         this.runGame = this.runGame.bind(this);
-        this.collectCoin = this.collectCoin.bind(this);
     }
 
     componentDidMount () {
@@ -33,28 +32,31 @@ class Main extends Component {
 
     startGame (event) {
         event.preventDefault();
+        this.props.setGameState('active')
         this.props.setEmotion(this.selectRandomEmotion());
-        let arr = this.pickPositions(this.props.coinCount);
-        console.log("arr", arr)
-        this.props.setCoins(arr);
-        this.props.setRounds(event.target.numRounds.value)
+        let coinString = this.pickPositions(this.props.coinCount);
+        this.props.setCoins(coinString);
+        this.props.setRounds(event.target.numRounds.value);
+        let interval = setInterval(this.runGame, 5000)
+        this.props.createInterval(interval);
     }
 
     runGame () {
         if (this.props.rounds > 0) {
             this.props.setEmotion(this.selectRandomEmotion());
-            this.props.setCoins(this.pickPositions());
+            this.props.setCoins(this.pickPositions(this.props.coinCount));
             this.props.decrementRound();
         } else {
             this.props.destroyInterval(); 
+            this.props.setGameState('stopped');
         }
     }
 
     pickPositions (num) {
-        let positions = [];
+        let positions = '';
         let possiblePositions = [0,1,2,3,4,5,6];
-        for (let i=0; i< num; i++){
-            positions.push(possiblePositions.splice(Math.floor(Math.random()*possiblePositions.length), 1)[0]);
+        for (let i=0; i<num; i++){
+            positions += (possiblePositions.splice(Math.floor(Math.random()*possiblePositions.length), 1)[0]);
         }
         return positions;
     }
@@ -65,20 +67,14 @@ class Main extends Component {
 
     matchedEmotion () {
         this.setState({matching:true});
-    }
-
-    collectCoin (position) {
-        let newPositions = this.state.coinPositions.splice(this.state.coinPositions.indexOf(position));
-        console.log(newPositions);
-        this.setState({score: this.state.score + 1, coinPositions:newPositions})
-    }
+    } 
 
     render () {
-        console.log("MAIN PROPS", this.props.positions)
+        console.log(this.props.positions.length);
         return (
             <div id = "single-player">
             {
-                this.props.positions.length ? <VideoFeed pos={this.props.positions} /> : null
+                <VideoFeed pos={this.props.positions} />
             }   
                 <div id='targetEmotion'> Target: {this.props.targetEmotion} </div>
 
@@ -126,16 +122,16 @@ const mapDispatchToProps = dispatch => {
             dispatch(setRounds(rounds))
         },
         decrementRound: () => {
-            dispatch(decrementRound);
+            dispatch(decrementRound());
         },
         createInterval: (interval) => {
             dispatch(createInterval(interval))
         },
         destroyInterval: () => {
-            dispatch(destroyInterval);
+            dispatch(destroyInterval());
         },
-        setGameState: () => {
-            dispatch(setGameState);
+        setGameState: (gameState) => {
+            dispatch(setGameState(gameState));
         }
     }
 }
