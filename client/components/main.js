@@ -9,7 +9,7 @@ export default class Main extends Component {
     constructor () {
         super();
 
-        this.pc;
+        this.pc = null;
         this.isInitiator = false;
 
         this.state = {
@@ -126,7 +126,7 @@ export default class Main extends Component {
     //     event.target.joinRoom.value = '';
     // }
     handleVideoSource (mediaStream) {
-		this.setState({userVidSource: window.URL.createObjectURL(mediaStream), userMediaObject: mediaStream});
+        this.setState({userVidSource: window.URL.createObjectURL(mediaStream), userMediaObject: mediaStream});
     }
 
     startGame (event) {
@@ -154,7 +154,8 @@ export default class Main extends Component {
 		// 	autoplay: true,
 		// 	controls: false,
     //             src: this.state.videoSource
-		// };
+        // };
+        console.log('MAIN USER',this.state.userVidSource)
         return (
             <div id = "single-player">
                 <h1> This is the main </h1>
@@ -177,10 +178,15 @@ export default class Main extends Component {
                   </label>
                   <input type='submit' name='submitJoin' />
                 </form>
-
-                <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion} />
-                <VideoFeed id='remoteStream' remoteVidSource={this.state.remoteVidSource}/>
+                {
+                    this.state.userVidSource &&
                 
+                <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion} />
+                }
+                {
+                    this.state.remoteVidSource &&
+                <VideoFeed id='remoteStream' remoteVidSource={this.state.remoteVidSource} />
+                }
                 <div id="targetEmotion"> Target: {this.state.targetEmotion} </div>
 
                 <div id="success">

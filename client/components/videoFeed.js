@@ -31,10 +31,10 @@ function threshold(value) {
 }
 
 //  Cross-Browser Implementierung von der URL-Funktion, eher unwichtig
-window.URL = window.URL ||
-window.webkitURL ||
-window.msURL ||
-window.mozURL;
+// window.URL = window.URL ||
+// window.webkitURL ||
+// window.msURL ||
+// window.mozURL;
 
 class VideoFeed extends React.Component {
 	state = {
@@ -56,7 +56,7 @@ class VideoFeed extends React.Component {
 		let emotionData = ec.getBlank();
 		this.ec = ec;
 
-		getUserMedia({ video : true}, this.getUserMediaCallback.bind(this) );
+		// getUserMedia({ video : true}, this.getUserMediaCallback.bind(this) );
 
 		let ctrack = new clm.tracker({useWebGL : true});
 		ctrack.init(pModel);
@@ -80,10 +80,10 @@ class VideoFeed extends React.Component {
 		return false;
 	}
 
-	getUserMediaCallback(err, stream ) {
-		this.video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
-		this.video.play();
-	}
+	// getUserMediaCallback(err, stream ) {
+	// 	this.video.src = (this.props.videoSource || stream);
+	// 	this.video.play();
+	// }
 
 	startVideo(){
 		//seems to work fine without calling play
@@ -181,7 +181,7 @@ class VideoFeed extends React.Component {
 	}
 
 	render(props) {
-		console.log('REMOTE', this.props.remoteVidSource)
+		console.log('REMOTE in video feed', this.props.remoteVidSource)
 		return (
 			<div className="the-video">
 				<video
@@ -190,23 +190,21 @@ class VideoFeed extends React.Component {
 					id={this.props.id}
 					src={this.props.videoSource}
 					autoPlay="true"
-					ref={ (video) => { this.video = video } } >
+					ref={(video) => { this.video = video }} >
 				</video>
 
+
 				{
-					!(this.props.remoteVidSource)
-						? 
-							false
-						:	
-							<video
-								width="400"
-								height="300"
-								id={this.props.id}
-								src={this.props.remoteVidSource}
-								autoPlay="true">
-							</video>
-				}
-			
+					!this.props.remoteVidSource === '' && (
+				<video
+					width="400"
+					height="300"
+					id={this.props.id}
+					src={this.props.remoteVidSource}
+					autoPlay="true">
+				</video>
+				)}
+
 
 				<div id='virtualButtons'>
 					<img id='blueButton' src="/images/SquareBlue.png" />
