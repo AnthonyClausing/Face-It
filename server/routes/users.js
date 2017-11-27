@@ -5,11 +5,11 @@ module.exports = router;
 
 router.get('/', function(req,res,next){
   if(req.user.isAdmin){
-    User.FindAll({
+    User.findAll({
       attributes: { exclude: ['password', "id"]}
     })
     .then(users =>res.json(users))
     .catch(next);
   }
-  res.sendMessage('YOU DO NOT BELONG')
+  res.send('YOU DO NOT BELONG')
 });

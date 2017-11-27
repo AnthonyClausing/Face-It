@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom'
 import ReactAudioPlayer from 'react-audio-player'
-
+import {connect} from 'react-redux'
 import {Loging, Signup} from "./authorization"
 import Main from './main'
 
-export default class Login extends Component  {
+class Login extends Component  {
 
     constructor(){
         super()
@@ -27,6 +27,7 @@ export default class Login extends Component  {
     }
 
     render(){
+        console.log(this.props.user)
         return (
             <div id='login-page'>
                 <div className='login-header'>
@@ -41,7 +42,7 @@ export default class Login extends Component  {
                 {this.state.LoginForm && <Loging/>}
                     {/* <input className='login-items' placeholder='name' autoFocus></input> */}
                 {this.state.SignupForm && <Signup/>}
-                    <NavLink to='/home' className='login-items'>EnterGame</NavLink>
+                    {this.props.user && <NavLink to='/home' className='login-items'>EnterGame</NavLink>}
                     <div className = 'audio-center'>
                     <ReactAudioPlayer
                         src="pokemon-black-white.mp3"
@@ -57,4 +58,10 @@ export default class Login extends Component  {
 }
 
 
+const mapState = state => {
+    return{
+        user: state.user
+    }
+}
 
+export default connect(mapState)(Login)
