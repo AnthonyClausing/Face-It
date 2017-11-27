@@ -10,7 +10,7 @@ module.exports = io => {
             if (!io.nsps['/'].adapter.rooms.hasOwnProperty(roomName)){
                 socket.join(roomName);
                 io.nsps['/'].adapter.rooms[roomName].owner = roomCreator;
-                console.log(io.nsps['/'].adapter.rooms, roomName, roomCreator);
+                console.log(roomName, roomCreator);
             } else {
                 io.to(roomCreator).emit('roomTaken', roomName + ' is taken.')
                 console.log('room already in use')
@@ -22,7 +22,7 @@ module.exports = io => {
             if (io.nsps['/'].adapter.rooms.hasOwnProperty(roomName)){
                 console.log('rooms exists')
                 socket.join(roomName);
-                socket.broadcast.emit('someoneJoinedTheRoom');
+                socket.broadcast.to(roomName).emit('someoneJoinedTheRoom');
             } else {
                 console.log('room not found')
             } 
