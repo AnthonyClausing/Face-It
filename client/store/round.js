@@ -40,7 +40,7 @@ export function collectCoin(position){
 }
 
 export function setCoins(positions){
-  return {type: SET_COINS, positions: positions}
+  return {type: SET_COINS, coinPositions: positions}
 }
 
 export function setEmotion(emotion){
@@ -72,7 +72,7 @@ const reducer = function(state = initialState, action){
       case COLLECT_COIN:
         return Object.assign({}, state, {coinPositions: state.coinPositions.splice(state.coinPositions.indexOf(action.position),1)})
       case SET_COINS:
-        return Object.assign({}, state, {coinPositions: action.positions})
+        return Object.assign({}, state, {coinPositions: action.coinPositions})
       case SET_EMOTION:
         return Object.assign({}, state, {targetEmotion: action.targetEmotion})
       case CREATE_INTERVAL:

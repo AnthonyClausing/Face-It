@@ -42,9 +42,6 @@ window.msURL ||
 window.mozURL;
 
 class VideoFeed extends React.Component {
-	state = {
-		emotion: { emotion: '' }
-	}
 
 	constructor(props) {
 		super(props);
@@ -53,6 +50,8 @@ class VideoFeed extends React.Component {
 		this.blend = this.blend.bind(this);
 		this.lastImageData;
 		this.checkAreas = this.checkAreas.bind(this);
+		this.state = {}
+	
 	}
 
 	componentDidMount() {
@@ -90,7 +89,10 @@ class VideoFeed extends React.Component {
 			return false;
 		}
 	}
-
+	componentWillUpdate(nextProps, nextState) {
+		console.log("WILL I UPDATED?", nextProps)
+	}
+	
 	getUserMediaCallback(err, stream ) {
 		this.video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
 		this.video.play();
@@ -184,12 +186,14 @@ class VideoFeed extends React.Component {
 		} else if (this.props.target === 'surprised' && er[2].value > .5) {
 			this.props.matchedEmotion();
 		}
-		
-        document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
-        document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[3].value;
-        document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[1].value;
-        document.getElementById('surprised').innerHTML = '<span> Surprised </span>' + er[2].value;
-
+		if(er) {
+			document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
+			document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[3].value;
+			document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[1].value;
+			document.getElementById('surprised').innerHTML = '<span> Surprised </span>' + er[2].value;
+	
+		}
+       
 		if (er) {
 			const emotion = _.maxBy(er, (o) => { return o.value; });
 			// this.setState({ emotion: emotion });
@@ -198,8 +202,8 @@ class VideoFeed extends React.Component {
 
 	}
 
-	render(props) {
-		console.log('props:', this.props);
+	render() {
+		console.log("*****", this.props)
 		return (
 			<div className="the-video">
 				<div id='canvasAndButtons'>
@@ -209,7 +213,7 @@ class VideoFeed extends React.Component {
 					</canvas>
 					<div id='virtualButtons'>
 						{
-							this.props.coinPositions.map((position,index) => {
+							this.props.pos.length ? (this.props.pos.map((position,index) => {
 								let coinStyles = {
 									position: 'absolute',
 									height: '32px',
@@ -221,7 +225,7 @@ class VideoFeed extends React.Component {
 									<img src='/images/coin.gif' style={coinStyles}
 									key={index} />
 								)
-							})
+							})) : null
 						}
 					</div>
 				</div>

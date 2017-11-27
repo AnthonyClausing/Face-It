@@ -34,7 +34,8 @@ class Main extends Component {
     startGame (event) {
         event.preventDefault();
         this.props.setEmotion(this.selectRandomEmotion());
-        this.props.setCoins(this.pickPositions());
+        let arr = [1,2,3] // TODO: Replace with randomly generated arr
+        this.props.setCoins(arr);
         this.props.setRounds(event.target.numRounds.value)
     }
 
@@ -72,11 +73,12 @@ class Main extends Component {
     }
 
     render () {
+        console.log("MAIN PROPS", this.props.positions)
         return (
             <div id = "single-player">
-
-                <VideoFeed />
-
+            {
+                this.props.positions.length ? <VideoFeed pos={this.props.positions} /> : null
+            }   
                 <div id='targetEmotion'> Target: {this.props.targetEmotion} </div>
 
                 <div id='gameControls'>
@@ -101,6 +103,7 @@ class Main extends Component {
 const mapStateToProps = state => {
     return {
         gameState: state.roundReducer.gameState,
+        positions: state.roundReducer.coinPositions,
         rounds: state.roundReducer.rounds,
         score: state.roundReducer.score,
         emotions: state.roundReducer.emotions,
@@ -111,8 +114,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setCoins: () => {
-            dispatch(setCoins)
+        setCoins: (pos) => {
+            dispatch(setCoins(pos))
         },
         setEmotion: (emotion) => {
             dispatch(setEmotion(emotion))
