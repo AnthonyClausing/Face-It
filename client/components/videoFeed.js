@@ -6,8 +6,11 @@ import pModel from './models/pmodel.js';
 import clm from '../../public/ClamTracker/build/clmtrackr.js';
 import _ from 'lodash';
 import PubSub from 'pubsub-js';
+import store from '../store/index.js';
+import {connect} from 'react-redux';
+import {collectCoin} from '../store/round.js';
 
-const coinCoords = [{x:0, y:0}, {x:300, y:0}, {x:500, y:0}, {x:0, y:150}, {x:500, y:150}, {x:0, y:400}, {x:500, y:400}]
+const coinCoords = [{x:0, y:0}, {x:300, y:0}, {x:568, y:0}, {x:0, y:230}, {x:568, y:230}, {x:0, y:450}, {x:568, y:450}]
 
 function fastAbs (value) {
 	return (value ^ (value >> 31)) - (value >> 31);
@@ -63,6 +66,7 @@ class VideoFeed extends React.Component {
 		let ctrack = new clm.tracker({useWebGL : true});
 		ctrack.init(pModel);
 		this.ctrack = ctrack;
+		this.setState({tracker: ctrack});
 
 		this.blendedCtx = this.blended.getContext('2d');
 		this.canvasCtx = this.canvas.getContext('2d');
@@ -75,11 +79,16 @@ class VideoFeed extends React.Component {
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
-		if (this.state.emotion.emotion !== nextState.emotion.emotion) {
-			this.PubSub.publish('emotion.update', nextState.emotion);
+		// if (this.state.emotion.emotion !== nextState.emotion.emotion) {
+		// 	this.PubSub.publish('emotion.update', nextState.emotion);
+		// 	return true;
+		// }
+		// return false;
+		if (nextProps.videoSource) {
 			return true;
+		} else {
+			return false;
 		}
-		return false;
 	}
 
 	getUserMediaCallback(err, stream ) {
@@ -90,7 +99,9 @@ class VideoFeed extends React.Component {
 	startVideo(){
 		//seems to work fine without calling play
 //		this.video.play();
-		this.ctrack.start(this.video);
+		this.state.tracker.start(this.video);
+		
+		//this.ctrack.start(this.video);
 		// start loop to draw face
 		this.drawLoop();
 	}
@@ -115,7 +126,7 @@ class VideoFeed extends React.Component {
 	checkAreas() {
 		// loop over the button areas
 		for (var r=0; r<this.props.coins.length; ++r) {
-			// get the pixels in a button area from the blended image
+			//get the pixels in a button area from the blended image
 			var blendedData = this.blendedCtx.getImageData(
 				coinCoords[this.props.coins[r]].x,
 				coinCoords[this.props.coins[r]].y,
@@ -130,12 +141,12 @@ class VideoFeed extends React.Component {
 				average += (blendedData.data[i*4] + blendedData.data[i*4+1] + blendedData.data[i*4+2]) / 3;
 				++i;
 			}
-			// calculate an average between of the color values of the note area
+			// calculate an average between the color values of the note area
 			average = Math.round(average / (blendedData.data.length / 4));
 			if (average > 10) {
 				// over a small limit, consider that a movement is detected
 				// do some action to indicated area touched
-				this.props.matchedEmotion();
+				this.props.collectCoin(r);
 				console.log('detected');
 				
 			}
@@ -145,12 +156,17 @@ class VideoFeed extends React.Component {
 	drawLoop(){
 		requestAnimationFrame((this.drawLoop).bind(this));
     
-		let cp = this.ctrack.getCurrentParameters();
+		//let cp = this.ctrack.getCurrentParameters();
+		let cp = this.state.tracker.getCurrentParameters();
 
-		this.canvasCtx.clearRect(0, 0, 400, 300);
+		this.canvasCtx.clearRect(0, 0, 600, 480);
 		this.canvasCtx.drawImage(this.video, 0, 0, this.video.width, this.video.height);
-		this.blend();
-		this.checkAreas();
+
+		//only run the motion detection functions if the game is active
+		if (this.props.gameState === 'active'){
+			this.blend();
+			this.checkAreas();
+		}
 
 		//this draws the wire face image on the canvas
 		// if (this.ctrack.getCurrentPosition()) {
@@ -176,13 +192,14 @@ class VideoFeed extends React.Component {
 
 		if (er) {
 			const emotion = _.maxBy(er, (o) => { return o.value; });
-			this.setState({ emotion: emotion });
+			// this.setState({ emotion: emotion });
 			this.PubSub.publish('emotions.loop', er);
 		}
 
 	}
 
 	render(props) {
+		console.log('props:', this.props);
 		return (
 			<div className="the-video">
 				<div id='canvasAndButtons'>
@@ -192,15 +209,17 @@ class VideoFeed extends React.Component {
 					</canvas>
 					<div id='virtualButtons'>
 						{
-							this.props.coins.map(position => {
+							this.props.coinPositions.map((position,index) => {
 								let coinStyles = {
+									position: 'absolute',
 									height: '32px',
 									width: '32px',
-									top: position.y,
-									left: position.x
+									top: coinCoords[position].y,
+									left: coinCoords[position].x
 								}
 								return (
-									<img src='../public/images/coin.gif' style={coinStyles} />
+									<img src='/images/coin.gif' style={coinStyles}
+									key={index} />
 								)
 							})
 						}
@@ -224,4 +243,11 @@ class VideoFeed extends React.Component {
 	}
 }
 
-module.exports = VideoFeed;
+const mapStateToProps = state => {
+    return {
+		coinPositions: state.roundReducer.coinPositions,
+		numberOfCoins: state.roundReducer.numberOfCoins
+    }
+}
+
+export default connect(mapStateToProps)(VideoFeed);
