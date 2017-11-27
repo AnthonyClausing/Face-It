@@ -34,7 +34,8 @@ class Main extends Component {
     startGame (event) {
         event.preventDefault();
         this.props.setEmotion(this.selectRandomEmotion());
-        let arr = [1,2,3] // TODO: Replace with randomly generated arr
+        let arr = this.pickPositions(this.props.coinCount);
+        console.log("arr", arr)
         this.props.setCoins(arr);
         this.props.setRounds(event.target.numRounds.value)
     }
@@ -49,10 +50,10 @@ class Main extends Component {
         }
     }
 
-    pickPositions () {
+    pickPositions (num) {
         let positions = [];
         let possiblePositions = [0,1,2,3,4,5,6];
-        for (let i=0; i<this.state.numberOfCoins; i++){
+        for (let i=0; i< num; i++){
             positions.push(possiblePositions.splice(Math.floor(Math.random()*possiblePositions.length), 1)[0]);
         }
         return positions;
@@ -108,6 +109,7 @@ const mapStateToProps = state => {
         score: state.roundReducer.score,
         emotions: state.roundReducer.emotions,
         interval: state.roundReducer.interval,
+        coinCount : state.roundReducer.numberOfCoins,
         targetEmotion: state.roundReducer.targetEmotion
     }
 }
