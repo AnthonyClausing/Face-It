@@ -4,17 +4,28 @@ import history from "../history";
 
  //ACTION TYPES
 const GET_USER = "GET_USER";
-const REMOVE_USER = 'REMOVE_USER'
+const REMOVE_USER = 'REMOVE_USER';
+const GET_MEDIA_SOURCE = 'GET_MEDIA_SOURCE';
+
 // INITIAL STATE
 
 const defaultUser = {};
 
 //ACTION CREATORS
-const getUser = user => ({ type: GET_USER, user });
-const removeUser = () => ({ type: REMOVE_USER });
-
+export const getUser = user => ({ type: GET_USER, user });
+export const removeUser = () => ({ type: REMOVE_USER });
+export const getMediaSource = src => {type: GET_MEDIA_SOURCE, src};
 
 //THUNK CREATORS
+export function getMediaSourceThunk(stream){
+  console.log('HELLO')
+  return function thunk(dispatch){
+    let src = window.URL.createObjectURL(stream);
+    console.log('this is src ', src);
+             dispatch(getMediaSource(src));
+  }
+}
+
 
 export const authorize = (email, password, method) => dispatch =>
   axios
@@ -43,6 +54,8 @@ export default function (state = defaultUser, action) {
       return action.user;
     case REMOVE_USER:
       return defaultUser;
+    case GET_MEDIA_SOURCE:
+      return action.src
     default:
       return state;
   }
