@@ -32,6 +32,10 @@ const User = db.define('user', {
 
 module.exports = User
 
+User.prototype.correctPassword = function (candidatePwd) {
+  return User.encryptPassword(candidatePwd, this.salt) === this.password
+}
+
 
 User.generateSalt = function () {
   return crypto.randomBytes(16).toString('base64')

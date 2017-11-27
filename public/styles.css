@@ -36,21 +36,33 @@ html, body{
     align-items: center;
 }
 
-.login-items{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 1em;
+.login-authorization{
+    display:flex;
+    justify-content: center;
+    margin: .2em;
+}
+
+.login-authorization-items{
+    padding: .5em;
     margin: .1em;
     border-radius: 10%;
     transition: all 1.5s ease-in;
     text-decoration: none;
 }
 
+.login-items{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: .2em;
+    margin: .1em;
+  
+}
+
 button.login-items:hover{
     background-color: cornflowerblue;
 }
-.login-items:hover{   
+.login-authorization-items:hover{   
     border-color: snow
 }
 
@@ -111,8 +123,14 @@ canvas{
     justify-content:space-between
 }
 
+
 #check-video{
     justify-content: space-between
+}
+
+.audio-center{
+    display: flex;
+    justify-content: center;
 }
 /* 
  */
