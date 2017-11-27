@@ -1,46 +1,51 @@
+const config = {
+    iceServers: [{ url: 'stun:stun2.1.google.com:19302' }]
+};
+
 function createPeerConnection (state, socket) {
-    this.pc = new RTCPeerConnection();
+    this.pc = new RTCPeerConnection(config);
     this.pc.onicecandidate = handleIceCandidate;
-    this.pc.onstream = handleRemoteStreamAdded;
+    this.pc.onaddstream = handleRemoteStreamAdded;
     this.pc.onremovestream = handleRemoteStreamRemoved;
-    console.log(state.userMediaObject)
-    this.pc.addStream(state.userMediaObject)
+    console.log(state.userMediaObject);
+    this.pc.addStream(state.userMediaObject);
     if (this.isInitiator) {
         this.pc.createOffer().then(offer => {
-            return this.pc.setLocalDescription(offer)
+            return this.pc.setLocalDescription(offer);
         }).then(() => {
-            console.log('localdes:', this.pc.localDescription)
-            socket.emit('signal', this.pc.localDescription)
-        })
+            console.log('localdes:', this.pc.localDescription);
+            socket.emit('signal', this.pc.localDescription);
+        });
     } else {
-        console.log('not initiator pc:', this.pc)
+        console.log('not initiator pc:', this.pc);
     }
 }
 
-function handleIceCandidate () {
+function handleIceCandidate (event) {
     console.log('handleIceCandidate event: ', event);
     if (event.candidate) {
         console.log('have cand');
-        // sendMessage({
-        // type: 'candidate',
-        // label: event.candidate.sdpMLineIndex,
-        // id: event.candidate.sdpMid,
-        // candidate: event.candidate.candidate});
+        // this.pc.addIceCandidate(new RTCIceCandidate(event.candidate))
+        socket.send({
+            type: 'candidate',
+            candidate: event.candidate.candidate
+        })
+        console.log('after addIceCandidate')
     } else {
         console.log('End of candidates.');
-    } 
+    }
 }
 
 function doAnswer (socket) {
     this.pc.createAnswer().then(answer => {
-        return this.pc.setLocalDescription(answer)
+        return this.pc.setLocalDescription(answer);
     }).then(() => {
-        socket.emit('signal', this.pc.localDescription)
-    })
+        socket.emit('signal', this.pc.localDescription);
+    });
 }
 
 function handleRemoteStreamAdded (event) {
-    remoteStream.src = window.URL.createObjectURL(stream)
+    remoteStream.src = window.URL.createObjectURL(stream);
 }
 
 function handleRemoteStreamRemoved () {
@@ -50,7 +55,7 @@ function handleRemoteStreamRemoved () {
 function setLocalAndSendMessage (sessionDescription) {
     sessionDescription.sdp = preferOpus(sessionDescription.sdp);
     pc.setLocalDescription(sessionDescription);
-    console.log('localdescription:', sessionDescription)
+    console.log('localdescription:', sessionDescription);
 }
 
 function handleCreateOfferError () {
@@ -71,7 +76,7 @@ function preferOpus(sdp) {
     if (mLineIndex === null) {
       return sdp;
     }
-  
+
     // If Opus is available, set it as the default in m line.
     for (i = 0; i < sdpLines.length; i++) {
       if (sdpLines[i].search('opus/48000') !== -1) {
@@ -82,10 +87,10 @@ function preferOpus(sdp) {
         break;
       }
     }
-  
+
     // Remove CN in m line and sdp.
     sdpLines = removeCN(sdpLines, mLineIndex);
-  
+
     sdp = sdpLines.join('\r\n');
     return sdp;
 }
@@ -95,7 +100,7 @@ function extractSdp(sdpLine, pattern) {
     var result = sdpLine.match(pattern);
     return result && result.length === 2 ? result[1] : null;
 }
-  
+
   // Set the selected codec to the first in m line.
 function setDefaultCodec(mLine, payload) {
     var elements = mLine.split(' ');
@@ -111,12 +116,12 @@ function setDefaultCodec(mLine, payload) {
     }
     return newLine.join(' ');
 }
-  
+
   // Strip CN from sdp before CN constraints is ready.
 function removeCN(sdpLines, mLineIndex) {
     var mLineElements = sdpLines[mLineIndex].split(' ');
     // Scan from end for the convenience of removing an item.
-    for (var i = sdpLines.length-1; i >= 0; i--) {
+    for (var i = sdpLines.length - 1; i >= 0; i--) {
       var payload = extractSdp(sdpLines[i], /a=rtpmap:(\d+) CN\/\d+/i);
       if (payload) {
         var cnPos = mLineElements.indexOf(payload);
@@ -128,14 +133,14 @@ function removeCN(sdpLines, mLineIndex) {
         sdpLines.splice(i, 1);
       }
     }
-  
+
     sdpLines[mLineIndex] = mLineElements.join(' ');
     return sdpLines;
 }
 
 module.exports = {
     createPeerConnection, doAnswer, handleIceCandidate, handleRemoteStreamAdded, handleRemoteStreamRemoved
-}
+};
 
 
 // import io from 'socket.io-client';

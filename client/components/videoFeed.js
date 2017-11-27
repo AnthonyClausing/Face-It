@@ -174,7 +174,7 @@ class VideoFeed extends React.Component {
 
 		if (er) {
 			const emotion = _.maxBy(er, (o) => { return o.value; });
-			this.setState({ emotion: emotion });
+			// this.setState({ emotion: emotion });
 			this.PubSub.publish('emotions.loop', er);
 		}
 
@@ -190,12 +190,13 @@ class VideoFeed extends React.Component {
 					id={this.props.id}
 					src={this.props.videoSource}
 					autoPlay="true"
+					muted
 					ref={(video) => { this.video = video }} >
 				</video>
 
 
 				{
-					!this.props.remoteVidSource === '' && (
+					this.props.remoteVidSource && (
 				<video
 					width="400"
 					height="300"

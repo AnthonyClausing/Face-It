@@ -45,7 +45,6 @@ export default class Main extends Component {
           .then(this.handleVideoSource)
           .catch(console.log);
       }
-    
 
     socket.on('connect', () => {
       console.log('Connected!, My Socket Id:', socket.id)
@@ -72,6 +71,7 @@ export default class Main extends Component {
           this.remote = window.URL.createObjectURL(this.remoteStream);
           this.setState({ remoteVidSource: this.remote })
           // this.setState({bridge: 'established'});
+
         };
       }
       else if (message.type === 'answer') {
@@ -86,9 +86,13 @@ export default class Main extends Component {
           // this.setState({bridge: 'established'});
         };
       }
-      // else if (message.type === 'candidate') {
-
-      // }
+      else if (message.type === 'candidate') {
+        this.pc.addIceCandidate(
+        new RTCIceCandidate({
+            sdpMLineIndex: message.mlineindex,
+            candidate: message.candidate
+        })
+        )}
     })
     }
 
@@ -105,8 +109,8 @@ export default class Main extends Component {
 
   handleJoinRoom (event) {
       event.preventDefault();
-      console.log('pc after join room:', this.pc, this.state)
       this.createPeerConnection(this.state);
+      console.log('pc after join room:', this.pc, this.state)
       socket.emit('joinRoom', event.target.joinRoom.value)
       event.target.joinRoom.value = '';
   }
@@ -155,7 +159,7 @@ export default class Main extends Component {
 		// 	controls: false,
     //             src: this.state.videoSource
         // };
-        console.log('MAIN USER',this.state.userVidSource)
+        // console.log('MAIN USER',this.state.userVidSource)
         return (
             <div id = "single-player">
                 <h1> This is the main </h1>
