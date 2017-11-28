@@ -7,7 +7,7 @@ const initialState = {
   targetEmotion: '',
   score: 0,
   count: 0,
-  interval: '',
+  interval: 0,
   emotions: ['angry', 'happy', 'sad', 'surprised']
 }
 
@@ -48,7 +48,7 @@ export function setEmotion(emotion){
 }
 
 export function createInterval(interval){
-  return {type: CREATE_INTERVAL}
+  return {type: CREATE_INTERVAL, interval: interval}
 }
 
 export function destroyInterval(){
@@ -76,9 +76,10 @@ const reducer = function(state = initialState, action){
       case SET_EMOTION:
         return Object.assign({}, state, {targetEmotion: action.targetEmotion})
       case CREATE_INTERVAL:
+        console.log('action', action.interval)
         return Object.assign({}, state, {interval: action.interval})
       case DESTROY_INTERVAL: 
-        return Object.assign({}, state, {interval: ''})
+        return Object.assign({}, state, {interval: 0})
       case SET_GAME_STATE:
         return Object.assign({}, state, {gameState: action.state})
       default:

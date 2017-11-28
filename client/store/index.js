@@ -9,7 +9,7 @@ import userReducer from './user';
 
 const reducer = combineReducers({roundReducer, queueReducer,userReducer});
 
-let middleware = composeWithDevTools(applyMiddleware(thunkMiddleWare, logger));
+let middleware = composeWithDevTools(applyMiddleware(thunkMiddleWare));
 
 const store = createStore(reducer,middleware);
 

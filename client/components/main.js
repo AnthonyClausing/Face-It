@@ -39,15 +39,18 @@ class Main extends Component {
         this.props.setRounds(event.target.numRounds.value);
         let interval = setInterval(this.runGame, 5000)
         this.props.createInterval(interval);
+        console.log('inteval create:', interval)
     }
 
     runGame () {
-        if (this.props.rounds > 0) {
+        if (this.props.rounds > 1) {
+            console.log('interval', this.props.interval);
             this.props.setEmotion(this.selectRandomEmotion());
             this.props.setCoins(this.pickPositions(this.props.coinCount));
             this.props.decrementRound();
         } else {
-            this.props.destroyInterval(); 
+            clearInterval(this.props.interval);
+            this.props.setCoins('');
             this.props.setGameState('stopped');
         }
     }

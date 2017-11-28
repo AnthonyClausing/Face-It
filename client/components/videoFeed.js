@@ -12,6 +12,8 @@ import {setCoins, incrementScore} from '../store/round.js';
 
 const coinCoords = [{x:0, y:0}, {x:300, y:0}, {x:568, y:0}, {x:0, y:230}, {x:568, y:230}, {x:0, y:450}, {x:568, y:450}]
 
+const audio = new Audio('coin.WAV');
+
 function fastAbs (value) {
 	return (value ^ (value >> 31)) - (value >> 31);
 }
@@ -133,13 +135,13 @@ class VideoFeed extends React.Component {
 			average = Math.round(average / (blendedData.data.length / 4));
 			if (average > 10) {
 				// over a small limit, consider that a movement is detected
-				// do some action to indicated area touched
-
-				newPositions = this.props.coinPositions.slice(0,this.props.coinPositions.indexOf(r)) + this.props.coinPositions.slice(this.props.coinPositions.indexOf(r));
-				console.log(newPositions)
+				// do some action to indicated area touchedthis.props.coinPositions.indexOf(coinArr[r]))
+				newPositions = this.props.coinPositions.slice(0,this.props.coinPositions.indexOf(coinArr[r])) + this.props.coinPositions.slice(this.props.coinPositions.indexOf(coinArr[r])+1);
 				this.props.setCoins(newPositions);
 				this.props.incrementScore();
-				console.log('detected');				
+				audio.pause();
+				audio.currentTime = 0;	
+				audio.play();		
 			}
 		}
 	}
