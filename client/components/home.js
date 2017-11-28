@@ -57,7 +57,7 @@ export class Home extends Component {
         return (
             <div className="home">
                 <div id="mySidenav" className="sidenav">
-                    <button onClick = {this.props.handleClick}>Logout</button>
+                    {this.props.username && <button onClick = {this.props.handleClick}>Logout</button>}
                     <h3>User gameStats</h3>
                     <NavLink to='singlePlayerMode'>Single Player</NavLink>
                     <h3>Multiplayer</h3>
@@ -78,7 +78,7 @@ export class Home extends Component {
 const mapState = (state) => {
     return {
         user: state.user,
-        username: state.user.email
+        username: state.user.userName
     }
 }
 

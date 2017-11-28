@@ -28,6 +28,7 @@ class Login extends Component  {
 
     render(){
         console.log(this.props.user)
+        
         return (
             <div id='login-page'>
                 <div className='login-header'>
@@ -45,10 +46,12 @@ class Login extends Component  {
                     {this.props.user && <NavLink to='/home' className='login-items'>EnterGame</NavLink>}
                     <div className = 'audio-center'>
                     <ReactAudioPlayer
+                        ref = { element => this.audio = element}
                         src="pokemon-black-white.mp3"
                         loop
                         autoPlay
                         controls
+                        volume = "0.5"
                     />
                     </div>
                 </div>

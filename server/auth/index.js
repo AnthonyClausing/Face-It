@@ -18,9 +18,9 @@ router.post('/login', (req, res, next) => {
 })
 
 router.post('/signup', (req, res, next) => {
+  console.log("HI THRE AT SIGNUP")
   User.create(req.body)
     .then(user => {
-      Order.create({ userId: user.id })
       req.login(user, err => (err ? next(err) : res.json(user)))
       //TODO REDIRECT AND/OR CONFIRMATION EMAIL LAUNCHPOINT
     })
