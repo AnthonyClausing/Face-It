@@ -90,6 +90,6 @@ const mapDispatch = dispatch =>{
     }
 }
 
-const HomePage =  connect(mapState, mapDispatch)(Home)
+const HomePage =  connect(mapState, mapDispatch )(Home)
 
 export default HomePage
