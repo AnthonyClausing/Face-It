@@ -4,8 +4,11 @@ import io from 'socket.io-client';
 import { createPeerConnection, doAnswer} from '../socket.js';
 
 const socket = io(window.location.origin);
+import store from '../store/index.js';
+import {collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval} from '../store/round.js';
+import {connect} from 'react-redux';
 
-export default class Main extends Component {
+class Main extends Component {
     constructor () {
         super();
 
@@ -27,9 +30,11 @@ export default class Main extends Component {
         };
 
         this.handleVideoSource = this.handleVideoSource.bind(this);
-        this.changeTargetEmotion = this.changeTargetEmotion.bind(this);
+        this.selectRandomEmotion = this.selectRandomEmotion.bind(this);
+        this.pickPositions = this.pickPositions.bind(this);
         this.matchedEmotion = this.matchedEmotion.bind(this);
         this.startGame = this.startGame.bind(this);
+        this.runGame = this.runGame.bind(this);
         this.handleJoinRoom = this.handleJoinRoom.bind(this);
         this.handleNewRoom = this.handleNewRoom.bind(this);
         this.roomTaken = this.roomTaken.bind(this);
@@ -119,43 +124,64 @@ export default class Main extends Component {
 
     startGame(event) {
         event.preventDefault();
-        this.changeTargetEmotion();
-        this.setState({ interval: setInterval(this.changeTargetEmotion, 1000), gameState: 'active', count: event.target.numRounds.value });
+        this.props.setGameState('active')
+        this.props.setEmotion(this.selectRandomEmotion());
+        let coinString = this.pickPositions(this.props.coinCount);
+        this.props.setCoins(coinString);
+        this.props.setRounds(event.target.numRounds.value);
+        let interval = setInterval(this.runGame, 5000)
+        this.props.createInterval(interval);
     }
 
-    changeTargetEmotion() {
-        console.log(this.state.gameState);
-        if (this.state.count > 0) {
-            this.setState({ targetEmotion: this.state.emotions[Math.floor(Math.random() * this.state.emotions.length)], matching: false, count: this.state.count - 1 });
+    runGame () {
+        if (this.props.rounds > 1) {
+            console.log('interval', this.props.interval);
+            this.props.setEmotion(this.selectRandomEmotion());
+            this.props.setCoins(this.pickPositions(this.props.coinCount));
+            this.props.decrementRound();
         } else {
-            clearInterval(this.state.interval);
-            this.setState({ gameState: 'stopped' });
+            clearInterval(this.props.interval);
+            this.props.setCoins('');
+            this.props.setGameState('stopped');
         }
     }
 
-    matchedEmotion() {
-        this.setState({ matching: true });
+    pickPositions (num) {
+        let positions = '';
+        let possiblePositions = [0,1,2,3,4,5,6];
+        for (let i=0; i<num; i++){
+            positions += (possiblePositions.splice(Math.floor(Math.random()*possiblePositions.length), 1)[0]);
+        }
+        return positions;
     }
 
+    selectRandomEmotion () {
+        return this.props.emotions[Math.floor(Math.random()*this.props.emotions.length)];
+    }
+
+    matchedEmotion () {
+        this.setState({matching:true});
+    } 
+
     render () {
+        console.log(this.props.positions.length);
         return (
             <div id="single-player">
-                <h1> This is the main </h1>
                 <form onSubmit={this.handleNewRoom}>
                     <label>
                         Create Room:
-                    <input type="text" name="newRoom" />
+            <input type="text" name="newRoom" />
                     </label>
                     <input type="submit" name="submitNew" />
                 </form>
                 <form onSubmit={this.handleJoinRoom}>
                     <label>
                         Join Room:
-                    <input type="text" name="joinRoom" />
+            <input type="text" name="joinRoom" />
                     </label>
                     <label>
                         Name:
-                    <input type="text" name="userName" />
+            <input type="text" name="userName" />
                     </label>
                     <input type="submit" name="submitJoin" />
                 </form>
@@ -168,11 +194,9 @@ export default class Main extends Component {
                     this.state.remoteVidSource &&
                     <VideoFeed remoteVidSource={this.state.remoteVidSource} />
                 }
-                <div id="targetEmotion"> Target: {this.state.targetEmotion} </div>
-                <div id="success">
-                    {
-                        this.state.matching ? 'Success' : 'Failing'
-                    }
+                <div id='targetEmotion'>
+                    {this.props.targetEmotion ?
+                        <img src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
                 </div>
                 <div id="gameControls">
                     <form onSubmit={this.startGame}>
@@ -180,10 +204,56 @@ export default class Main extends Component {
                             Number of Rounds to Play:
                             <input name="numRounds" type="text" />
                         </label>
-                        <input id="startGame" type="submit" disabled={this.state.gameState === 'active'} value="Start Game" />
+                        <input id='startGame' type='submit' disabled={this.props.gameState === 'active' ? true : false} value='Start Game' />
+
                     </form>
+                </div>
+
+                <div id='gameScore'>
+                    {this.props.score}
                 </div>
             </div>
         );
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        gameState: state.roundReducer.gameState,
+        positions: state.roundReducer.coinPositions,
+        rounds: state.roundReducer.rounds,
+        score: state.roundReducer.score,
+        emotions: state.roundReducer.emotions,
+        interval: state.roundReducer.interval,
+        coinCount : state.roundReducer.numberOfCoins,
+        targetEmotion: state.roundReducer.targetEmotion
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setCoins: (pos) => {
+            dispatch(setCoins(pos))
+        },
+        setEmotion: (emotion) => {
+            dispatch(setEmotion(emotion))
+        },
+        setRounds: (rounds) => {
+            dispatch(setRounds(rounds))
+        },
+        decrementRound: () => {
+            dispatch(decrementRound());
+        },
+        createInterval: (interval) => {
+            dispatch(createInterval(interval))
+        },
+        destroyInterval: () => {
+            dispatch(destroyInterval());
+        },
+        setGameState: (gameState) => {
+            dispatch(setGameState(gameState));
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

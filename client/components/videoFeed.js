@@ -6,6 +6,13 @@ import pModel from './models/pmodel.js';
 import clm from '../../public/ClamTracker/build/clmtrackr.js';
 import _ from 'lodash';
 import PubSub from 'pubsub-js';
+import store from '../store/index.js';
+import {connect} from 'react-redux';
+import {setCoins, incrementScore, toggleCanvasClass} from '../store/round.js';
+
+const coinCoords = [{x:0, y:0}, {x:300, y:0}, {x:568, y:0}, {x:0, y:230}, {x:568, y:230}, {x:0, y:450}, {x:568, y:450}]
+
+const audio = new Audio('coin.WAV');
 
 function fastAbs (value) {
 	return (value ^ (value >> 31)) - (value >> 31);
@@ -37,9 +44,6 @@ function threshold(value) {
 // window.mozURL;
 
 class VideoFeed extends React.Component {
-	state = {
-		emotion: { emotion: '' }
-	}
 
 	constructor(props) {
 		super(props);
@@ -47,7 +51,9 @@ class VideoFeed extends React.Component {
 		this.PubSub = props.PubSub || PubSub;
 		this.blend = this.blend.bind(this);
 		this.lastImageData;
-		this.virtualButtonPositions = [{color:'blue', x:0, y:0}, {color: 'red', x:32, y:0}]
+		this.checkAreas = this.checkAreas.bind(this);
+		this.state = {}
+	
 	}
 
 	componentDidMount() {
@@ -61,6 +67,7 @@ class VideoFeed extends React.Component {
 		let ctrack = new clm.tracker({useWebGL : true});
 		ctrack.init(pModel);
 		this.ctrack = ctrack;
+		this.setState({tracker: ctrack});
 
 		this.blendedCtx = this.blended.getContext('2d');
 		this.canvasCtx = this.canvas.getContext('2d');
@@ -72,23 +79,12 @@ class VideoFeed extends React.Component {
 		this.video.addEventListener('canplay', (this.startVideo).bind(this), false);
 	}
 
-	shouldComponentUpdate(nextProps, nextState) {
-		if (this.state.emotion.emotion !== nextState.emotion.emotion) {
-			this.PubSub.publish('emotion.update', nextState.emotion);
-			return true;
-		}
-		return false;
-	}
-
-	// getUserMediaCallback(err, stream ) {
-	// 	this.video.src = (this.props.videoSource || stream);
-	// 	this.video.play();
-	// }
-
 	startVideo(){
 		//seems to work fine without calling play
 //		this.video.play();
-		this.ctrack.start(this.video);
+		this.state.tracker.start(this.video);
+		
+		//this.ctrack.start(this.video);
 		// start loop to draw face
 		this.drawLoop();
 	}
@@ -111,12 +107,14 @@ class VideoFeed extends React.Component {
 	}
 
 	checkAreas() {
-		// loop over the button areas
-		for (var r=0; r<this.virtualButtonPositions.length; ++r) {
-			// get the pixels in a button area from the blended image
+		// loop over the coin areas
+		let coinArr = this.props.coinPositions.split('');
+		let newPositions = '';
+		for (var r=0; r<coinArr.length; ++r) {
+			//get the pixels in a button area from the blended image
 			var blendedData = this.blendedCtx.getImageData(
-				this.virtualButtonPositions[r].x,
-				this.virtualButtonPositions[r].y,
+				coinCoords[coinArr[r]].x,
+				coinCoords[coinArr[r]].y,
 				32,
 				32
 			);
@@ -128,14 +126,20 @@ class VideoFeed extends React.Component {
 				average += (blendedData.data[i*4] + blendedData.data[i*4+1] + blendedData.data[i*4+2]) / 3;
 				++i;
 			}
-			// calculate an average between of the color values of the note area
+			// calculate an average between the color values of the note area
 			average = Math.round(average / (blendedData.data.length / 4));
+			// over a small limit, consider that a movement is detected
 			if (average > 10) {
-				// over a small limit, consider that a movement is detected
-				// do some action to indicated area touched
-				this.props.matchedEmotion();
-				console.log('detected');
-				document.getElementById(this.virtualButtonPositions[r].color + 'Button').style.cssText = "border: 3px solid yellow";
+				// slice out the touched coin from the positions
+				newPositions = this.props.coinPositions.slice(0,this.props.coinPositions.indexOf(coinArr[r])) + this.props.coinPositions.slice(this.props.coinPositions.indexOf(coinArr[r])+1);
+				//update the coin positions in the store
+				this.props.setCoins(newPositions);
+				//update score
+				this.props.incrementScore();
+				//play an audio cue
+				audio.pause();
+				audio.currentTime = 0;	
+				audio.play();		
 			}
 		}
 	}
@@ -143,90 +147,172 @@ class VideoFeed extends React.Component {
 	drawLoop(){
 		requestAnimationFrame((this.drawLoop).bind(this));
     
-		let cp = this.ctrack.getCurrentParameters();
+		//let cp = this.ctrack.getCurrentParameters();
+		let cp = this.state.tracker.getCurrentParameters();
 
-		this.canvasCtx.clearRect(0, 0, 400, 300);
+		this.canvasCtx.clearRect(0, 0, 600, 480);
 		this.canvasCtx.drawImage(this.video, 0, 0, this.video.width, this.video.height);
-		this.blend();
-		this.checkAreas();
 
-		//this draws the wire face image on the canvas
-		// if (this.ctrack.getCurrentPosition()) {
-		// 	this.ctrack.draw(this.overlay);
-		// }
+		//only run the motion detection functions if the game is active
+		if (this.props.gameState === 'active'){
+			this.blend();
+			if (this.props.matching){
+				this.checkAreas();
+			}
+		}
 
-		// Die Emotionen in darstellbare Form bringen
+		// gauging which emotion is dominant
 		let er = this.ec.meanPredict(cp);
-		if (this.props.target === 'angry' && er[0].value > .5) {
-			this.props.matchedEmotion();
-		} else if (this.props.target === 'happy' && er[3].value > .5) {
-			this.props.matchedEmotion();
-		} else if (this.props.target === 'sad' && er[1].value > .5) {
-			this.props.matchedEmotion();
-		} else if (this.props.target === 'surprised' && er[2].value > .5) {
-			this.props.matchedEmotion();
+		console.log('mating', this.props.matching)
+		switch (this.props.targetEmotion) {
+			case 'angry':
+				if ((er[0].value > .3 && !this.props.matching) || (er[0].value < .3 && this.props.matching)) {
+					this.props.toggleCanvasClass();
+				}
+				break;
+			case 'happy':
+				if ((er[3].value > .5 && !this.props.matching) || (er[3].value < .5 && this.props.matching)) {
+					console.log('togglehappy');
+					this.props.toggleCanvasClass();
+				}
+				break;
+			case 'sad':
+				if ((er[1].value > .5 && !this.props.matching) || (er[1].value < .5 && this.props.matching)) {
+					this.props.toggleCanvasClass();
+				}
+				break;
+			case 'surprised':
+				if ((er[2].value > .5 && !this.props.matching) || (er[2].value < .5 && this.props.matching)) {
+					this.props.toggleCanvasClass();
+				}
+				break;
 		}
-		
-        document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
-        document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[3].value;
-        document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[1].value;
-        document.getElementById('surprised').innerHTML = '<span> Surprised </span>' + er[2].value;
 
-		if (er) {
-			const emotion = _.maxBy(er, (o) => { return o.value; });
-			// this.setState({ emotion: emotion });
-			this.PubSub.publish('emotions.loop', er);
+		if(er) {
+			//these are just for development purposes, easy read out of status
+			document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
+			document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[3].value;
+			document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[1].value;
+			document.getElementById('surprised').innerHTML = '<span> Surprised </span>' + er[2].value;
 		}
-
+       
 	}
 
 	render(props) {
-		console.log('REMOTE in video feed', this.props.remoteVidSource)
+		let className = this.props.matching?'matching':'notMatching';
 		return (
-			<div className="the-video">
+			<div className='player-video'>
 				{
 					this.props.remoteVidSource
 						?
+					<div className='vid-size'>
+						<div id='p2canvasAndButtons'>
+							<canvas id='p2canvas-source'
+								height='480px' width='600px'
+								ref={(canvas) => this.canvas = canvas}
+								className={className}>
+							</canvas>
+							
+						</div>
 						<video
-							width="400"
-							height="300"
+							width="480"
+							height="600"
 							id='remoteVidFeed'
 							src={this.props.remoteVidSource}
 							ref={(video) => { this.video = video }}
 							autoPlay="true">
 						</video>
-						:
+
+					</div>
+					:
+					<div className='vid-size'>
+						<div id='p1canvasAndButtons'>
+							<canvas id='p1canvas-source'
+								height='480px' width='600px'
+								ref={(canvas) => this.canvas = canvas}
+								className={className}>
+							</canvas>
+							<div id='p1virtualButtons'>
+								{
+									this.props.coinPositions.split('').map((position, index) => {
+										let coinStyles = {
+											position: 'absolute',
+											height: '32px',
+											width: '32px',
+											top: coinCoords[position].y,
+											left: coinCoords[position].x
+										}
+										return (
+											<img src='/images/coin.gif' style={coinStyles}
+												key={index} />
+										)
+									})
+								}
+							</div>
+						</div>
 						<video
-							width="400"
-							height="300"
+							width="480"
+							height="600"
 							id={this.props.id}
 							src={this.props.videoSource}
 							autoPlay="true"
 							muted
-							ref={(video) => { this.video = video }} >
+							ref={(video) => { this.video = video }}>
 						</video>
-				}
-
-				<div id='virtualButtons'>
-					<img id='blueButton' src="/images/SquareBlue.png" />
-					<img id='redButton' src="/images/SquareRed.png" />
-				</div>
-
-				<canvas className='canvas-source'
-					width="400"
-					height="300"
-					ref={ (canvas) => this.canvas = canvas }>
-				</canvas>
-
-				<canvas className='blended'
-					width="400"
-					height="300"
-					ref={ (canvas) => this.blended = canvas}>
-				</canvas>
-
-			</div>
+					</div>
+			}
+				<div>{this.props.targetEmotion}</div>
+				< canvas className='blended'
+					height='480px' width='600px'
+					ref={(canvas) => this.blended = canvas}>
+				</canvas >
+			</div >
 		)
 	}
 }
 
-module.exports = VideoFeed;
+const mapStateToProps = state => {
+    return {
+		coinPositions: state.roundReducer.coinPositions,
+		numberOfCoins: state.roundReducer.numberOfCoins,
+		gameState: state.roundReducer.gameState,
+		targetEmotion: state.roundReducer.targetEmotion,
+		matching: state.roundReducer.matching
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+	return {
+		setCoins: (positions) => {
+			dispatch(setCoins(positions))
+		},
+		incrementScore: () => {
+			dispatch(incrementScore())
+		},
+		toggleCanvasClass: () => {
+			dispatch(toggleCanvasClass())
+		}
+	}
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(VideoFeed);
+
+
+
+// <div id='p2virtualButtons'>
+// {
+// 	this.props.coinPositions.split('').map((position, index) => {
+// 		let coinStyles = {
+// 			position: 'absolute',
+// 			height: '32px',
+// 			width: '32px',
+// 			top: coinCoords[position].y,
+// 			left: coinCoords[position].x
+// 		}
+// 		return (
+// 			<img src='/images/coin.gif' style={coinStyles}
+// 				key={index} />
+// 		)
+// 	})
+// }
+// </div>
