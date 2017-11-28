@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Main from './main'
 import { NavLink } from 'react-router-dom'
 import {connect} from 'react-redux'
+import {logout} from '../store/user'
 
 export class Home extends Component {
     constructor(props) {
@@ -56,6 +57,7 @@ export class Home extends Component {
         return (
             <div className="home">
                 <div id="mySidenav" className="sidenav">
+                    <button onClick = {this.props.handleClick}>Logout</button>
                     <h3>User gameStats</h3>
                     <NavLink to='singlePlayerMode'>Single Player</NavLink>
                     <h3>Multiplayer</h3>
@@ -80,6 +82,14 @@ const mapState = (state) => {
     }
 }
 
-const HomePage =  connect(mapState)(Home)
+const mapDispatch = dispatch =>{
+    return{
+        handleClick(){
+            dispatch(logout());
+        }
+    }
+}
+
+const HomePage =  connect(mapState, mapDispatch)(Home)
 
 export default HomePage

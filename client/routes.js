@@ -9,17 +9,15 @@ import Login from './components/login'
 import history from './history'
 import Home from './components/home'
 import {Signup} from './components/authorization'
+import {me} from './store/user'
 import FriendsList from './components/friendsList';
 
-///only export default for now until containers can be made
-export default class Routes extends Component {
+class Routes extends Component {
 
-  componentDidMount(){
-    console.log(this.props)
-  }
-
+    componentDidMount(){
+        this.props.me();
+    }
   render(){
-    
     return (
       <Router history = {history}>
       <Switch>
@@ -32,5 +30,17 @@ export default class Routes extends Component {
     )
   }
 }
+
+const mapState = state => {
+    return {
+        isLoggedIn: !!state.user.id,
+    }
+}
+
+const mapDispatch = {
+    me
+}
+
+export default connect(mapState, mapDispatch)(Routes) 
 
 

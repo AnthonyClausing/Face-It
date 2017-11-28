@@ -9,7 +9,7 @@ import {NavLink} from 'react-router-dom'
 //crossed out error and state.user.error handler
 
 const AuthForm = (props) => {
-  const {name, displayName, handleSubmit, error} = props
+  const {name, displayName, handleSubmit, error, user} = props
 
   return (
     <div>
@@ -29,6 +29,7 @@ const AuthForm = (props) => {
         {error && error.response && <div> {error.response.data} </div>}
         </div>
       </form>
+      {}
     </div>
   )
 }
@@ -37,7 +38,8 @@ const mapLogin = (state) => {
   return {
     name: 'login',
     displayName: 'Login',
-    error: state.user.error
+    error: state.user.error,
+    user: state.user
   }
 }
 
@@ -45,7 +47,8 @@ const mapSignup = (state) => {
   return {
     name: 'signup',
     displayName: 'Sign Up',
-    error: state.user.error
+    error: state.user.error,
+    user: state.user
   }
 }
 

@@ -11,8 +11,9 @@ router.get('/', function(req,res,next){
     .then(users =>res.json(users))
     .catch(next);
   }
-  res.sendMessage('YOU DO NOT BELONG')
+  res.send('YOU DO NOT BELONG')
 });
+
 
 router.get('/friends', function(req,res,next){
   User.findById(req.user.id)
