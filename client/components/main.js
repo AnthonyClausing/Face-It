@@ -39,7 +39,6 @@ class Main extends Component {
         this.props.setRounds(event.target.numRounds.value);
         let interval = setInterval(this.runGame, 5000)
         this.props.createInterval(interval);
-        console.log('inteval create:', interval)
     }
 
     runGame () {
@@ -79,7 +78,10 @@ class Main extends Component {
             {
                 <VideoFeed pos={this.props.positions} />
             }   
-                <div id='targetEmotion'> Target: {this.props.targetEmotion} </div>
+                <div id='targetEmotion'>
+                    {this.props.targetEmotion ? 
+                    <img src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
+                </div>
 
                 <div id='gameControls'>
                     <form onSubmit={this.startGame}>
