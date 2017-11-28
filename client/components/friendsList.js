@@ -6,7 +6,7 @@ class FriendsList extends Component{
   constructor(props){
     super()
   }
-  ComponentWillMount(){
+  ComponentDidMount(){
     this.props.getFriends();
   }  
    render(){
