@@ -38,10 +38,10 @@ function threshold(value) {
 }
 
 //  Cross-Browser Implementierung von der URL-Funktion, eher unwichtig
-window.URL = window.URL ||
-window.webkitURL ||
-window.msURL ||
-window.mozURL;
+// window.URL = window.URL ||
+// window.webkitURL ||
+// window.msURL ||
+// window.mozURL;
 
 class VideoFeed extends React.Component {
 
@@ -62,7 +62,7 @@ class VideoFeed extends React.Component {
 		let emotionData = ec.getBlank();
 		this.ec = ec;
 
-		getUserMedia({ video : true}, this.getUserMediaCallback.bind(this) );
+		// getUserMedia({ video : true}, this.getUserMediaCallback.bind(this) );
 
 		let ctrack = new clm.tracker({useWebGL : true});
 		ctrack.init(pModel);
@@ -77,11 +77,6 @@ class VideoFeed extends React.Component {
 		let self = this;
 
 		this.video.addEventListener('canplay', (this.startVideo).bind(this), false);
-	}
-	
-	getUserMediaCallback(err, stream ) {
-		this.video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
-		this.video.play();
 	}
 
 	startVideo(){
@@ -203,48 +198,75 @@ class VideoFeed extends React.Component {
        
 	}
 
-	render() {
+	render(props) {
 		let className = this.props.matching?'matching':'notMatching';
 		return (
-			<div className="the-video">
-				<div id='canvasAndButtons'>
-					<canvas id='canvas-source'
-						height='480px' width='600px'
-						ref={ (canvas) => this.canvas = canvas }
-						className={className}>
-					</canvas>
-					<div id='virtualButtons'>
-						{	
-							this.props.coinPositions.split('').map((position,index) => {
-								let coinStyles = {
-									position: 'absolute',
-									height: '32px',
-									width: '32px',
-									top: coinCoords[position].y,
-									left: coinCoords[position].x
-								}
-								return (
-									<img src='/images/coin.gif' style={coinStyles}
-									key={index} />
-								)
-							})
-						}
+			<div className='player-video'>
+				{
+					this.props.remoteVidSource
+						?
+					<div className='vid-size'>
+						<div id='p2canvasAndButtons'>
+							<canvas id='p2canvas-source'
+								height='480px' width='600px'
+								ref={(canvas) => this.canvas = canvas}
+								className={className}>
+							</canvas>
+							
+						</div>
+						<video
+							width="480"
+							height="600"
+							id='remoteVidFeed'
+							src={this.props.remoteVidSource}
+							ref={(video) => { this.video = video }}
+							autoPlay="true">
+						</video>
+
 					</div>
-				</div>
-
-				<video
-					className = 'video-canvas'
+					:
+					<div className='vid-size'>
+						<div id='p1canvasAndButtons'>
+							<canvas id='p1canvas-source'
+								height='480px' width='600px'
+								ref={(canvas) => this.canvas = canvas}
+								className={className}>
+							</canvas>
+							<div id='p1virtualButtons'>
+								{
+									this.props.coinPositions.split('').map((position, index) => {
+										let coinStyles = {
+											position: 'absolute',
+											height: '32px',
+											width: '32px',
+											top: coinCoords[position].y,
+											left: coinCoords[position].x
+										}
+										return (
+											<img src='/images/coin.gif' style={coinStyles}
+												key={index} />
+										)
+									})
+								}
+							</div>
+						</div>
+						<video
+							width="480"
+							height="600"
+							id={this.props.id}
+							src={this.props.videoSource}
+							autoPlay="true"
+							muted
+							ref={(video) => { this.video = video }}>
+						</video>
+					</div>
+			}
+				<div>{this.props.targetEmotion}</div>
+				< canvas className='blended'
 					height='480px' width='600px'
-					ref={ (video) => { this.video = video } } >
-				</video>
-
-
-				<canvas id='blended'
-					height='480px' width='600px'
-					ref={ (canvas) => this.blended = canvas}>
-				</canvas>
-
-			</div>
+					ref={(canvas) => this.blended = canvas}>
+				</canvas >
+			</div >
 		)
 	}
 }
@@ -274,3 +296,23 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(VideoFeed);
+
+
+
+// <div id='p2virtualButtons'>
+// {
+// 	this.props.coinPositions.split('').map((position, index) => {
+// 		let coinStyles = {
+// 			position: 'absolute',
+// 			height: '32px',
+// 			width: '32px',
+// 			top: coinCoords[position].y,
+// 			left: coinCoords[position].x
+// 		}
+// 		return (
+// 			<img src='/images/coin.gif' style={coinStyles}
+// 				key={index} />
+// 		)
+// 	})
+// }
+// </div>
