@@ -21,7 +21,7 @@ const app = express();
 passport.serializeUser((user, done) => done(null, user.id))
 passport.deserializeUser((id, done) =>
   db.models.user.findById(id)
-    .then(user => done(null, user))
+    .then(user => {return done(null, user)})
     .catch(done));
 
 app.use(morgan('dev'));

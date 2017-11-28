@@ -9,7 +9,7 @@ import Login from './components/login'
 import history from './history'
 import Home from './components/home'
 import {Signup} from './components/authorization'
-import {FriendsList} from './components/friendsList';
+import FriendsList from './components/friendsList';
 
 ///only export default for now until containers can be made
 export default class Routes extends Component {

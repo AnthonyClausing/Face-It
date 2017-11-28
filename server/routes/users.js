@@ -21,7 +21,7 @@ router.get('/friends', function(req,res,next){
   .catch(next);
 })
 
-router.post('/add/:friendId', function(req,res,next){
+router.put('/add/:friendId', function(req,res,next){
   User.findById(req.user.id)
   .then(user => user.addFriends(req.params.friendId))
   .then(newFriend => res.json(newFriend))
