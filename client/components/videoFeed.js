@@ -8,7 +8,7 @@ import _ from 'lodash';
 import PubSub from 'pubsub-js';
 import store from '../store/index.js';
 import {connect} from 'react-redux';
-import {setCoins, incrementScore} from '../store/round.js';
+import {setCoins, incrementScore, toggleCanvasClass} from '../store/round.js';
 
 const coinCoords = [{x:0, y:0}, {x:300, y:0}, {x:568, y:0}, {x:0, y:230}, {x:568, y:230}, {x:0, y:450}, {x:568, y:450}]
 
@@ -112,7 +112,7 @@ class VideoFeed extends React.Component {
 	}
 
 	checkAreas() {
-		// loop over the button areas
+		// loop over the coin areas
 		let coinArr = this.props.coinPositions.split('');
 		let newPositions = '';
 		for (var r=0; r<coinArr.length; ++r) {
@@ -133,12 +133,15 @@ class VideoFeed extends React.Component {
 			}
 			// calculate an average between the color values of the note area
 			average = Math.round(average / (blendedData.data.length / 4));
+			// over a small limit, consider that a movement is detected
 			if (average > 10) {
-				// over a small limit, consider that a movement is detected
-				// do some action to indicated area touchedthis.props.coinPositions.indexOf(coinArr[r]))
+				// slice out the touched coin from the positions
 				newPositions = this.props.coinPositions.slice(0,this.props.coinPositions.indexOf(coinArr[r])) + this.props.coinPositions.slice(this.props.coinPositions.indexOf(coinArr[r])+1);
+				//update the coin positions in the store
 				this.props.setCoins(newPositions);
+				//update score
 				this.props.incrementScore();
+				//play an audio cue
 				audio.pause();
 				audio.currentTime = 0;	
 				audio.play();		
@@ -158,42 +161,57 @@ class VideoFeed extends React.Component {
 		//only run the motion detection functions if the game is active
 		if (this.props.gameState === 'active'){
 			this.blend();
-			this.checkAreas();
+			if (this.props.matching){
+				this.checkAreas();
+			}
 		}
 
-		// Die Emotionen in darstellbare Form bringen
+		// gauging which emotion is dominant
 		let er = this.ec.meanPredict(cp);
-		if (this.props.target === 'angry' && er[0].value > .5) {
-			this.props.matchedEmotion();
-		} else if (this.props.target === 'happy' && er[3].value > .5) {
-			this.props.matchedEmotion();
-		} else if (this.props.target === 'sad' && er[1].value > .5) {
-			this.props.matchedEmotion();
-		} else if (this.props.target === 'surprised' && er[2].value > .5) {
-			this.props.matchedEmotion();
+		console.log('mating', this.props.matching)
+		switch (this.props.targetEmotion) {
+			case 'angry':
+				if ((er[0].value > .3 && !this.props.matching) || (er[0].value < .3 && this.props.matching)) {
+					this.props.toggleCanvasClass();
+				}
+				break;
+			case 'happy':
+				if ((er[3].value > .5 && !this.props.matching) || (er[3].value < .5 && this.props.matching)) {
+					console.log('togglehappy');
+					this.props.toggleCanvasClass();
+				}
+				break;
+			case 'sad':
+				if ((er[1].value > .5 && !this.props.matching) || (er[1].value < .5 && this.props.matching)) {
+					this.props.toggleCanvasClass();
+				}
+				break;
+			case 'surprised':
+				if ((er[2].value > .5 && !this.props.matching) || (er[2].value < .5 && this.props.matching)) {
+					this.props.toggleCanvasClass();
+				}
+				break;
 		}
+
 		if(er) {
+			//these are just for development purposes, easy read out of status
 			document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
 			document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[3].value;
 			document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[1].value;
 			document.getElementById('surprised').innerHTML = '<span> Surprised </span>' + er[2].value;
 		}
        
-		if (er) {
-			const emotion = _.maxBy(er, (o) => { return o.value; });
-			// this.setState({ emotion: emotion });
-			this.PubSub.publish('emotions.loop', er);
-		}
 	}
 
 	render() {
-		console.log("*****", this.props)
+		let className = this.props.matching?'matching':'notMatching';
 		return (
 			<div className="the-video">
 				<div id='canvasAndButtons'>
 					<canvas id='canvas-source'
 						height='480px' width='600px'
-						ref={ (canvas) => this.canvas = canvas }>
+						ref={ (canvas) => this.canvas = canvas }
+						className={className}>
 					</canvas>
 					<div id='virtualButtons'>
 						{	
@@ -235,7 +253,9 @@ const mapStateToProps = state => {
     return {
 		coinPositions: state.roundReducer.coinPositions,
 		numberOfCoins: state.roundReducer.numberOfCoins,
-		gameState: state.roundReducer.gameState
+		gameState: state.roundReducer.gameState,
+		targetEmotion: state.roundReducer.targetEmotion,
+		matching: state.roundReducer.matching
     }
 }
 
@@ -246,6 +266,9 @@ const mapDispatchToProps = dispatch => {
 		},
 		incrementScore: () => {
 			dispatch(incrementScore())
+		},
+		toggleCanvasClass: () => {
+			dispatch(toggleCanvasClass())
 		}
 	}
 }

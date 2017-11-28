@@ -5,6 +5,7 @@ const initialState = {
   coinPositions: '',
   gameState: null,
   targetEmotion: '',
+  matching: false,
   score: 0,
   count: 0,
   interval: 0,
@@ -21,6 +22,7 @@ const CREATE_INTERVAL = "CREATE_INTERVAL";
 const DESTROY_INTERVAL = "DESTROY_INTERVAL";
 const SET_EMOTION = "SET_EMOTION";
 const SET_GAME_STATE = "SET_GAME_STATE";
+const TOGGLE_CANVAS_CLASS = "TOGGLE_CANVAS_CLASS";
 
 //ACTION CREATORS
 export function setRounds(num){
@@ -59,8 +61,11 @@ export function setGameState(state){
   return {type: SET_GAME_STATE, state: state}
 }
 
-//Reducer
+export function toggleCanvasClass(){
+  return {type: TOGGLE_CANVAS_CLASS}
+}
 
+//Reducer
 const reducer = function(state = initialState, action){
     switch(action.type){
       case SET_ROUNDS:
@@ -82,6 +87,8 @@ const reducer = function(state = initialState, action){
         return Object.assign({}, state, {interval: 0})
       case SET_GAME_STATE:
         return Object.assign({}, state, {gameState: action.state})
+      case TOGGLE_CANVAS_CLASS:
+        return Object.assign({}, state, {matching: !state.matching})
       default:
         return state;
     }
