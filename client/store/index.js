@@ -9,7 +9,7 @@ import friends from './friend';
 
 const reducer = combineReducers({roundReducer, queue,user, friends});
 
-let middleware = composeWithDevTools(applyMiddleware(thunkMiddleWare));
+let middleware = composeWithDevTools(applyMiddleware(thunkMiddleWare, logger));
 
 const store = createStore(reducer,middleware);
 
