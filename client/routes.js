@@ -20,11 +20,11 @@ class Routes extends Component {
   render(){
     return (
       <Router history = {history}>
-      <Switch>
+      <Switch>      
+      <Route exact path="/friends" component={FriendsList}/>
       <Route exact path='/singlePlayerMode' component={Main}/>
       <Route exact path='/home' component={Home}/>
       <Route component= {Login}/>
-      <Route exact path="/friends" component={FriendsList}/>
       </Switch>
       </Router>
     )
