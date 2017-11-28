@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import Main from './main'
 import { NavLink } from 'react-router-dom'
+import {connect} from 'react-redux'
+import {logout} from '../store/user'
 
-export default class Home extends Component {
+export class Home extends Component {
     constructor(props) {
         super();
         this.state = {
@@ -40,7 +42,7 @@ export default class Home extends Component {
     }
 
     changeNav() {
-        if(!this.state.open) {document.getElementById("mySidenav").style.width = "250px";
+        if(!this.state.open) {document.getElementById("mySidenav").style.width = "20%";
         this.setState({open:true})}
        else {document.getElementById("mySidenav").style.width = "0";
         this.setState({open:false})}
@@ -51,9 +53,11 @@ export default class Home extends Component {
 
 
     render() {
+        console.log(this.props.user)
         return (
             <div className="home">
                 <div id="mySidenav" className="sidenav">
+                    <button onClick = {this.props.handleClick}>Logout</button>
                     <h3>User gameStats</h3>
                     <NavLink to='singlePlayerMode'>Single Player</NavLink>
                     <h3>Multiplayer</h3>
@@ -61,7 +65,7 @@ export default class Home extends Component {
                 </div>
                 <span onClick={this.changeNav}>&#9776; toggle</span>
                 <div className ='home-greeting'>
-                <h1>Hi username here</h1>
+                <h1>Hi {this.props.username ? this.props.username: 'Guest'}</h1>
                 <video src = {this.state.videoSource} autoPlay />
                 <p>Just checking if your browser supports our game.</p>
                 </div>
@@ -71,3 +75,21 @@ export default class Home extends Component {
 
 }
 
+const mapState = (state) => {
+    return {
+        user: state.user,
+        username: state.user.email
+    }
+}
+
+const mapDispatch = dispatch =>{
+    return{
+        handleClick(){
+            dispatch(logout());
+        }
+    }
+}
+
+const HomePage =  connect(mapState, mapDispatch)(Home)
+
+export default HomePage

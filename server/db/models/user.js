@@ -11,16 +11,18 @@ const User = db.define('user', {
       isEmail: true
     }
   },
+  userName:{
+    type: Sequelize.STRING,
+    unique: true,
+    allowNull: false
+  },
   password: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false 
   },
   isAdmin: {
     type: Sequelize.BOOLEAN,
     defaultValue: false
-  },
-  address: {
-    type: Sequelize.TEXT
   },
   salt: {
     type: Sequelize.STRING
@@ -32,6 +34,9 @@ const User = db.define('user', {
 
 module.exports = User
 
+User.prototype.correctPassword = function (candidatePwd) {
+  return User.encryptPassword(candidatePwd, this.salt) === this.password
+}
 
 User.generateSalt = function () {
   return crypto.randomBytes(16).toString('base64')
@@ -44,6 +49,7 @@ User.encryptPassword = function (plainText, salt) {
     .update(salt)
     .digest('hex')
 }
+
 const setSaltAndPassword = user => { 
   if (user.changed('password')) {
     user.salt = User.generateSalt()

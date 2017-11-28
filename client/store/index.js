@@ -3,11 +3,11 @@ import {composeWithDevTools} from 'redux-devtools-extension';
 import thunkMiddleWare from "redux-thunk";
 import logger from 'redux-logger';
 import roundReducer from './round';
-import queueReducer from './queue';
-import userReducer from './user';
+import queue from './queue';
+import user from './user';
+import friends from './friend';
 
-
-const reducer = combineReducers({roundReducer, queueReducer,userReducer});
+const reducer = combineReducers({roundReducer, queue,user, friends});
 
 let middleware = composeWithDevTools(applyMiddleware(thunkMiddleWare));
 
@@ -17,3 +17,4 @@ export default store;
 export * from "./round";
 export * from "./queue";
 export * from "./user";
+export * from "./friend";
