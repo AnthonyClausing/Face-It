@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const User = require('../db/models/user')
+const {User} = require('../db/models')
 
 module.exports = router;
 
@@ -13,3 +13,18 @@ router.get('/', function(req,res,next){
   }
   res.send('YOU DO NOT BELONG')
 });
+
+
+router.get('/friends', function(req,res,next){
+  User.findById(req.user.id)
+  .then(user => user.getFriends())
+  .then(friends => res.json(friends))
+  .catch(next);
+})
+
+router.put('/add/:friendId', function(req,res,next){
+  User.findById(req.user.id)
+  .then(user => user.addFriends(req.params.friendId))
+  .then(newFriend => res.json(newFriend))
+  .catch(next);
+})

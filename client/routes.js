@@ -10,14 +10,13 @@ import history from './history'
 import Home from './components/home'
 import {Signup} from './components/authorization'
 import {me} from './store/user'
+import FriendsList from './components/friendsList';
 
-///only export default for now until containers can be made
 class Routes extends Component {
 
     componentDidMount(){
         this.props.me();
     }
-
   render(){
     return (
       <Router history = {history}>
@@ -25,6 +24,7 @@ class Routes extends Component {
       <Route exact path='/singlePlayerMode' component={Main}/>
       <Route exact path='/home' component={Home}/>
       <Route component= {Login}/>
+      <Route exact path="/friends" component={FriendsList}/>
       </Switch>
       </Router>
     )
@@ -42,4 +42,5 @@ const mapDispatch = {
 }
 
 export default connect(mapState, mapDispatch)(Routes) 
+
 
