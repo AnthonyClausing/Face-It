@@ -9,9 +9,15 @@ import Login from './components/login'
 import history from './history'
 import Home from './components/home'
 import {Signup} from './components/authorization'
+import {FriendsList} from './components/friendsList';
 
 ///only export default for now until containers can be made
 export default class Routes extends Component {
+
+  componentDidMount(){
+    console.log(this.props)
+  }
+
   render(){
     
     return (
@@ -20,8 +26,11 @@ export default class Routes extends Component {
       <Route exact path='/singlePlayerMode' component={Main}/>
       <Route exact path='/home' component={Home}/>
       <Route component= {Login}/>
+      <Route exact path="/friends" component={FriendsList}/>
       </Switch>
       </Router>
     )
   }
 }
+
+

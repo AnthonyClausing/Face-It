@@ -1,33 +1,17 @@
 import axios from "axios";
 import history from "../history";
 
-
  //ACTION TYPES
 const GET_USER = "GET_USER";
 const REMOVE_USER = 'REMOVE_USER'
 // INITIAL STATE
-
 const defaultUser = {};
 
 //ACTION CREATORS
 const getUser = user => ({ type: GET_USER, user });
 const removeUser = () => ({ type: REMOVE_USER });
-const getFriends = () => ({type: GET_FRIENDS});
-const addFriend = ()  => ({type: ADD_FRIEND});
-const removeFriend = () => ({type: REMOVE_FRIEND});
-
 
 //THUNK CREATORS
-export const addFriendThunk = () => dispatch =>{
-  axios.post('/api/users/add')
-  .then(newfriend => {
-    addFriend(newfriend)
-  })
-}
-
-export const getFriends =  () => dispatch =>
-  axios.get('/api/users/friends')
-    .then()
 export const authorize = (email, password, method) => dispatch =>
   axios
     .post(`/auth/${method}`, { email, password })
