@@ -27,7 +27,7 @@ const AuthForm = (props) => {
             <button className='login-authorization-items' type="submit">{displayName}</button>
           </div>
           {error && error.response && <div> {error.response.data} </div>}
-          {user.userName && <div>Hey {user.userName}.</div>}
+          {user.userName && <div>Hey {user.userName}!</div>}
         </div>
       </form>
       {}

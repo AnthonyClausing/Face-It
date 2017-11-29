@@ -3,6 +3,7 @@ import Main from './main'
 import { NavLink } from 'react-router-dom'
 import {connect} from 'react-redux'
 import {logout} from '../store/user'
+import Friends from './friendsList'
 
 export class Home extends Component {
     constructor(props) {
@@ -57,11 +58,13 @@ export class Home extends Component {
         return (
             <div className="home">
                 <div id="mySidenav" className="sidenav">
-                    {this.props.username && <button onClick = {this.props.handleClick}>Logout</button>}
+                    {this.props.username && <div className = "center-items" ><button className = "home-logout-btn" onClick = {this.props.handleClick}>Logout</button></div>}
                     <h3>User gameStats</h3>
-                    <NavLink to='singlePlayerMode'>Single Player</NavLink>
-                    <h3>Multiplayer</h3>
+                    <NavLink to='singlePlayerMode'>Training</NavLink>
+                    <h3>Face-to-Face</h3>
                     <p>Join Room and create room will be here after toggle</p>
+                    <NavLink to = 'friends'>Friends</NavLink>
+                    <Friends/>
                 </div>
                 <span onClick={this.changeNav}>&#9776; toggle</span>
                 <div className ='home-greeting'>
