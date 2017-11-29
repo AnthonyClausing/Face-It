@@ -152,7 +152,7 @@ button.login-items:hover{
     display: inline-block;
 }
 
-video, .video-canvas, .blended{
+.video-canvas, .blended{
     display:none;
 }
 

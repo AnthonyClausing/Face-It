@@ -219,6 +219,7 @@ class VideoFeed extends React.Component {
 							
 						</div>
 						<video
+							className = 'video-canvas'
 							width="600"
 							height="480"
 							id='remoteVidFeed'
@@ -255,6 +256,7 @@ class VideoFeed extends React.Component {
 							</div>
 						</div>
 						<video
+							className = 'video-canvas'
 							width="600"
 							height="480"
 							id={this.props.id}
