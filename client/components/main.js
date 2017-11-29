@@ -1,22 +1,11 @@
-<<<<<<< HEAD
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-=======
 import React, { Component } from 'react';
 import ReactAudioPlayer from 'react-audio-player'
-import VideoFeed from './videoFeed';
 import io from 'socket.io-client';
-import { createPeerConnection, doAnswer } from '../socket.js';
-
-const socket = io(window.location.origin);
-import store from '../store/index.js';
-import { collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval } from '../store/round.js';
 import { connect } from 'react-redux';
->>>>>>> 615b59c14256e817b7c0bf8b35c024ebe722765e
+import { createPeerConnection, doAnswer } from '../socket.js';
 
 import VideoFeed from './videoFeed';
 import  store , {collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval, getP1, getP1Score} from '../store';
-
 
 class Main extends Component {
     constructor() {
@@ -38,7 +27,8 @@ class Main extends Component {
             userMediaObject: {},
             remoteVidSource: '',
             isCreateClicked: false,
-            isJoinClicked: false
+            isJoinClicked: false,
+            volume: 0.5
         };
 
         this.handleVideoSource = this.handleVideoSource.bind(this);
@@ -54,6 +44,8 @@ class Main extends Component {
         this.doAnswer = doAnswer.bind(this);
         this.joinClicked = this.joinClicked.bind(this);
         this.createClicked = this.createClicked.bind(this);
+        this.handleVolume = this.handleVolume.bind(this)
+        
     }
 
     componentDidMount() {
@@ -184,9 +176,6 @@ class Main extends Component {
         this.setState({ matching: true });
     }
 
-<<<<<<< HEAD
-    render () {
-=======
     createClicked(){
         this.setState({isCreateClicked: true, isJoinClicked: false });
     }
@@ -194,10 +183,14 @@ class Main extends Component {
     joinClicked(){
         this.setState({isJoinClicked:true, isCreateClicked: false});
     }
+    handleVolume(){
+        this.state.volume ? this.setState({volume : 0}) : this.setState({volume: 0.5})
+        this.rap.audioEl.volume = this.rap.audioEl.volume ? 0 : 0.5; 
+    }
+
 
     render() {
         console.log(this.props.positions.length);
->>>>>>> 615b59c14256e817b7c0bf8b35c024ebe722765e
         return (
             <div id="single-player">
                 { this.state.isCreateClicked ? <form onSubmit={this.handleNewRoom}>
@@ -248,6 +241,12 @@ class Main extends Component {
                     {this.props.score }
                 </div>
                 <div className='center-items' >
+                {this.state.volume ? 
+                    <img src ='images/002-speaker.png' onClick={this.handleVolume}></img>
+                    :
+                    <img src ='images/001-speaker-1.png' onClick={this.handleVolume}></img> 
+                }
+                <div id = 'audio-login'>
                     <ReactAudioPlayer
                         ref={element => this.rap = element}
                         src="pokemon-black-white.mp3"
@@ -256,6 +255,7 @@ class Main extends Component {
                         controls
                         volume="0.5"
                     />
+                    </div>
                 </div>
             </div>
         );
@@ -270,15 +270,10 @@ const mapStateToProps = state => {
         score: state.roundReducer.score,
         emotions: state.roundReducer.emotions,
         interval: state.roundReducer.interval,
-<<<<<<< HEAD
-        coinCount : state.roundReducer.numberOfCoins,
+        coinCount: state.roundReducer.numberOfCoins,
         targetEmotion: state.roundReducer.targetEmotion,
         userId : state.user.id,
         points : state.gameState.p1Score
-=======
-        coinCount: state.roundReducer.numberOfCoins,
-        targetEmotion: state.roundReducer.targetEmotion
->>>>>>> 615b59c14256e817b7c0bf8b35c024ebe722765e
     }
 }
 
