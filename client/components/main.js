@@ -65,6 +65,12 @@ class Main extends Component {
             this.createPeerConnection(this.state, socket);
             console.log('pc after someone joined:', this.pc);
         });
+        socket.on('otherScore', ({user,score}) =>{
+            console.log('this is user:', user)
+            console.log('this is score:', score)
+        })
+
+
 
         socket.on('signal', message => {
             if (message.type === 'offer') {
@@ -189,7 +195,9 @@ class Main extends Component {
                 {
                     this.state.userVidSource &&
 
-                    <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion} />
+                    <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion} 
+                    socket = {socket}
+                    />
                 }
                 {
                     this.state.remoteVidSource &&

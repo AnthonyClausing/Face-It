@@ -54,6 +54,7 @@ class VideoFeed extends React.Component {
 		this.checkAreas = this.checkAreas.bind(this);
 		this.state = {}
 	
+	
 	}
 
 	componentDidMount() {
@@ -105,7 +106,11 @@ class VideoFeed extends React.Component {
 		// store the current webcam image
 		this.lastImageData = sourceData;
 	}
-
+	updateScore(score,user) {
+		console.log('******SCORE:', score, user);
+		socket.emit('updateScore', {score, user} )
+		this.props.incrementScore()
+	}
 	checkAreas() {
 		// loop over the coin areas
 		let coinArr = this.props.coinPositions.split('');
@@ -135,7 +140,7 @@ class VideoFeed extends React.Component {
 				//update the coin positions in the store
 				this.props.setCoins(newPositions);
 				//update score
-				this.props.incrementScore();
+				this.updateScore(this.props.score+1,this.props.user)
 				//play an audio cue
 				audio.pause();
 				audio.currentTime = 0;	
@@ -163,7 +168,6 @@ class VideoFeed extends React.Component {
 
 		// gauging which emotion is dominant
 		let er = this.ec.meanPredict(cp);
-		console.log('mating', this.props.matching)
 		switch (this.props.targetEmotion) {
 			case 'angry':
 				if ((er[0].value > .3 && !this.props.matching) || (er[0].value < .3 && this.props.matching)) {
@@ -277,7 +281,9 @@ const mapStateToProps = state => {
 		numberOfCoins: state.roundReducer.numberOfCoins,
 		gameState: state.roundReducer.gameState,
 		targetEmotion: state.roundReducer.targetEmotion,
-		matching: state.roundReducer.matching
+		matching: state.roundReducer.matching,
+		score: state.roundReducer.score,
+		user : state.user.userName
     }
 }
 
