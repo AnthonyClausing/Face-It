@@ -8,6 +8,21 @@ html, body{
     font-size: 1.25em;
 }
 
+#game-name{
+    font-size: 3.1em;
+    margin: 0em;
+    padding: 0em;
+}
+
+#game-description{
+    margin:0;
+}
+
+button{
+    color:white;
+    background-color: cornflowerblue;
+}
+
 #login-page{
     text-align: center;
     display: flex;
@@ -64,6 +79,11 @@ button.login-items:hover{
 .login-authorization-items:hover{   
     border-color: snow
 }
+
+#audio-login{
+    display:none
+}
+
 
 #single-player{
     display:flex;
@@ -150,12 +170,12 @@ button.login-items:hover{
 
 .player-video {
     display: inline-block;
-    width: 40%;
+    width: 40%
 }
 
 
 
-video, .video-canvas, .blended{
+.video-canvas, .blended{
     display:none;
 }
 
@@ -172,7 +192,7 @@ video, .video-canvas, .blended{
     border: 2px ridge black;
     width: 100%;
     height:100%;
-    display: inline;
+    display:inline;
 }
 
 .matching{

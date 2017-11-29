@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactAudioPlayer from 'react-audio-player'
 import VideoFeed from './videoFeed';
 import io from 'socket.io-client';
-import { createPeerConnection, doAnswer} from '../socket.js';
+import { createPeerConnection, doAnswer } from '../socket.js';
 
 const socket = io(window.location.origin);
 import store from '../store/index.js';
@@ -10,7 +10,7 @@ import { collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRo
 import { connect } from 'react-redux';
 
 class Main extends Component {
-    constructor () {
+    constructor() {
         super();
 
         this.pc = null;
@@ -27,7 +27,9 @@ class Main extends Component {
             pc: {},
             userVidSource: '',
             userMediaObject: {},
-            remoteVidSource: ''
+            remoteVidSource: '',
+            isCreateClicked: false,
+            isJoinClicked: false
         };
 
         this.handleVideoSource = this.handleVideoSource.bind(this);
@@ -41,6 +43,8 @@ class Main extends Component {
         this.roomTaken = this.roomTaken.bind(this);
         this.createPeerConnection = createPeerConnection.bind(this);
         this.doAnswer = doAnswer.bind(this);
+        this.joinClicked = this.joinClicked.bind(this);
+        this.createClicked = this.createClicked.bind(this);
     }
 
     componentDidMount() {
@@ -65,7 +69,7 @@ class Main extends Component {
             this.createPeerConnection(this.state, socket);
             console.log('pc after someone joined:', this.pc);
         });
-        socket.on('otherScore', ({user,score}) =>{
+        socket.on('otherScore', ({ user, score }) => {
             console.log('this is user:', user)
             console.log('this is score:', score)
         })
@@ -170,33 +174,43 @@ class Main extends Component {
         this.setState({ matching: true });
     }
 
+    createClicked(){
+        this.setState({isCreateClicked: true, isJoinClicked: false });
+    }
+
+    joinClicked(){
+        this.setState({isJoinClicked:true, isCreateClicked: false});
+    }
+
     render() {
         console.log(this.props.positions.length);
         return (
             <div id="single-player">
-                <form onSubmit={this.handleNewRoom}>
+                { this.state.isCreateClicked ? <form onSubmit={this.handleNewRoom}>
                     <label>
                         Create Room:
             <input type="text" name="newRoom" />
                     </label>
+                    
                     <input type="submit" name="submitNew" />
                 </form>
-                <form onSubmit={this.handleJoinRoom}>
+                :<button onClick={this.createClicked}>Create A Room</button>
+                }
+                {this.state.isJoinClicked ? <form onSubmit={this.handleJoinRoom}>
                     <label>
                         Join Room:
-            <input type="text" name="joinRoom" />
-                    </label>
-                    <label>
-                        Name:
-            <input type="text" name="userName" />
+                        <input type="text" name="joinRoom" />
                     </label>
                     <input type="submit" name="submitJoin" />
                 </form>
+                :
+                    <button onClick={this.joinClicked}>Join A Room</button>
+                }
                 {
                     this.state.userVidSource &&
 
-                    <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion} 
-                    socket = {socket}
+                    <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion}
+                        socket={socket}
                     />
                 }
                 {
@@ -219,14 +233,14 @@ class Main extends Component {
                 <div id='gameScore'>
                     {this.props.score}
                 </div>
-                <div className = 'center-items' > 
-                <ReactAudioPlayer
-                        ref = { element => this.rap = element}
+                <div className='center-items' >
+                    <ReactAudioPlayer
+                        ref={element => this.rap = element}
                         src="pokemon-black-white.mp3"
                         loop
                         autoPlay
                         controls
-                        volume = "0.5"
+                        volume="0.5"
                     />
                 </div>
             </div>

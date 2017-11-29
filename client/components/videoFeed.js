@@ -212,13 +212,14 @@ class VideoFeed extends React.Component {
 					<div className='vid-size'>
 						<div id='p2canvasAndButtons'>
 							<canvas id='p2canvas-source'
-								height='480px' width='600px'
+								height='600px' width='480px'
 								ref={(canvas) => this.canvas = canvas}
 								className={className}>
 							</canvas>
 							
 						</div>
 						<video
+							className = 'video-canvas'
 							width="480"
 							height="600"
 							id='remoteVidFeed'
@@ -232,7 +233,7 @@ class VideoFeed extends React.Component {
 					<div className='vid-size'>
 						<div id='p1canvasAndButtons'>
 							<canvas id='p1canvas-source'
-								height='480px' width='600px'
+								height='600px' width='480px'
 								ref={(canvas) => this.canvas = canvas}
 								className={className}>
 							</canvas>
@@ -255,6 +256,7 @@ class VideoFeed extends React.Component {
 							</div>
 						</div>
 						<video
+							className = 'video-canvas'
 							width="480"
 							height="600"
 							id={this.props.id}
