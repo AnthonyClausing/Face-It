@@ -1,12 +1,13 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import ReactAudioPlayer from 'react-audio-player'
 import VideoFeed from './videoFeed';
 import store from '../store/index.js';
-import {collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval} from '../store/round.js';
-import {connect} from 'react-redux';
+import { collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval } from '../store/round.js';
+import { connect } from 'react-redux';
 
 class Main extends Component {
-    constructor () {
-        super ();
+    constructor() {
+        super();
 
         this.handleVideoSource = this.handleVideoSource.bind(this);
         this.selectRandomEmotion = this.selectRandomEmotion.bind(this);
@@ -16,21 +17,21 @@ class Main extends Component {
         this.runGame = this.runGame.bind(this);
     }
 
-    componentDidMount () {
+    componentDidMount() {
         let vidSource;
         let error = function () {
             console.log('Vid Error');
         }
         if (navigator.getUserMedia) {
-            navigator.getUserMedia({video: true, audio: true},this.handleVideoSource, error);
+            navigator.getUserMedia({ video: true, audio: true }, this.handleVideoSource, error);
         }
     }
 
-    handleVideoSource (mediaStream) {
-        this.setState({userVidSource: window.URL.createObjectURL(mediaStream)})
+    handleVideoSource(mediaStream) {
+        this.setState({ userVidSource: window.URL.createObjectURL(mediaStream) })
     }
 
-    startGame (event) {
+    startGame(event) {
         event.preventDefault();
         this.props.setGameState('active')
         this.props.setEmotion(this.selectRandomEmotion());
@@ -41,7 +42,7 @@ class Main extends Component {
         this.props.createInterval(interval);
     }
 
-    runGame () {
+    runGame() {
         if (this.props.rounds > 1) {
             console.log('interval', this.props.interval);
             this.props.setEmotion(this.selectRandomEmotion());
@@ -54,48 +55,53 @@ class Main extends Component {
         }
     }
 
-    pickPositions (num) {
+    pickPositions(num) {
         let positions = '';
-        let possiblePositions = [0,1,2,3,4,5,6];
-        for (let i=0; i<num; i++){
-            positions += (possiblePositions.splice(Math.floor(Math.random()*possiblePositions.length), 1)[0]);
+        let possiblePositions = [0, 1, 2, 3, 4, 5, 6];
+        for (let i = 0; i < num; i++) {
+            positions += (possiblePositions.splice(Math.floor(Math.random() * possiblePositions.length), 1)[0]);
         }
         return positions;
     }
 
-    selectRandomEmotion () {
-        return this.props.emotions[Math.floor(Math.random()*this.props.emotions.length)];
+    selectRandomEmotion() {
+        return this.props.emotions[Math.floor(Math.random() * this.props.emotions.length)];
     }
 
-    matchedEmotion () {
-        this.setState({matching:true});
-    } 
+    matchedEmotion() {
+        this.setState({ matching: true });
+    }
 
-    render () {
+    render() {
         console.log(this.props.positions.length);
         return (
-            <div id = "single-player">
-            {
+            <div id="single-player">
                 <VideoFeed pos={this.props.positions} />
-            }   
                 <div id='targetEmotion'>
-                    {this.props.targetEmotion ? 
-                    <img src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
+                    {this.props.targetEmotion ?
+                        <img src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
                 </div>
-
                 <div id='gameControls'>
                     <form onSubmit={this.startGame}>
-                        <label> 
+                        <label>
                             Number of Rounds to Play:
                             <input name='numRounds' type='text' />
                         </label>
                         <input id='startGame' type='submit' disabled={this.props.gameState === 'active' ? true : false} value='Start Game' />
-
                     </form>
                 </div>
-
                 <div id='gameScore'>
                     {this.props.score}
+                </div>
+                <div className = 'center-items' > 
+                <ReactAudioPlayer
+                        ref = { element => this.rap = element}
+                        src="pokemon-black-white.mp3"
+                        loop
+                        autoPlay
+                        controls
+                        volume = "0.5"
+                    />
                 </div>
             </div>
         )
@@ -110,7 +116,7 @@ const mapStateToProps = state => {
         score: state.roundReducer.score,
         emotions: state.roundReducer.emotions,
         interval: state.roundReducer.interval,
-        coinCount : state.roundReducer.numberOfCoins,
+        coinCount: state.roundReducer.numberOfCoins,
         targetEmotion: state.roundReducer.targetEmotion
     }
 }
