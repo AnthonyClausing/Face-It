@@ -38,10 +38,10 @@ function threshold(value) {
 }
 
 //  Cross-Browser Implementierung von der URL-Funktion, eher unwichtig
-window.URL = window.URL ||
-window.webkitURL ||
-window.msURL ||
-window.mozURL;
+// window.URL = window.URL ||
+// window.webkitURL ||
+// window.msURL ||
+// window.mozURL;
 
 class VideoFeed extends React.Component {
 
@@ -54,6 +54,7 @@ class VideoFeed extends React.Component {
 		this.checkAreas = this.checkAreas.bind(this);
 		this.state = {}
 	
+	
 	}
 
 	componentDidMount() {
@@ -62,7 +63,7 @@ class VideoFeed extends React.Component {
 		let emotionData = ec.getBlank();
 		this.ec = ec;
 
-		getUserMedia({ video : true}, this.getUserMediaCallback.bind(this) );
+		// getUserMedia({ video : true}, this.getUserMediaCallback.bind(this) );
 
 		let ctrack = new clm.tracker({useWebGL : true});
 		ctrack.init(pModel);
@@ -77,11 +78,6 @@ class VideoFeed extends React.Component {
 		let self = this;
 
 		this.video.addEventListener('canplay', (this.startVideo).bind(this), false);
-	}
-	
-	getUserMediaCallback(err, stream ) {
-		this.video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
-		this.video.play();
 	}
 
 	startVideo(){
@@ -110,7 +106,11 @@ class VideoFeed extends React.Component {
 		// store the current webcam image
 		this.lastImageData = sourceData;
 	}
-
+	updateScore(score,user) {
+		console.log('******SCORE:', score, user);
+		socket.emit('updateScore', {score, user} )
+		this.props.incrementScore()
+	}
 	checkAreas() {
 		// loop over the coin areas
 		let coinArr = this.props.coinPositions.split('');
@@ -140,7 +140,7 @@ class VideoFeed extends React.Component {
 				//update the coin positions in the store
 				this.props.setCoins(newPositions);
 				//update score
-				this.props.incrementScore();
+				this.updateScore(this.props.score+1,this.props.user)
 				//play an audio cue
 				audio.pause();
 				audio.currentTime = 0;	
@@ -168,7 +168,6 @@ class VideoFeed extends React.Component {
 
 		// gauging which emotion is dominant
 		let er = this.ec.meanPredict(cp);
-		console.log('mating', this.props.matching)
 		switch (this.props.targetEmotion) {
 			case 'angry':
 				if ((er[0].value > .3 && !this.props.matching) || (er[0].value < .3 && this.props.matching)) {
@@ -203,47 +202,74 @@ class VideoFeed extends React.Component {
        
 	}
 
-	render() {
+	render(props) {
 		let className = this.props.matching?'matching':'notMatching';
 		return (
-			<div className="the-video">
-				<div id='canvasAndButtons'>
-					<canvas id='canvas-source'
-						height='480px' width='600px'
-						ref={ (canvas) => this.canvas = canvas }
-						className={className}>
-					</canvas>
-					<div id='virtualButtons'>
-						{	
-							this.props.coinPositions.split('').map((position,index) => {
-								let coinStyles = {
-									position: 'absolute',
-									height: '32px',
-									width: '32px',
-									top: coinCoords[position].y,
-									left: coinCoords[position].x
-								}
-								return (
-									<img src='/images/coin.gif' style={coinStyles}
-									key={index} />
-								)
-							})
-						}
+			<div className='player-video'>
+				{
+					this.props.remoteVidSource
+						?
+					<div className='vid-size'>
+						<div id='p2canvasAndButtons'>
+							<canvas id='p2canvas-source'
+								height='480px' width='600px'
+								ref={(canvas) => this.canvas = canvas}
+								className={className}>
+							</canvas>
+							
+						</div>
+						<video
+							width="480"
+							height="600"
+							id='remoteVidFeed'
+							src={this.props.remoteVidSource}
+							ref={(video) => { this.video = video }}
+							autoPlay="true">
+						</video>
+
 					</div>
-				</div>
-
-				<video
-					className = 'video-canvas'
+					:
+					<div className='vid-size'>
+						<div id='p1canvasAndButtons'>
+							<canvas id='p1canvas-source'
+								height='480px' width='600px'
+								ref={(canvas) => this.canvas = canvas}
+								className={className}>
+							</canvas>
+							<div id='p1virtualButtons'>
+								{
+									this.props.coinPositions.split('').map((position, index) => {
+										let coinStyles = {
+											position: 'absolute',
+											height: '32px',
+											width: '32px',
+											top: coinCoords[position].y,
+											left: coinCoords[position].x
+										}
+										return (
+											<img src='/images/coin.gif' style={coinStyles}
+												key={index} />
+										)
+									})
+								}
+							</div>
+						</div>
+						<video
+							width="480"
+							height="600"
+							id={this.props.id}
+							src={this.props.videoSource}
+							autoPlay="true"
+							muted
+							ref={(video) => { this.video = video }}>
+						</video>
+					</div>
+			}
+				<div>{this.props.targetEmotion}</div>
+				<canvas className='blended'
 					height='480px' width='600px'
-					ref={ (video) => { this.video = video } } >
-				</video>
-
-
-				<canvas id='blended'
-					height='480px' width='600px'
-					ref={ (canvas) => this.blended = canvas}>
+					ref={(canvas) => this.blended = canvas}>
 				</canvas>
-
 			</div>
 		)
 	}
@@ -255,7 +281,9 @@ const mapStateToProps = state => {
 		numberOfCoins: state.roundReducer.numberOfCoins,
 		gameState: state.roundReducer.gameState,
 		targetEmotion: state.roundReducer.targetEmotion,
-		matching: state.roundReducer.matching
+		matching: state.roundReducer.matching,
+		score: state.roundReducer.score,
+		user : state.user.userName
     }
 }
 
@@ -274,3 +302,23 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(VideoFeed);
+
+
+
+// <div id='p2virtualButtons'>
+// {
+// 	this.props.coinPositions.split('').map((position, index) => {
+// 		let coinStyles = {
+// 			position: 'absolute',
+// 			height: '32px',
+// 			width: '32px',
+// 			top: coinCoords[position].y,
+// 			left: coinCoords[position].x
+// 		}
+// 		return (
+// 			<img src='/images/coin.gif' style={coinStyles}
+// 				key={index} />
+// 		)
+// 	})
+// }
+// </div>
