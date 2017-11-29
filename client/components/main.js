@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import VideoFeed from './videoFeed';
-import store from '../store/index.js';
-import {collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval} from '../store/round.js';
 import {connect} from 'react-redux';
+
+import VideoFeed from './videoFeed';
+import  store , {collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval, getP1, getP1Score} from '../store';
+
 
 class Main extends Component {
     constructor () {
@@ -39,11 +40,12 @@ class Main extends Component {
         this.props.setRounds(event.target.numRounds.value);
         let interval = setInterval(this.runGame, 5000)
         this.props.createInterval(interval);
+        this.props.getPlayerOne(this.props.userId);
+        this.props.getPlayerOneScore(0);
     }
 
     runGame () {
         if (this.props.rounds > 1) {
-            console.log('interval', this.props.interval);
             this.props.setEmotion(this.selectRandomEmotion());
             this.props.setCoins(this.pickPositions(this.props.coinCount));
             this.props.decrementRound();
@@ -72,7 +74,6 @@ class Main extends Component {
     } 
 
     render () {
-        console.log(this.props.positions.length);
         return (
             <div id = "single-player">
             {
@@ -95,7 +96,7 @@ class Main extends Component {
                 </div>
 
                 <div id='gameScore'>
-                    {this.props.score}
+                    {this.props.score }
                 </div>
             </div>
         )
@@ -111,7 +112,9 @@ const mapStateToProps = state => {
         emotions: state.roundReducer.emotions,
         interval: state.roundReducer.interval,
         coinCount : state.roundReducer.numberOfCoins,
-        targetEmotion: state.roundReducer.targetEmotion
+        targetEmotion: state.roundReducer.targetEmotion,
+        userId : state.user.id,
+        points : state.gameState.p1Score
     }
 }
 
@@ -137,6 +140,12 @@ const mapDispatchToProps = dispatch => {
         },
         setGameState: (gameState) => {
             dispatch(setGameState(gameState));
+        },
+        getPlayerOne: (id) => {
+            dispatch(getP1(id))
+        },
+        getPlayerOneScore: (points) => {
+            dispatch(getP1Score(points))
         }
     }
 }

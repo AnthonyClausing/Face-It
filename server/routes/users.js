@@ -31,9 +31,9 @@ router.post('/addFriend', function(req,res,next){
      let friender = users.find(user => user.id === req.user.id)
      let friendee = users.find(user => user.id !== req.user.id)
      return friender.addFriends(friendee)
-   })
-   .then(newfriend =>  res.json(newfriend))
-   .catch(next)
+    })
+     .then(newfriend =>  res.json(newfriend))
+     .catch(next)
 })
 
 router.delete('/friends/:id', function(req,res,next){

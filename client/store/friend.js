@@ -24,7 +24,7 @@ export const addFriendsThunk = (friendName) => dispatch =>{
   })
   .catch(console.log);
 }
-
+//TODO GO TO AUTHORIZATION!!!!!! TO SEND ERROR
 export const getFriends =  () => dispatch =>
   axios.get('/api/users/friends')
     .then(res => res.data)
