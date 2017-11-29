@@ -150,10 +150,7 @@ button.login-items:hover{
 
 .player-video {
     display: inline-block;
-    width: 40%;
 }
-
-
 
 video, .video-canvas, .blended{
     display:none;
@@ -161,8 +158,8 @@ video, .video-canvas, .blended{
 
 #p1canvasAndButtons, #p2canvasAndButtons {
     position:relative;
+    width:600;    
     height:480;
-    width:600;
     margin: 30px auto;
 }
 
