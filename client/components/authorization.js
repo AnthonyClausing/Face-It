@@ -1,32 +1,33 @@
 import React from 'react'
-import {connect} from 'react-redux'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import {authorize} from '../store'
-import {NavLink} from 'react-router-dom'
+import { authorize } from '../store'
+import { NavLink } from 'react-router-dom'
 
 //Cannot read property 'error' of undefined 
 //the above error occurred in the <Connect(AuthForm)> component:
 //crossed out error and state.user.error handler
 
 const AuthForm = (props) => {
-  const {name, displayName, handleSubmit, error, user} = props
+  const { name, displayName, handleSubmit, error, user } = props
 
   return (
     <div>
       <form onSubmit={handleSubmit} name={name}>
-      <div className ='login-authorization' >
-        <div>
-          <label htmlFor="email"><small>Email</small></label>
-          <input className= 'login-authorization-items' name="email" type="text" />
-        </div>
-        <div>
-          <label htmlFor="password"><small>Password</small></label>
-          <input className= 'login-authorization-items' name="password" type="password" />
-        </div>
-        <div>
-          <button className= 'login-authorization-items' type="submit">{displayName}</button>
-        </div>
-        {error && error.response && <div> {error.response.data} </div>}
+        <div className='login-authorization' >
+          <div>
+            <label htmlFor="email"><small>Email</small></label>
+            <input className='login-authorization-items' name="email" type="text" />
+          </div>
+          <div>
+            <label htmlFor="password"><small>Password</small></label>
+            <input className='login-authorization-items' name="password" type="password" />
+            {name === 'signup' ? <label><small>UserName</small></label> : null}
+            {name === 'signup' ? <input className='login-authorization-items' name="userName" type="text" placeholder='userName' /> : null}
+            <button className='login-authorization-items' type="submit">{displayName}</button>
+          </div>
+          {error && error.response && <div> {error.response.data} </div>}
+          {user.userName && <div>Hey {user.userName}!</div>}
         </div>
       </form>
       {}
@@ -54,14 +55,18 @@ const mapSignup = (state) => {
 
 const mapDispatch = (dispatch) => {
   return {
-    handleSubmit (evt) {
+    handleSubmit(evt) {
       evt.preventDefault()
       const formName = evt.target.name
       const email = evt.target.email.value
       const password = evt.target.password.value
-      dispatch(authorize(email, password, formName))
+      var userName;
+      if(formName === 'signup'){  userName = evt.target.userName.value
+        console.log(userName)}
+      dispatch(authorize(email, password, userName, formName))
       evt.target.email.value = ''
       evt.target.password.value = ''
+      if(userName) { evt.target.userName.value = ''}
     }
   }
 }

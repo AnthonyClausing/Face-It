@@ -1,6 +1,5 @@
 html, body{
     font-family: 'PT Serif', serif;
-    
     font-family: 'Audiowide', cursive;
     font-family: 'Rock Salt', cursive;
     font-family: 'Gloria Hallelujah', cursive;
@@ -67,11 +66,24 @@ button.login-items:hover{
 }
 
 #single-player{
-    width: 100vw;
-    height: 100vh;
+    display:flex;
+    flex-direction: column;
+    padding:1em;
+    width: 100%;
+    height: 100%;
     text-align: center;
-
+    background-image: url(https://www.xmple.com/wallpaper/stripes-lines-white-pink-streaks-1920x1080-c2-ffffff-ffb6c1-l2-53-106-a-120-f-1.svg);
+    /* background-size: initial;
+    background-position: 0px, 0px;
+    background-repeat: repeat-x;
+    animation: singlescroll 15s linear infinite; */
 }
+/* 
+@keyframes singlescroll {
+    from {background-position: 0, 0;}
+    to {background-position: 100%, 0 ;}
+} */
+
 
 .sidenav {
     height: 100%;
@@ -94,6 +106,11 @@ button.login-items:hover{
     width: 100%;
     height: 100%; 
     text-align: center;
+    background-color: #ecffdb;
+    /* background-image: url(https://image.shutterstock.com/z/stock-photo-crazy-background-with-heap-of-yellow-smileys-73086103.jpg); */
+    background-image: url(https://previews.123rf.com/images/pilart/pilart1103/pilart110300076/9151349-Background-with-heap-of-Yellow-Smileys-template-for-your-fun--Stock-Photo.jpg);
+    background-size: cover;
+    
 }
 
 .home-greeting{
@@ -102,6 +119,28 @@ button.login-items:hover{
     justify-content:space-between
 }
 
+.home-logout-btn{
+    background-color: lightskyblue;
+    padding: .3em;
+    border-radius:  10%;
+    width: 70%;
+    font-size: 1em;
+    transition: all .5s ease-in
+}
+
+.home-logout-btn:hover{
+    color:white;
+}
+
+.overflow-scroll{
+    display: flex;
+    flex-direction: column;
+    position: fixed; 
+    font-size: 21px;
+    overflow-y: scroll;
+    justify-content: space-between;
+    align-items: center;
+}
 
 #check-video{
     justify-content: space-between
@@ -152,7 +191,7 @@ video, .video-canvas, .blended{
     width:100%;
     border:1px solid black
 }
-.audio-center{
+.center-items{
     display: flex;
     justify-content: center;
 }
