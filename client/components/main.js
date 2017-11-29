@@ -6,7 +6,7 @@ import { createPeerConnection, doAnswer} from '../socket.js';
 
 const socket = io(window.location.origin);
 import store from '../store/index.js';
-import { collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval } from '../store/round.js';
+import { collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval, setOpponentScore } from '../store/round.js';
 import { connect } from 'react-redux';
 
 class Main extends Component {
@@ -17,13 +17,6 @@ class Main extends Component {
         this.isInitiator = false;
 
         this.state = {
-            emotions: ['angry', 'happy', 'sad', 'surprised', 'redButton', 'blueButton'],
-            targetEmotion: '',
-            gameState: null,
-            score: 0,
-            count: 0,
-            interval: '',
-            matching: false,
             pc: {},
             userVidSource: '',
             userMediaObject: {},
@@ -66,12 +59,10 @@ class Main extends Component {
             console.log('pc after someone joined:', this.pc);
         });
         socket.on('otherScore', ({user,score}) =>{
+            this.props.setOpponentScore(user, score)
             console.log('this is user:', user)
-            console.log('this is score:', score)
+            console.log('this is score: ', score)
         })
-
-
-
         socket.on('signal', message => {
             if (message.type === 'offer') {
                 console.log('received offer:', message);
@@ -269,6 +260,9 @@ const mapDispatchToProps = dispatch => {
         },
         setGameState: (gameState) => {
             dispatch(setGameState(gameState));
+        },
+        setOpponentScore: (user, score) => {
+            dispatch(setOpponentScore(score))
         }
     }
 }

@@ -27,9 +27,6 @@ module.exports = io => {
         });
 
         socket.on('updateScore', ({user,score}) =>{
-            console.log('this is user',user)
-            console.log('this is score', score)
-
             socket.broadcast.emit('otherScore', {user,score})
         })
 

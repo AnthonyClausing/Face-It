@@ -7,6 +7,7 @@ const initialState = {
   targetEmotion: '',
   matching: false,
   score: 0,
+  opponentScore: 0,
   count: 0,
   interval: 0,
   emotions: ['angry', 'happy', 'sad', 'surprised']
@@ -17,6 +18,7 @@ const SET_ROUNDS = 'SET_ROUNDS';
 const DECREMENT_ROUNDS = "DECREMENT ROUNDS";
 const CHECK_ROUND = "CHECK_ROUND";
 const INCREMENT_SCORE = "INCREMENT_SCORE";
+const SET_OPPONENT_SCORE = "SET_OPPONENT_SCORE";
 const SET_COINS = "SET_COINS";
 const CREATE_INTERVAL = "CREATE_INTERVAL";
 const DESTROY_INTERVAL = "DESTROY_INTERVAL";
@@ -39,6 +41,10 @@ export function checkRound(){
 
 export function incrementScore(){
   return {type: INCREMENT_SCORE}
+}
+
+export function setOpponentScore(score){
+  return {type: SET_OPPONENT_SCORE, score:score}
 }
 
 export function setCoins(positions){
@@ -76,6 +82,8 @@ const reducer = function(state = initialState, action){
         return state.rounds
       case INCREMENT_SCORE:
         return Object.assign({}, state, {score: state.score+1})
+      case SET_OPPONENT_SCORE:
+        return Object.assign({}, state, {opponentScore:action.score})
       case SET_COINS:
         return Object.assign({}, state, {coinPositions: action.coinPositions})
       case SET_EMOTION:
