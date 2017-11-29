@@ -262,11 +262,11 @@ class VideoFeed extends React.Component {
 					</div>
 			}
 				<div>{this.props.targetEmotion}</div>
-				< canvas className='blended'
+				<canvas className='blended'
 					height='480px' width='600px'
 					ref={(canvas) => this.blended = canvas}>
-				</canvas >
-			</div >
+				</canvas>
+			</div>
 		)
 	}
 }
