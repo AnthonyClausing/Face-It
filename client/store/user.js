@@ -19,10 +19,10 @@ dispatch =>
       dispatch(getUser(res.data || defaultUser)))
     .catch(err => console.log(err))
 
-export const authorize = (email, password, method) => dispatch =>
+export const authorize = (email, password, userName, method) => dispatch =>
   axios
-    .post(`/auth/${method}`, { email, password })
-    .then(res => {
+    .post(`/auth/${method}`, { email, password, userName })
+    .then(res => {  
       dispatch(getUser(res.data));
       // history.push("/home");
     })

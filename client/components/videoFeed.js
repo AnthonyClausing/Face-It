@@ -193,13 +193,13 @@ class VideoFeed extends React.Component {
 				break;
 		}
 
-		if(er) {
-			//these are just for development purposes, easy read out of status
-			document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
-			document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[3].value;
-			document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[1].value;
-			document.getElementById('surprised').innerHTML = '<span> Surprised </span>' + er[2].value;
-		}
+		// if(er) {
+		// 	//these are just for development purposes, easy read out of status
+		// 	document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
+		// 	document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[3].value;
+		// 	document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[1].value;
+		// 	document.getElementById('surprised').innerHTML = '<span> Surprised </span>' + er[2].value;
+		// }
        
 	}
 

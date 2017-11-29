@@ -13,7 +13,7 @@ class FriendsList extends Component{
      console.log(this.props)
     const {friends} = this.props;
   return (
-    <div>
+    <div className = "overflow-scroll">
    <ul>
     {
        friends && friends.map( friend =>{

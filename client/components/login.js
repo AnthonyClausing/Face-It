@@ -17,6 +17,9 @@ class Login extends Component  {
         this.handleLogin = this.handleLogin.bind(this)
     }
 
+    componentDidMount(){
+        console.log(this.rap.audioEl.volume = 0.3)
+    }
     handleSignUp(){
         
         this.setState({LoginForm: false, SignupForm: !this.state.SignupForm})
@@ -28,6 +31,7 @@ class Login extends Component  {
 
     render(){
         console.log(this.props.user)
+        
         return (
             <div id='login-page'>
                 <div className='login-header'>
@@ -40,15 +44,16 @@ class Login extends Component  {
                     <button className = 'login-authorization-items' onClick = {this.handleSignUp} >Signup</button>
                 </div>
                 {this.state.LoginForm && <Loging/>}
-                    {/* <input className='login-items' placeholder='name' autoFocus></input> */}
                 {this.state.SignupForm && <Signup/>}
                     {this.props.user && <NavLink to='/home' className='login-items'>EnterGame</NavLink>}
-                    <div className = 'audio-center'>
+                    <div className = 'center-items'>
                     <ReactAudioPlayer
+                        ref = { element => this.rap = element}
                         src="pokemon-black-white.mp3"
                         loop
                         autoPlay
                         controls
+                        volume = "0.5"
                     />
                     </div>
                 </div>
