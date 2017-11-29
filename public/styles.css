@@ -134,12 +134,12 @@ button.login-items:hover{
 
 .overflow-scroll{
     display: flex;
-    flex-direction: column;
-    position: fixed; 
+    flex-direction: column; 
     font-size: 21px;
     overflow-y: scroll;
     justify-content: space-between;
     align-items: center;
+    padding-bottom: 3em;
 }
 
 #check-video{

@@ -64,7 +64,9 @@ export class Home extends Component {
                     <h3>Face-to-Face</h3>
                     <p>Join Room and create room will be here after toggle</p>
                     <NavLink to = 'friends'>Friends</NavLink>
+                    <div className = "overflow-scroll" >
                     <Friends/>
+                    </div>
                 </div>
                 <span onClick={this.changeNav}>&#9776; toggle</span>
                 <div className ='home-greeting'>
