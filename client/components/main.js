@@ -20,7 +20,8 @@ class Main extends Component {
             pc: {},
             userVidSource: '',
             userMediaObject: {},
-            remoteVidSource: ''
+            remoteVidSource: '',
+            volume: 0.5
         };
 
         this.handleVideoSource = this.handleVideoSource.bind(this);
@@ -34,6 +35,7 @@ class Main extends Component {
         this.roomTaken = this.roomTaken.bind(this);
         this.createPeerConnection = createPeerConnection.bind(this);
         this.doAnswer = doAnswer.bind(this);
+        this.handleVolume = this.handleVolume.bind(this)
     }
 
     componentDidMount() {
@@ -161,11 +163,17 @@ class Main extends Component {
         this.setState({ matching: true });
     }
 
+    handleVolume(){
+        this.state.volume ? this.setState({volume : 0}) : this.setState({volume: 0.5})
+        this.rap.audioEl.volume = this.rap.audioEl.volume ? 0 : 0.5; 
+    }
+
+
     render() {
         console.log(this.props.positions.length);
         return (
             <div id="single-player">
-                <form onSubmit={this.handleNewRoom}>
+                {/* <form onSubmit={this.handleNewRoom}>
                     <label>
                         Create Room:
             <input type="text" name="newRoom" />
@@ -182,7 +190,7 @@ class Main extends Component {
             <input type="text" name="userName" />
                     </label>
                     <input type="submit" name="submitJoin" />
-                </form>
+                </form> */}
                 {
                     this.state.userVidSource &&
 
@@ -210,15 +218,22 @@ class Main extends Component {
                 <div id='gameScore'>
                     {this.props.score}
                 </div>
-                <div className = 'center-items' > 
-                <ReactAudioPlayer
-                        ref = { element => this.rap = element}
+                <div className='center-items' >
+                {this.state.volume ? 
+                    <img src ='images/002-speaker.png' onClick={this.handleVolume}></img>
+                    :
+                    <img src ='images/001-speaker-1.png' onClick={this.handleVolume}></img> 
+                }
+                <div className = 'audio-login'>
+                    <ReactAudioPlayer
+                        ref={element => this.rap = element}
                         src="pokemon-black-white.mp3"
                         loop
                         autoPlay
                         controls
-                        volume = "0.5"
+                        volume="0.5"
                     />
+                    </div>
                 </div>
             </div>
         );

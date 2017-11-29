@@ -199,3 +199,6 @@ video, .video-canvas, .blended{
     width: 50px;
 }
 
+.audio-login {
+    display: none
+}
