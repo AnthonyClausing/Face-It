@@ -1,12 +1,26 @@
 html, body{
     font-family: 'PT Serif', serif;
-    
     font-family: 'Audiowide', cursive;
     font-family: 'Rock Salt', cursive;
     font-family: 'Gloria Hallelujah', cursive;
     margin:0;
     padding:0;
     font-size: 1.25em;
+}
+
+#game-name{
+    font-size: 3.1em;
+    margin: 0em;
+    padding: 0em;
+}
+
+#game-description{
+    margin:0;
+}
+
+button{
+    color:white;
+    background-color: cornflowerblue;
 }
 
 #login-page{
@@ -66,12 +80,30 @@ button.login-items:hover{
     border-color: snow
 }
 
-#single-player{
-    width: 100vw;
-    height: 100vh;
-    text-align: center;
-
+#audio-login{
+    display:none
 }
+
+
+#single-player{
+    display:flex;
+    flex-direction: column;
+    padding:1em;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background-image: url(https://www.xmple.com/wallpaper/stripes-lines-white-pink-streaks-1920x1080-c2-ffffff-ffb6c1-l2-53-106-a-120-f-1.svg);
+    /* background-size: initial;
+    background-position: 0px, 0px;
+    background-repeat: repeat-x;
+    animation: singlescroll 15s linear infinite; */
+}
+/* 
+@keyframes singlescroll {
+    from {background-position: 0, 0;}
+    to {background-position: 100%, 0 ;}
+} */
+
 
 .sidenav {
     height: 100%;
@@ -94,6 +126,11 @@ button.login-items:hover{
     width: 100%;
     height: 100%; 
     text-align: center;
+    background-color: #ecffdb;
+    /* background-image: url(https://image.shutterstock.com/z/stock-photo-crazy-background-with-heap-of-yellow-smileys-73086103.jpg); */
+    background-image: url(https://previews.123rf.com/images/pilart/pilart1103/pilart110300076/9151349-Background-with-heap-of-Yellow-Smileys-template-for-your-fun--Stock-Photo.jpg);
+    background-size: cover;
+    
 }
 
 .home-greeting{
@@ -102,6 +139,28 @@ button.login-items:hover{
     justify-content:space-between
 }
 
+.home-logout-btn{
+    background-color: lightskyblue;
+    padding: .3em;
+    border-radius:  10%;
+    width: 70%;
+    font-size: 1em;
+    transition: all .5s ease-in
+}
+
+.home-logout-btn:hover{
+    color:white;
+}
+
+.overflow-scroll{
+    display: flex;
+    flex-direction: column; 
+    font-size: 21px;
+    overflow-y: scroll;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 3em;
+}
 
 #check-video{
     justify-content: space-between
@@ -109,34 +168,31 @@ button.login-items:hover{
 
 /*******************  Canvas Video Feed and Virtual Buttons ************/
 
-/* #canvas-source{
-    z-index:10;
-    background-color: #deb887;
-} */
-
-.player-videos{
-    display: none;
-    z-index : 0;
-    position: absolute;
+.player-video {
+    display: inline-block;
+    width: 40%
 }
 
-.video-canvas, #blended{
+
+
+.video-canvas, .blended{
     display:none;
 }
 
-#canvasAndButtons {
+#p1canvasAndButtons, #p2canvasAndButtons {
     position:relative;
     height:480;
     width:600;
     margin: 30px auto;
 }
 
-#canvas-source{
+#p1canvas-source, #p2canvas-source{
     z-index:10;
     padding:10px;
     border: 2px ridge black;
     width: 100%;
     height:100%;
+    display:inline;
 }
 
 .matching{
@@ -147,7 +203,7 @@ button.login-items:hover{
     background-color: #deb887;
 }
 
-#virtualButtons{
+#p1virtualButtons, #p2virtualButtons{
     position:absolute;
     top:11;
     left:11;
@@ -155,7 +211,7 @@ button.login-items:hover{
     width:100%;
     border:1px solid black
 }
-.audio-center{
+.center-items{
     display: flex;
     justify-content: center;
 }
