@@ -216,7 +216,23 @@ class VideoFeed extends React.Component {
 								ref={(canvas) => this.canvas = canvas}
 								className={className}>
 							</canvas>
-							
+							<div id='p2virtualButtons'>
+								{
+									this.props.coinPositions.split('').map((position, index) => {
+										let coinStyles = {
+											position: 'absolute',
+											height: '32px',
+											width: '32px',
+											top: coinCoords[position].y,
+											left: coinCoords[position].x
+										}
+										return (
+											<img src='/images/coin.gif' style={coinStyles}
+												key={index} />
+										)
+									})
+								}
+								</div>
 						</div>
 						<video
 							className = 'video-canvas'
