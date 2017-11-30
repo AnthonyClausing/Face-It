@@ -208,10 +208,10 @@ class VideoFeed extends React.Component {
 
 		// if(er) {
 		// 	//these are just for development purposes, easy read out of status
-		// 	document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
-		// 	document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[3].value;
-		// 	document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[1].value;
-		// 	document.getElementById('surprised').innerHTML = '<span> Surprised </span>' + er[2].value;
+			// document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
+			// document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[3].value;
+			// document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[1].value;
+			// document.getElementById('surprised').innerHTML = '<span> Surprised </span>' + er[2].value;
 		// }
        
 	}
@@ -230,9 +230,26 @@ class VideoFeed extends React.Component {
 								ref={(canvas) => this.canvas = canvas}
 								className={className}>
 							</canvas>
-							
+							<div id='p2virtualButtons'>
+								{
+									this.props.coinPositions.split('').map((position, index) => {
+										let coinStyles = {
+											position: 'absolute',
+											height: '32px',
+											width: '32px',
+											top: coinCoords[position].y,
+											left: coinCoords[position].x
+										}
+										return (
+											<img src='/images/coin.gif' style={coinStyles}
+												key={index} />
+										)
+									})
+								}
+								</div>
 						</div>
 						<video
+							className = 'video-canvas'
 							width="600"
 							height="480"
 							id='remoteVidFeed'
@@ -269,6 +286,7 @@ class VideoFeed extends React.Component {
 							</div>
 						</div>
 						<video
+							className = 'video-canvas'
 							width="600"
 							height="480"
 							id={this.props.id}

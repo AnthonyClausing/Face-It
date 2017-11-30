@@ -64,11 +64,15 @@ button.login-items:hover{
 .login-authorization-items:hover{   
     border-color: snow
 }
+.audio-controller{
+    position: fixed;
+    top:650px;
+    left:32px;
+}
 
 #single-player{
     display:flex;
     flex-direction: column;
-    padding:1em;
     width: 100%;
     height: 100%;
     text-align: center;
@@ -77,6 +81,7 @@ button.login-items:hover{
     background-position: 0px, 0px;
     background-repeat: repeat-x;
     animation: singlescroll 15s linear infinite; */
+    overflow-y:scroll;
 }
 /* 
 @keyframes singlescroll {
@@ -152,7 +157,7 @@ button.login-items:hover{
     display: inline-block;
 }
 
-video, .video-canvas, .blended{
+.video-canvas, .blended{
     display:none;
 }
 
@@ -188,14 +193,37 @@ video, .video-canvas, .blended{
     width:100%;
     border:1px solid black
 }
-.center-items{
+/* .center-items{
     display: flex;
     justify-content: center;
-}
+} */
 
 /********************Game Controls *****************/
-#targetEmotion img {
-    height: 50px;
-    width: 50px;
+.targetEmotion {
+    height: 200;
+    width: 200px;
+    position: relative;
+    bottom: 220;
 }
 
+#left{
+    left:100px
+}
+
+#right{
+    right: 100px
+}
+
+
+.audio-login {
+    display: none
+}
+
+#single-player-video-feed{
+    width: 100%;
+    height: 30em;
+}
+/* 
+#multiplayer-feed{
+    display:flex;
+} */
