@@ -45,8 +45,8 @@ class Login extends Component  {
                 </div>
                 <div className='login-items'>
                 {!this.props.user && <div className = 'login-authorization'>
-                    <button className = 'login-authorization-items' onClick = {this.handleLogin}  >Login</button>
-                    <button className = 'login-authorization-items' onClick = {this.handleSignUp} >Signup</button>
+                    <button className = 'login-authorization-items-login' onClick = {this.handleLogin}  >Login</button>
+                    <button className = 'login-authorization-items-signup' onClick = {this.handleSignUp} >Signup</button>
                 </div>}
                 {!this.props.user && this.state.LoginForm && <Loging/>}
                 {!this.props.user && this.state.SignupForm && <Signup/>}

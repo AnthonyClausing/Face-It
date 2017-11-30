@@ -24,7 +24,7 @@ const AuthForm = (props) => {
             <input className='login-authorization-items' name="password" type="password" />
             {name === 'signup' ? <label><small>UserName</small></label> : null}
             {name === 'signup' ? <input className='login-authorization-items' name="userName" type="text" placeholder='userName' /> : null}
-            <button className='login-authorization-items' type="submit">{displayName}</button>
+            <button className='login-authorization-items-form-button' type="submit">{displayName}</button>
           </div>
           {error && error.response && <div> {error.response.data} </div>}
           {user.userName && <div>Hey {user.userName}!</div>}
