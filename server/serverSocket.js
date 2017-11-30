@@ -25,6 +25,13 @@ module.exports = io => {
                 console.log('room not found');
             }
         });
+        socket.on('startGame', (roomName, rounds) => {
+            socket.broadcast.to(roomName).emit('startGame', rounds);
+        })
+
+        socket.on('ready', (roomName) => {
+            socket.broadcast.to(roomName).emit('opponentReady')
+        })
 
         socket.on('updateScore', ({user,score}) =>{
             socket.broadcast.emit('otherScore', {user,score})

@@ -3,7 +3,7 @@ const initialState = {
   rounds: 0,
   numberOfCoins: 1,
   coinPositions: '',
-  oponnentCoinPositions: '',
+  opponentCoinPositions: '',
   gameState: null,
   targetEmotion: '',
   matching: false,
@@ -94,7 +94,8 @@ const reducer = function(state = initialState, action){
       case INCREMENT_SCORE:
         return Object.assign({}, state, {score: state.score+1})
       case SET_OPPONENT_SCORE:
-        return Object.assign({}, state, {opponentScore:action.score})
+        console.log('opnerent score updateing')
+        return Object.assign({}, state, {opponentScore:action.score+1})
       case SET_NUMBER_COINS:
         return Object.assign({}, state, {numberOfCoins: action.numberOfCoins})
       case SET_COINS:

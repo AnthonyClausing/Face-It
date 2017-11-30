@@ -21,7 +21,8 @@ class Main extends Component {
             userVidSource: '',
             userMediaObject: {},
             remoteVidSource: '',
-            volume: 0.5
+            volume: 0.5,
+            roomName: ''
         };
 
         this.handleVideoSource = this.handleVideoSource.bind(this);
@@ -29,6 +30,7 @@ class Main extends Component {
         this.pickPositions = this.pickPositions.bind(this);
         this.matchedEmotion = this.matchedEmotion.bind(this);
         this.startGame = this.startGame.bind(this);
+        this.handleStart = this.handleStart.bind(this);
         this.runGame = this.runGame.bind(this);
         this.handleJoinRoom = this.handleJoinRoom.bind(this);
         this.handleNewRoom = this.handleNewRoom.bind(this);
@@ -66,6 +68,10 @@ class Main extends Component {
             console.log('this is user:', user)
             console.log('this is score: ', score)
         })
+        socket.on('startGame', (rounds) => {
+            console.log('emitting start')
+            this.startGame(rounds);
+        })
         socket.on('signal', message => {
             if (message.type === 'offer') {
                 console.log('received offer:', message);
@@ -76,6 +82,8 @@ class Main extends Component {
                     this.remoteStream = e.stream;
                     this.remote = window.URL.createObjectURL(this.remoteStream);
                     this.setState({ remoteVidSource: this.remote });
+                    //both video feeds are running so alert the room
+                    socket.emit('ready', this.state.roomName);
                 };
             }
             else if (message.type === 'answer') {
@@ -87,6 +95,8 @@ class Main extends Component {
                     this.remoteStream = e.stream;
                     this.remote = window.URL.createObjectURL(this.remoteStream);
                     this.setState({ remoteVidSource: this.remote });
+                    //both video feeds are running so alert the room
+                    socket.emit('ready', this.state.roomName);
                 };
             }
             else if (message.type === 'candidate') {
@@ -106,6 +116,7 @@ class Main extends Component {
 
     handleNewRoom(event) {
         event.preventDefault();
+        this.setState({roomName: event.target.newRoom.value})
         socket.emit('newRoom', event.target.newRoom.value, socket.id);
         console.log('NEW ROOM', event.target.newRoom.value);
         event.target.newRoom.value = '';
@@ -114,6 +125,7 @@ class Main extends Component {
     handleJoinRoom(event) {
         event.preventDefault();
         this.createPeerConnection(this.state);
+        this.setState({roomName: event.target.joinRoom.value})
         console.log('pc after join room:', this.pc, this.state);
         socket.emit('joinRoom', event.target.joinRoom.value);
         event.target.joinRoom.value = '';
@@ -123,13 +135,19 @@ class Main extends Component {
         this.setState({ userVidSource: window.URL.createObjectURL(mediaStream), userMediaObject: mediaStream });
     }
 
-    startGame(event) {
+    handleStart(event){
         event.preventDefault();
+        socket.emit('startGame', this.state.roomName, event.target.numRounds.value);
+        console.log('START EVENT:', event, 'roomname:', this.state.roomName, '/')
+        this.startGame(event.target.numRounds.value);
+    }
+
+    startGame(rounds) {
         this.props.setGameState('active')
         this.props.setEmotion(this.selectRandomEmotion());
         let coinString = this.pickPositions(this.props.numberOfCoins);
         this.props.setCoins(coinString);
-        this.props.setRounds(event.target.numRounds.value);
+        this.props.setRounds(rounds);
         let interval = setInterval(this.runGame, 5000)
         this.props.createInterval(interval);
     }
@@ -180,18 +198,18 @@ class Main extends Component {
                 <form onSubmit={this.handleNewRoom}>
                     <label>
                         Create Room:
-            <input type="text" name="newRoom" />
+                        <input type="text" name="newRoom" />
                     </label>
                     <input type="submit" name="submitNew" />
                 </form>
                 <form onSubmit={this.handleJoinRoom}>
                     <label>
                         Join Room:
-            <input type="text" name="joinRoom" />
+                        <input type="text" name="joinRoom" />
                     </label>
                     <label>
                         Name:
-            <input type="text" name="userName" />
+                        <input type="text" name="userName" />
                     </label>
                     <input type="submit" name="submitJoin" />
                 </form>
@@ -213,7 +231,7 @@ class Main extends Component {
                         <img src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
                 </div>
                 <div id='gameControls'>
-                    <form onSubmit={this.startGame}>
+                    <form onSubmit={this.handleStart}>
                         <label>
                             Number of Rounds to Play:
                             <input name="numRounds" type="text" />
@@ -222,6 +240,7 @@ class Main extends Component {
                     </form>
                 </div>
                 <div id='gameScore'>
+                    your score
                     {this.props.score}
                 </div>
                 <div className='center-items' >

@@ -116,7 +116,7 @@ class VideoFeed extends React.Component {
 	updateScore(score,user) {
 		console.log('******SCORE:', score, user);
 		socket.emit('updateScore', {score, user} )
-		this.props.incrementScore()
+		this.props.incrementScore();
 	}
 	checkAreas() {
 		// loop over the coin areas
@@ -222,17 +222,17 @@ class VideoFeed extends React.Component {
 			<div className='player-video'>
 				{
 					this.props.remoteVidSource
-						?
+					?
 					<div className='vid-size'>
 						<div id='p2canvasAndButtons'>
 							<canvas id='p2canvas-source'
 								width='600px' height='480px'
-								ref={(canvas) => this.canvas = canvas}
-								className={className}>
+								ref={(canvas) => this.canvas = canvas}>
 							</canvas>
 							<div id='p2virtualButtons'>
 								{
-									this.props.coinPositions.split('').map((position, index) => {
+									
+									this.props.opponentCoinPositions.split('').map((position, index) => {
 										let coinStyles = {
 											position: 'absolute',
 											height: '32px',
@@ -261,6 +261,9 @@ class VideoFeed extends React.Component {
 					</div>
 					:
 					<div className='vid-size'>
+						<div>opponent score
+							{this.props.opponentScore}
+						</div>
 						<div id='p1canvasAndButtons'>
 							<canvas id='p1canvas-source'
 								width='600px' height='480px'
@@ -285,6 +288,7 @@ class VideoFeed extends React.Component {
 								}
 							</div>
 						</div>
+			
 						<video
 							className = 'video-canvas'
 							width="600"
@@ -315,6 +319,8 @@ const mapStateToProps = state => {
 		targetEmotion: state.roundReducer.targetEmotion,
 		matching: state.roundReducer.matching,
 		score: state.roundReducer.score,
+		opponentScore: state.roundReducer.opponentScore,
+		opponentCoinPositions: state.roundReducer.opponentCoinPositions,
 		user : state.user.userName
     }
 }
