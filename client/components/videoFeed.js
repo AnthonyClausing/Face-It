@@ -8,7 +8,7 @@ import _ from 'lodash';
 import PubSub from 'pubsub-js';
 import store from '../store/index.js';
 import {connect} from 'react-redux';
-import {setCoins, incrementScore, toggleCanvasClass} from '../store/round.js';
+import {setNumberCoins, setCoins, incrementScore, toggleCanvasClass, incrementCoins} from '../store/round.js';
 
 const coinCoords = [{x:0, y:0}, {x:300, y:0}, {x:568, y:0}, {x:0, y:230}, {x:568, y:230}, {x:0, y:450}, {x:568, y:450}]
 
@@ -37,6 +37,15 @@ function threshold(value) {
 	return (value > 0x15) ? 0xFF : 0;
 }
 
+function pickPositions(num) {
+	let positions = '';
+	let possiblePositions = [0, 1, 2, 3, 4, 5, 6];
+	for (let i = 0; i < num; i++) {
+		positions += (possiblePositions.splice(Math.floor(Math.random() * possiblePositions.length), 1)[0]);
+	}
+	return positions;
+}
+
 //  Cross-Browser Implementierung von der URL-Funktion, eher unwichtig
 // window.URL = window.URL ||
 // window.webkitURL ||
@@ -53,8 +62,6 @@ class VideoFeed extends React.Component {
 		this.lastImageData;
 		this.checkAreas = this.checkAreas.bind(this);
 		this.state = {}
-	
-	
 	}
 
 	componentDidMount() {
@@ -137,6 +144,13 @@ class VideoFeed extends React.Component {
 			if (average > 10) {
 				// slice out the touched coin from the positions
 				newPositions = this.props.coinPositions.slice(0,this.props.coinPositions.indexOf(coinArr[r])) + this.props.coinPositions.slice(this.props.coinPositions.indexOf(coinArr[r])+1);
+				//if they have gotten all the coins, make more appear, up until 7
+				if (newPositions.length === 0){
+					if (this.props.numberOfCoins < 7) {
+						this.props.setNumberCoins(this.props.numberOfCoins + 1)
+					}
+					newPositions = pickPositions(this.props.numberOfCoins);
+				}
 				//update the coin positions in the store
 				this.props.setCoins(newPositions);
 				//update score
@@ -315,6 +329,9 @@ const mapDispatchToProps = dispatch => {
 		},
 		toggleCanvasClass: () => {
 			dispatch(toggleCanvasClass())
+		},
+		setNumberCoins: (num) => {
+			dispatch(setNumberCoins(num))
 		}
 	}
 }

@@ -1,8 +1,9 @@
 //Initial State
 const initialState = {
   rounds: 0,
-  numberOfCoins: 2,
+  numberOfCoins: 1,
   coinPositions: '',
+  oponnentCoinPositions: '',
   gameState: null,
   targetEmotion: '',
   matching: false,
@@ -19,7 +20,9 @@ const DECREMENT_ROUNDS = "DECREMENT ROUNDS";
 const CHECK_ROUND = "CHECK_ROUND";
 const INCREMENT_SCORE = "INCREMENT_SCORE";
 const SET_OPPONENT_SCORE = "SET_OPPONENT_SCORE";
+const SET_NUMBER_COINS = "SET_NUMBER_COINS";
 const SET_COINS = "SET_COINS";
+const SET_OPPONENT_COINS = "SET_OPPONENT_COINS";
 const CREATE_INTERVAL = "CREATE_INTERVAL";
 const DESTROY_INTERVAL = "DESTROY_INTERVAL";
 const SET_EMOTION = "SET_EMOTION";
@@ -47,8 +50,16 @@ export function setOpponentScore(score){
   return {type: SET_OPPONENT_SCORE, score:score}
 }
 
+export function setNumberCoins(num){
+  return {type: SET_NUMBER_COINS, numberOfCoins: num}
+}
+
 export function setCoins(positions){
   return {type: SET_COINS, coinPositions: positions}
+}
+
+export function setOpponentCoins(positions){
+  return {type: SET_OPPONENT_COINS, coinPositions: positions}
 }
 
 export function setEmotion(emotion){
@@ -84,12 +95,15 @@ const reducer = function(state = initialState, action){
         return Object.assign({}, state, {score: state.score+1})
       case SET_OPPONENT_SCORE:
         return Object.assign({}, state, {opponentScore:action.score})
+      case SET_NUMBER_COINS:
+        return Object.assign({}, state, {numberOfCoins: action.numberOfCoins})
       case SET_COINS:
         return Object.assign({}, state, {coinPositions: action.coinPositions})
+      case SET_OPPONENT_COINS:
+        return Object.assign({}, state, {opponentCoinPositions: action.coinPositions})
       case SET_EMOTION:
         return Object.assign({}, state, {targetEmotion: action.targetEmotion})
       case CREATE_INTERVAL:
-        console.log('action', action.interval)
         return Object.assign({}, state, {interval: action.interval})
       case DESTROY_INTERVAL: 
         return Object.assign({}, state, {interval: 0})
