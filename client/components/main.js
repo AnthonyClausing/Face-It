@@ -6,7 +6,7 @@ import { createPeerConnection, doAnswer} from '../socket.js';
 
 const socket = io(window.location.origin);
 import store from '../store/index.js';
-import { collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval, setOpponentScore } from '../store/round.js';
+import { collectCoin, setGameState, setNumberCoins, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval, setOpponentScore } from '../store/round.js';
 import { connect } from 'react-redux';
 
 class Main extends Component {
@@ -124,7 +124,7 @@ class Main extends Component {
         event.preventDefault();
         this.props.setGameState('active')
         this.props.setEmotion(this.selectRandomEmotion());
-        let coinString = this.pickPositions(this.props.coinCount);
+        let coinString = this.pickPositions(this.props.numberOfCoins);
         this.props.setCoins(coinString);
         this.props.setRounds(event.target.numRounds.value);
         let interval = setInterval(this.runGame, 5000)
@@ -134,11 +134,13 @@ class Main extends Component {
     runGame() {
         if (this.props.rounds > 1) {
             console.log('interval', this.props.interval);
+            this.props.setNumberCoins(1);
             this.props.setEmotion(this.selectRandomEmotion());
-            this.props.setCoins(this.pickPositions(this.props.coinCount));
+            this.props.setCoins(this.pickPositions(this.props.numberOfCoins));
             this.props.decrementRound();
         } else {
             clearInterval(this.props.interval);
+            this.props.setNumberCoins(1);
             this.props.setCoins('');
             this.props.setGameState('stopped');
         }
@@ -233,13 +235,16 @@ const mapStateToProps = state => {
         score: state.roundReducer.score,
         emotions: state.roundReducer.emotions,
         interval: state.roundReducer.interval,
-        coinCount: state.roundReducer.numberOfCoins,
+        numberOfCoins: state.roundReducer.numberOfCoins,
         targetEmotion: state.roundReducer.targetEmotion
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
+        setNumberCoins: (num) => {
+            dispatch(setNumberCoins(num))
+        },
         setCoins: (pos) => {
             dispatch(setCoins(pos))
         },
