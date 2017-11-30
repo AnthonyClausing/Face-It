@@ -11,6 +11,7 @@ import Home from './components/home'
 import {Signup} from './components/authorization'
 import {me} from './store/user'
 import FriendsList from './components/friendsList';
+import Training from './components/training'
 
 class Routes extends Component {
 
@@ -22,7 +23,7 @@ class Routes extends Component {
       <Router history = {history}>
       <Switch>      
       <Route exact path="/friends" component={FriendsList}/>
-      <Route exact path='/singlePlayerMode' component={Main}/>
+      <Route exact path='/training' component={Training}/>
       <Route exact path='/home' component={Home}/>
       <Route component= {Login}/>
       </Switch>

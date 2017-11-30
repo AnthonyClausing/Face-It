@@ -1,26 +1,19 @@
 import React, { Component } from 'react';
 import ReactAudioPlayer from 'react-audio-player'
 import VideoFeed from './videoFeed';
-import io from 'socket.io-client';
-import { createPeerConnection, doAnswer} from '../socket.js';
 
-const socket = io(window.location.origin);
 import store from '../store/index.js';
 import { collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval, setOpponentScore } from '../store/round.js';
 import { connect } from 'react-redux';
 
-class Main extends Component {
+class Training extends Component {
     constructor () {
         super();
 
-        // this.pc = null;
-        // this.isInitiator = false;
-
+    
         this.state = {
-            // pc: {},
             userVidSource: '',
             userMediaObject: {},
-            // remoteVidSource: '',
             volume: 0.5
         };
 
@@ -30,11 +23,6 @@ class Main extends Component {
         this.matchedEmotion = this.matchedEmotion.bind(this);
         this.startGame = this.startGame.bind(this);
         this.runGame = this.runGame.bind(this);
-        // this.handleJoinRoom = this.handleJoinRoom.bind(this);
-        // this.handleNewRoom = this.handleNewRoom.bind(this);
-        // this.roomTaken = this.roomTaken.bind(this);
-        // this.createPeerConnection = createPeerConnection.bind(this);
-        // this.doAnswer = doAnswer.bind(this);
         this.handleVolume = this.handleVolume.bind(this)
     }
 
@@ -286,4 +274,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Main);
+export default connect(mapStateToProps, mapDispatchToProps)(Training);
