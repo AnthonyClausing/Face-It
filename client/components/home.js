@@ -61,7 +61,7 @@ export class Home extends Component {
                     {this.props.username && <div className = "center-items" ><button className = "home-logout-btn" onClick = {this.props.handleClick}>Logout</button></div>}
                     <h3>User gameStats</h3>
                     <NavLink to='training'>Training</NavLink>
-                    <h3>Face-to-Face</h3>
+                    <NavLink to = 'multiplayer' ><h3>Face-to-Face</h3></NavLink>
                     <p>Join Room and create room will be here after toggle</p>
                     <NavLink to = 'friends'>Friends</NavLink>
                     <Friends/>

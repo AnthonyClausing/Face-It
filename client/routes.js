@@ -25,6 +25,7 @@ class Routes extends Component {
       <Route exact path="/friends" component={FriendsList}/>
       <Route exact path='/training' component={Training}/>
       <Route exact path='/home' component={Home}/>
+      <Route exact path='/multiplayer' component={Main}/>
       <Route component= {Login}/>
       </Switch>
       </Router>

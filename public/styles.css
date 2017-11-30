@@ -64,6 +64,11 @@ button.login-items:hover{
 .login-authorization-items:hover{   
     border-color: snow
 }
+.audio-controller{
+    position: fixed;
+    top:650px;
+    left:32px;
+}
 
 #single-player{
     display:flex;
@@ -194,11 +199,27 @@ button.login-items:hover{
 } */
 
 /********************Game Controls *****************/
-.targetEmotion img {
-    height: 250px;
-    width: 250px;
+.targetEmotion {
+    height: 200;
+    width: 200px;
+    position: relative;
+    bottom: 220;
 }
+
+#left{
+    left:100px
+}
+
+#right{
+    right: 100px
+}
+
 
 .audio-login {
     display: none
+}
+
+#single-player-video-feed{
+    width: 100%;
+    height: 30em;
 }
