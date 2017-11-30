@@ -13,18 +13,20 @@ class FriendsList extends Component{
      console.log(this.props)
     const {friends} = this.props;
   return (
+    <div id="friends-list">
+    <form id="friend-adder" onSubmit={this.props.handleAddFriend}>
+      <input id="friend-input" type="text" placeholder="Add Friend" name="username"></input>
+      <button type="submit" id="add-friend">Add</button>
+    </form>
     <div className = "overflow-scroll">
    <ul>
     {
        friends && friends.map( friend =>{
-       return (<li key={friend.id}>{friend.userName}<button key={friend.id} onClick={this.props.handleRemoveFriend} value={friend.id}>X</button></li>)
+       return (<li key={friend.id}>{friend.userName}<img className="remove-friend" src="./images/trash-friends.png" key={friend.id} onClick={this.props.handleRemoveFriend} value={friend.id}/></li>)
       })
      }
     </ul>
-    <form onSubmit={this.props.handleAddFriend}>
-      <input type="text" placeholder="Enter Friend's Username" name="username"></input>
-      <button type="submit">Add</button>
-    </form>
+    </div>
     </div>
    )
   }

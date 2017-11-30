@@ -17,13 +17,13 @@ html, body{
     width: 100vw;
     background-color: #57ed87;
     height: 100vh;
-    background-image: url(https://ipadnotebook.files.wordpress.com/2012/10/screenshot-2012-10-10-08-26-281.png);
+    background-image: url('./images/login-background.png');
     /* background-image: url(http://blog.portfolium.com/wp-content/uploads/2015/04/3020937-poster-1280-emoji.jpg); */
     /* background-image: url(https://www.xmple.com/wallpaper/stripes-lines-white-pink-streaks-1920x1080-c2-ffffff-ffb6c1-l2-53-106-a-120-f-1.svg); */
     background-size: initial;
     background-position: 0px, 0px;
     background-repeat: repeat-x;
-    animation: loginscroll 15s linear infinite;
+    animation: loginscroll 16s linear infinite;
 }
 
 @keyframes loginscroll {
@@ -47,6 +47,30 @@ html, body{
     border-radius: 10%;
     transition: all 1.5s ease-in;
     text-decoration: none;
+}
+.login-authorization-items-login{
+    background: rgb(30, 90, 84); 
+    color: white;
+    text-shadow: black;
+    padding: .6em;
+    margin: .2em;
+    border-radius: 10%;
+}
+.login-authorization-items-signup{
+    background: rgb(221, 177, 95); 
+    color: white;
+    text-shadow: black;
+    padding: .6em;
+    margin: .2em;
+    border-radius: 10%;
+}
+.login-authorization-items-form-button{
+    background: rgb(81, 196, 204); 
+    color: white;
+    text-shadow: black;
+    padding: .6em;
+    margin: .2em;
+    border-radius: 10%;
 }
 
 .login-items{
@@ -76,7 +100,7 @@ button.login-items:hover{
     width: 100%;
     height: 100%;
     text-align: center;
-    background-image: url(https://www.xmple.com/wallpaper/stripes-lines-white-pink-streaks-1920x1080-c2-ffffff-ffb6c1-l2-53-106-a-120-f-1.svg);
+    background-image: url('./images/game-background.svg');
     /* background-size: initial;
     background-position: 0px, 0px;
     background-repeat: repeat-x;
@@ -92,14 +116,14 @@ button.login-items:hover{
 
 .sidenav {
     height: 100%;
-    width: 0;
+    width: 20%;
     position: fixed;
-    z-index: 1;
     top: 0;
     left: 0;
     color: white;
     background-color: #111;
     overflow-x: hidden;
+    /* overflow-y: scroll; */
     transition: 0.5s;
     padding-top: 60px;
 }
@@ -113,7 +137,7 @@ button.login-items:hover{
     text-align: center;
     background-color: #ecffdb;
     /* background-image: url(https://image.shutterstock.com/z/stock-photo-crazy-background-with-heap-of-yellow-smileys-73086103.jpg); */
-    background-image: url(https://previews.123rf.com/images/pilart/pilart1103/pilart110300076/9151349-Background-with-heap-of-Yellow-Smileys-template-for-your-fun--Stock-Photo.jpg);
+    background-image: url('./images/home-background.jpg');
     background-size: cover;
     
 }
@@ -122,6 +146,32 @@ button.login-items:hover{
     display:flex;
     flex-direction: column;
     justify-content:space-between
+}
+
+#friend-list{
+    /* position: fixed; */
+    /* width:10%; */
+    overflow-y: scroll;
+    color:white;
+    background-color:rgba(16, 16, 17, 0.863); 
+    text-shadow: black;
+}
+
+#friend-adder{
+    margin-bottom: 0px;
+}
+#friend-input{
+    padding: .5em;
+    margin-right: 1em;
+    border-radius: 10%;
+}
+.remove-friend{
+    position: relative;
+    top:.5em;
+    height: 30px;
+    width: 30px;
+    margin-left: .5em;
+    background-color:white;
 }
 
 .home-logout-btn{
@@ -137,10 +187,21 @@ button.login-items:hover{
     color:white;
 }
 
+.home-page-link{
+    text-decoration: none;
+    color: white;
+    transition: all .5s linear;
+}
+
+.home-page-link:hover{
+    background-color: darkgray;
+    text-decoration: underline;
+}
+
 .overflow-scroll{
     display: flex;
     flex-direction: column;
-    position: fixed; 
+    /* position: fixed;  */
     font-size: 21px;
     overflow-y: scroll;
     justify-content: space-between;
@@ -223,7 +284,4 @@ button.login-items:hover{
     width: 100%;
     height: 30em;
 }
-/* 
-#multiplayer-feed{
-    display:flex;
-} */
+
