@@ -193,6 +193,7 @@ class Main extends Component {
                     </label>
                     <input type="submit" name="submitJoin" />
                 </form>
+                <div id = "multiplayer-feed">
                 {
                     this.state.userVidSource &&
 
@@ -204,6 +205,7 @@ class Main extends Component {
                     this.state.remoteVidSource &&
                     <VideoFeed remoteVidSource={this.state.remoteVidSource} />
                 }
+                </div>
                 <div className='targetEmotion'>
                     {this.props.targetEmotion ?
                         <img src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
