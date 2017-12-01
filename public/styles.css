@@ -297,10 +297,11 @@ button.login-items:hover{
 
 /********************Game Controls *****************/
 .targetEmotion {
-    height: 200;
+    display:inline-block;
+    height: 200px;
     width: 200px;
     position: relative;
-    bottom: 220;
+    vertical-align:top;
 }
 
 #left{
