@@ -45,17 +45,17 @@ class Login extends Component  {
                 </div>
                 <div className='login-items'>
                 {!this.props.user && <div className = 'login-authorization'>
-                    <button className = 'login-authorization-items' onClick = {this.handleLogin}  >Login</button>
-                    <button className = 'login-authorization-items' onClick = {this.handleSignUp} >Signup</button>
+                    <button className = 'login-authorization-items-login' onClick = {this.handleLogin}  >Login</button>
+                    <button className = 'login-authorization-items-signup' onClick = {this.handleSignUp} >Signup</button>
                 </div>}
                 {!this.props.user && this.state.LoginForm && <Loging/>}
                 {!this.props.user && this.state.SignupForm && <Signup/>}
                     {this.props.user && <NavLink to='/home' className='login-items'>EnterGame</NavLink>}
                     <div className = 'center-items'>
                         {this.state.volume ? 
-                            <img src ='images/002-speaker.png' onClick={this.handleVolume}></img>
+                            <img src ='images/002-speaker.png' className="audio-controller" onClick={this.handleVolume}></img>
                             :
-                            <img src ='images/001-speaker-1.png' onClick={this.handleVolume}></img> 
+                            <img src ='images/001-speaker-1.png' className="audio-controller" onClick={this.handleVolume}></img> 
                         }
                         </div>
                     <div className = 'audio-login'>

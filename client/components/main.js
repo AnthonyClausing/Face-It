@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import ReactAudioPlayer from 'react-audio-player'
 import io from 'socket.io-client';
 
-const socket = io(window.location.origin);
 import { connect } from 'react-redux';
 import { createPeerConnection, doAnswer } from '../socket.js';
-
+import  store , {collectCoin, setGameState, setNumberCoins, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval,setOpponentScore, blackoutScreen, reviveScreen, decreaseScore} from '../store';
 import VideoFeed from './videoFeed';
-import  store , {collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval, getP1, getP1Score} from '../store';
+const socket = io(window.location.origin);
 
 class Main extends Component {
     constructor() {
@@ -21,7 +20,10 @@ class Main extends Component {
             userVidSource: '',
             userMediaObject: {},
             remoteVidSource: '',
-            volume: 0.5
+            volume: 0.5,
+            roomName: '',
+            opponentBlack: false,
+            opponentEmotion: ''
         };
 
         this.handleVideoSource = this.handleVideoSource.bind(this);
@@ -29,23 +31,26 @@ class Main extends Component {
         this.pickPositions = this.pickPositions.bind(this);
         this.matchedEmotion = this.matchedEmotion.bind(this);
         this.startGame = this.startGame.bind(this);
+        this.handleStart = this.handleStart.bind(this);
         this.runGame = this.runGame.bind(this);
         this.handleJoinRoom = this.handleJoinRoom.bind(this);
         this.handleNewRoom = this.handleNewRoom.bind(this);
         this.roomTaken = this.roomTaken.bind(this);
         this.createPeerConnection = createPeerConnection.bind(this);
         this.doAnswer = doAnswer.bind(this);
-        this.handleVolume = this.handleVolume.bind(this)
+        this.handleVolume = this.handleVolume.bind(this);
+        this.handleSpacebar = this.handleSpacebar.bind(this);
     }
 
     componentDidMount() {
-
         let videoSource;
         if (navigator.mediaDevices) {
             navigator.mediaDevices.getUserMedia({ video: true, audio: true })
                 .then(this.handleVideoSource)
                 .catch(console.log);
         }
+
+        window.addEventListener('keyup', this.handleSpacebar, false);
 
         socket.on('connect', () => {
             console.log('Connected!, My Socket Id:', socket.id);
@@ -60,10 +65,25 @@ class Main extends Component {
             this.createPeerConnection(this.state, socket);
             console.log('pc after someone joined:', this.pc);
         });
-        socket.on('otherScore', ({user,score}) =>{
-            this.props.setOpponentScore(user, score)
-            console.log('this is user:', user)
-            console.log('this is score: ', score)
+        socket.on('opponentScored', ({user,score}) =>{
+            if (this.props.user != user){
+                this.props.setOpponentScore(user, score)
+                console.log('this is user:', user)
+                console.log('this is score: ', score)
+            }
+        })
+        socket.on('blackoutScreen', () => {
+            console.log('screen shold go dark');
+            this.props.blackoutScreen();
+            setTimeout(this.props.reviveScreen, 2000);
+        })
+        socket.on('opponentEmotion', (emotion) => {
+            this.setState({opponentEmotion: emotion})
+            console.log('emotion:::::', emotion);
+        })
+        socket.on('startGame', (rounds) => {
+            console.log('emitting start')
+            this.startGame(rounds);
         })
         socket.on('signal', message => {
             if (message.type === 'offer') {
@@ -75,6 +95,8 @@ class Main extends Component {
                     this.remoteStream = e.stream;
                     this.remote = window.URL.createObjectURL(this.remoteStream);
                     this.setState({ remoteVidSource: this.remote });
+                    //both video feeds are running so alert the room
+                    socket.emit('ready', this.state.roomName);
                 };
             }
             else if (message.type === 'answer') {
@@ -86,6 +108,8 @@ class Main extends Component {
                     this.remoteStream = e.stream;
                     this.remote = window.URL.createObjectURL(this.remoteStream);
                     this.setState({ remoteVidSource: this.remote });
+                    //both video feeds are running so alert the room
+                    socket.emit('ready', this.state.roomName);
                 };
             }
             else if (message.type === 'candidate') {
@@ -99,12 +123,25 @@ class Main extends Component {
         });
     }
 
+    handleSpacebar(event) {
+        event.preventDefault();
+        if (event.keycode == 32 || event.key == ' '){
+            if (this.props.score >= 5){
+                this.props.decreaseScore(5)
+                socket.emit('blackoutOpponent');
+                this.setState({opponentBlack:true})
+                setTimeout(() => {this.setState({opponentBlack:false})}, 2000)
+            }
+        }
+    }
+
     roomTaken(msg) {
         document.getElementById('roomTaken').innerHTML = msg;
     }
 
     handleNewRoom(event) {
         event.preventDefault();
+        this.setState({roomName: event.target.newRoom.value})
         socket.emit('newRoom', event.target.newRoom.value, socket.id);
         console.log('NEW ROOM', event.target.newRoom.value);
         event.target.newRoom.value = '';
@@ -113,6 +150,7 @@ class Main extends Component {
     handleJoinRoom(event) {
         event.preventDefault();
         this.createPeerConnection(this.state);
+        this.setState({roomName: event.target.joinRoom.value})
         console.log('pc after join room:', this.pc, this.state);
         socket.emit('joinRoom', event.target.joinRoom.value);
         event.target.joinRoom.value = '';
@@ -122,13 +160,20 @@ class Main extends Component {
         this.setState({ userVidSource: window.URL.createObjectURL(mediaStream), userMediaObject: mediaStream });
     }
 
-    startGame(event) {
+    handleStart(event){
         event.preventDefault();
+        socket.emit('startGame', this.state.roomName, event.target.numRounds.value);
+        console.log('START EVENT:', event, 'roomname:', this.state.roomName, '/')
+        this.startGame(event.target.numRounds.value);
+    }
+
+    startGame(rounds) {
         this.props.setGameState('active')
         this.props.setEmotion(this.selectRandomEmotion());
-        let coinString = this.pickPositions(this.props.coinCount);
+        socket.emit('newEmotion', this.props.targetEmotion);
+        let coinString = this.pickPositions(this.props.numberOfCoins);
         this.props.setCoins(coinString);
-        this.props.setRounds(event.target.numRounds.value);
+        this.props.setRounds(rounds);
         let interval = setInterval(this.runGame, 5000)
         this.props.createInterval(interval);
         this.props.getPlayerOne(this.props.userId);
@@ -137,11 +182,15 @@ class Main extends Component {
 
     runGame() {
         if (this.props.rounds > 1) {
+            console.log('interval', this.props.interval);
+            this.props.setNumberCoins(1);
             this.props.setEmotion(this.selectRandomEmotion());
-            this.props.setCoins(this.pickPositions(this.props.coinCount));
+            socket.emit('newEmotion', this.props.targetEmotion);
+            this.props.setCoins(this.pickPositions(this.props.numberOfCoins));
             this.props.decrementRound();
         } else {
             clearInterval(this.props.interval);
+            this.props.setNumberCoins(1);
             this.props.setCoins('');
             this.props.setGameState('stopped');
         }
@@ -171,44 +220,66 @@ class Main extends Component {
 
 
     render() {
-        console.log(this.props.positions.length);
         return (
             <div id="single-player">
-            <p>Match The Emojis That Appear At The Bottom, When The Edge Of The Screen Turns Green Grab The Coins</p>
-                {/* <form onSubmit={this.handleNewRoom}>
-                    <label>
-                        Create Room:
-            <input type="text" name="newRoom" />
-                    </label>
-                    
-                    <input type="submit" name="submitNew" />
-                </form>
-                :<button onClick={this.createClicked}>Create A Room</button>
+                <p>Once you collect 5 coins, try out the spacebar (for a cosmic drink :)</p>
+                {this.state.roomName ?
+                <div> Your are in the {this.state.roomName} room </div>
+                :
+                <div className='roomForms'>
+                    <form onSubmit={this.handleNewRoom}>
+                        <label>
+                            Create Room:
+                            <input type="text" name="newRoom" />
+                        </label>
+                        <input type="submit" name="submitNew" />
+                    </form>
+                    <form onSubmit={this.handleJoinRoom}>
+                        <label>
+                            Join Room:
+                            <input type="text" name="joinRoom" />
+                        </label>
+                        <input type="submit" name="submitJoin" />
+                    </form>
+                </div>
                 }
-                {this.state.isJoinClicked ? <form onSubmit={this.handleJoinRoom}>
-                    <label>
-                        Join Room:
-                        <input type="text" name="joinRoom" />
-                    </label>
-                    <input type="submit" name="submitJoin" />
-                </form> */}
+                <div id = "multiplayer-feed">
                 {
                     this.state.userVidSource &&
 
-                    <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion}
-                        socket={socket}
+                    <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion} 
+                    socket = {socket}
+                    roomName = {this.state.roomName}
                     />
                 }
                 {
                     this.state.remoteVidSource &&
-                    <VideoFeed remoteVidSource={this.state.remoteVidSource} />
+                    <div id='opponentInfo'>
+                        <div className='gameScore'>
+                            {this.state.opponentEmotion ?
+							<img height='80em' width='80em' src={'/images/' + this.state.opponentEmotion + '.png'} /> : null}
+                            Opponent score:
+                            {this.props.opponentScore}
+                            {this.state.opponentEmotion ?
+                                <img height='80em' width='80em' src={'/images/' + this.state.opponentEmotion + '.png'} /> : null}
+                        </div>                      
+                        <div id='opponentVideo'>                
+                            <video 
+                                width = '600px'
+                                height = '480px'
+                                autoPlay="true"
+                                src={this.state.remoteVidSource} 
+                            /> 
+                            {this.state.opponentBlack &&
+                                <div className='blackout'> </div> 
+                            } 
+                        </div>
+                    </div>
                 }
-                <div id='targetEmotion'>
-                    {this.props.targetEmotion ?
-                        <img src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
                 </div>
+                
                 <div id='gameControls'>
-                    <form onSubmit={this.startGame}>
+                    <form onSubmit={this.handleStart}>
                         <label>
                             Number of Rounds to Play:
                             <input name="numRounds" type="text" />
@@ -221,9 +292,9 @@ class Main extends Component {
                 </div>
                 <div className='center-items' >
                 {this.state.volume ? 
-                    <img src ='images/002-speaker.png' onClick={this.handleVolume}></img>
+                    <img src ='images/002-speaker.png' className="audio-controller" onClick={this.handleVolume}></img>
                     :
-                    <img src ='images/001-speaker-1.png' onClick={this.handleVolume}></img> 
+                    <img src ='images/001-speaker-1.png' className="audio-controller" onClick={this.handleVolume}></img> 
                 }
                 <div className = 'audio-login'>
                     <ReactAudioPlayer
@@ -235,11 +306,12 @@ class Main extends Component {
                         volume="0.5"
                     />
                     </div>
+                    
                 </div>
             </div>
         );
     }
-}
+}//DIV ID GAMESCORE KEEP????????????????
 
 const mapStateToProps = state => {
     return {
@@ -247,17 +319,20 @@ const mapStateToProps = state => {
         positions: state.roundReducer.coinPositions,
         rounds: state.roundReducer.rounds,
         score: state.roundReducer.score,
+        opponentScore: state.roundReducer.opponentScore,
         emotions: state.roundReducer.emotions,
         interval: state.roundReducer.interval,
-        coinCount: state.roundReducer.numberOfCoins,
+        numberOfCoins: state.roundReducer.numberOfCoins,
         targetEmotion: state.roundReducer.targetEmotion,
-        userId : state.user.id,
-        points : state.gameState.p1Score
+        user: state.user.userName
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
+        setNumberCoins: (num) => {
+            dispatch(setNumberCoins(num))
+        },
         setCoins: (pos) => {
             dispatch(setCoins(pos))
         },
@@ -281,6 +356,15 @@ const mapDispatchToProps = dispatch => {
         },
         setOpponentScore: (user, score) => {
             dispatch(setOpponentScore(score))
+        },
+        blackoutScreen: () => {
+            dispatch(blackoutScreen())
+        },
+        reviveScreen: () => {
+            dispatch(reviveScreen())
+        },
+        decreaseScore: (num) => {
+            dispatch(decreaseScore(num))
         }
     }
 }

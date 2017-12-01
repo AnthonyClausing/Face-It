@@ -25,9 +25,27 @@ module.exports = io => {
                 console.log('room not found');
             }
         });
+        socket.on('startGame', (roomName, rounds) => {
+            socket.broadcast.to(roomName).emit('startGame', rounds);
+        })
 
-        socket.on('updateScore', ({user,score}) =>{
-            socket.broadcast.emit('otherScore', {user,score})
+        socket.on('ready', (roomName) => {
+            socket.broadcast.to(roomName).emit('opponentReady')
+        })
+
+        socket.on('updateScore', ({user,score,roomName}) =>{
+            console.log('score update', score, user)
+            socket.broadcast.to(roomName).emit('opponentScored', {user,score})
+        })
+
+        socket.on('blackoutOpponent', () => {
+            console.log('blaking out');
+            socket.broadcast.emit('blackoutScreen');
+        })
+
+        socket.on('newEmotion', (emotion) => {
+            console.log('newEmotion');
+            socket.broadcast.emit('opponentEmotion', emotion)
         })
 
         socket.on('signal', message => {
