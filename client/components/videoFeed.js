@@ -226,7 +226,7 @@ class VideoFeed extends React.Component {
 						<div className='gameScore'>
 							{this.props.targetEmotion ?
 							<img height='80em' width='80em' src={'/images/' + this.props.targetEmotion + '.png'} /> : null}	
-							Your score: 
+							{'Your score: '} 
 							{this.props.score}
 							{this.props.targetEmotion ?
 								<img height='80em' width='80em' src={'/images/' + this.props.targetEmotion + '.png'} /> : null}

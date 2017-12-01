@@ -92,8 +92,9 @@ class Training extends Component {
         console.log(this.props.positions.length);
         return (
             <div id="single-player">
-                <p>To play this game you have to match the emojis facial expressions. You know you're doing it right if border turns green. Once green you can collect the coins :)</p>
-                <div id = 'single-player-video-feed'>
+            <p className='game-rules'>Make the same face as the emoji</p>
+            <p className='game-rules'>Collect coins when the border is green :)</p>
+            <div id = 'single-player-video-feed'>
                 {this.props.targetEmotion ?
                         <img className='targetEmotion' id = "right" src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
         
@@ -112,9 +113,6 @@ class Training extends Component {
                         </label>
                         <input id='startGame' type='submit' disabled={this.props.gameState === 'active' ? true : false} value='Start Game' />
                     </form>
-                </div>
-                <div id='gameScore'>
-                    {this.props.score}
                 </div>
                 <div className='center-items' >
                 {this.state.volume ? 

@@ -221,21 +221,21 @@ class Main extends Component {
     render() {
         return (
             <div id="single-player">
-                <p>Once you collect 5 coins, try out the spacebar (for a cosmic drink :)</p>
+                <p>Once you collect 5 coins, try out the spacebar for a cosmic drink :)</p>
                 {this.state.roomName ?
                 <div> Your are in the {this.state.roomName} room </div>
                 :
                 <div className='roomForms'>
                     <form onSubmit={this.handleNewRoom}>
                         <label>
-                            Create Room:
+                            {'Create Room: '}
                             <input type="text" name="newRoom" />
                         </label>
                         <input type="submit" name="submitNew" />
                     </form>
                     <form onSubmit={this.handleJoinRoom}>
                         <label>
-                            Join Room:
+                            {'Join Room: '}
                             <input type="text" name="joinRoom" />
                         </label>
                         <input type="submit" name="submitJoin" />
@@ -257,7 +257,7 @@ class Main extends Component {
                         <div className='gameScore'>
                             {this.state.opponentEmotion ?
 							<img height='80em' width='80em' src={'/images/' + this.state.opponentEmotion + '.png'} /> : null}
-                            Opponent score:
+                            {'Opponent score: '}
                             {this.props.opponentScore}
                             {this.state.opponentEmotion ?
                                 <img height='80em' width='80em' src={'/images/' + this.state.opponentEmotion + '.png'} /> : null}
@@ -280,7 +280,7 @@ class Main extends Component {
                 <div id='gameControls'>
                     <form onSubmit={this.handleStart}>
                         <label>
-                            Number of Rounds to Play:
+                            {"Number of Rounds to Play: "}
                             <input name="numRounds" type="text" />
                         </label>
                         <input id='startGame' type='submit' disabled={this.props.gameState === 'active' ? true : false} value='Start Game' />

@@ -224,6 +224,10 @@ button.login-items:hover{
     display:none;
 }
 
+.game-rules {
+    margin: 0;
+}
+
 #p1canvasAndButtons, #p2canvasAndButtons {
     position:relative;
     width:600;    
