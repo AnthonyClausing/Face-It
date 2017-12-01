@@ -113,9 +113,9 @@ class VideoFeed extends React.Component {
 		// store the current webcam image
 		this.lastImageData = sourceData;
 	}
-	updateScore(score,user) {
+	updateScore(score,user,roomName) {
 		console.log('******SCORE:', score, user);
-		socket.emit('updateScore', {score, user} )
+		socket.emit('updateScore', {score, user, roomName} )
 		this.props.incrementScore();
 	}
 	checkAreas() {
@@ -154,7 +154,7 @@ class VideoFeed extends React.Component {
 				//update the coin positions in the store
 				this.props.setCoins(newPositions);
 				//update score
-				this.updateScore(this.props.score+1,this.props.user)
+				this.updateScore(this.props.score+1,this.props.user, this.props.roomName)
 				//play an audio cue
 				audio.pause();
 				audio.currentTime = 0;	
@@ -221,48 +221,9 @@ class VideoFeed extends React.Component {
 		return (
 			<div className='player-video'>
 				{
-					this.props.remoteVidSource
-					?
 					<div className='vid-size'>
-						<div id='p2canvasAndButtons'>
-							<canvas id='p2canvas-source'
-								width='600px' height='480px'
-								ref={(canvas) => this.canvas = canvas}>
-							</canvas>
-							<div id='p2virtualButtons'>
-								{
-									
-									this.props.opponentCoinPositions.split('').map((position, index) => {
-										let coinStyles = {
-											position: 'absolute',
-											height: '32px',
-											width: '32px',
-											top: coinCoords[position].y,
-											left: coinCoords[position].x
-										}
-										return (
-											<img src='/images/coin.gif' style={coinStyles}
-												key={index} />
-										)
-									})
-								}
-								</div>
-						</div>
-						<video
-							className = 'video-canvas'
-							width="600"
-							height="480"
-							id='remoteVidFeed'
-							src={this.props.remoteVidSource}
-							ref={(video) => { this.video = video }}
-							autoPlay="true">
-						</video>
-
-					</div>
-					:
-					<div className='vid-size'>
-						<div>opponent score
-							{this.props.opponentScore}
+						<div>Your score
+							{this.props.score}
 						</div>
 						<div id='p1canvasAndButtons'>
 							<canvas id='p1canvas-source'
@@ -287,6 +248,9 @@ class VideoFeed extends React.Component {
 									})
 								}
 							</div>
+							{this.props.blackout && 
+								<div id='blackOut'></div>
+							}
 						</div>
 			
 						<video
@@ -321,7 +285,8 @@ const mapStateToProps = state => {
 		score: state.roundReducer.score,
 		opponentScore: state.roundReducer.opponentScore,
 		opponentCoinPositions: state.roundReducer.opponentCoinPositions,
-		user : state.user.userName
+		user: state.user.userName,
+		blackout: state.roundReducer.blackout
     }
 }
 

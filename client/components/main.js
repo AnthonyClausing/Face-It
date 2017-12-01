@@ -6,7 +6,7 @@ import { createPeerConnection, doAnswer} from '../socket.js';
 
 const socket = io(window.location.origin);
 import store from '../store/index.js';
-import { collectCoin, setGameState, setNumberCoins, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval, setOpponentScore } from '../store/round.js';
+import { collectCoin, setGameState, setNumberCoins, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval, setOpponentScore, blackoutScreen, reviveScreen, decreaseScore } from '../store/round.js';
 import { connect } from 'react-redux';
 
 class Main extends Component {
@@ -37,18 +37,19 @@ class Main extends Component {
         this.roomTaken = this.roomTaken.bind(this);
         this.createPeerConnection = createPeerConnection.bind(this);
         this.doAnswer = doAnswer.bind(this);
-        this.handleVolume = this.handleVolume.bind(this)
+        this.handleVolume = this.handleVolume.bind(this);
+        this.handleSpacebar = this.handleSpacebar.bind(this);
     }
 
     componentDidMount() {
-
         let videoSource;
         if (navigator.mediaDevices) {
             navigator.mediaDevices.getUserMedia({ video: true, audio: true })
                 .then(this.handleVideoSource)
                 .catch(console.log);
         }
-    
+
+        window.addEventListener('keyup', this.handleSpacebar, false);
 
         socket.on('connect', () => {
             console.log('Connected!, My Socket Id:', socket.id);
@@ -63,10 +64,17 @@ class Main extends Component {
             this.createPeerConnection(this.state, socket);
             console.log('pc after someone joined:', this.pc);
         });
-        socket.on('otherScore', ({user,score}) =>{
-            this.props.setOpponentScore(user, score)
-            console.log('this is user:', user)
-            console.log('this is score: ', score)
+        socket.on('opponentScored', ({user,score}) =>{
+            if (this.props.user != user){
+                this.props.setOpponentScore(user, score)
+                console.log('this is user:', user)
+                console.log('this is score: ', score)
+            }
+        })
+        socket.on('blackoutScreen', () => {
+            console.log('screen shold go dark');
+            this.props.blackoutScreen();
+            setTimeout(this.props.reviveScreen, 2000);
         })
         socket.on('startGame', (rounds) => {
             console.log('emitting start')
@@ -108,6 +116,16 @@ class Main extends Component {
                 );
             }
         });
+    }
+
+    handleSpacebar(event) {
+        event.preventDefault();
+        if (event.keycode == 32 || event.key == ' '){
+            if (this.props.score >= 5){
+                this.props.decreaseScore(5)
+                socket.emit('blackoutOpponent');
+            }
+        }
     }
 
     roomTaken(msg) {
@@ -191,7 +209,6 @@ class Main extends Component {
 
 
     render() {
-        console.log("remote vide sourse:", this.state.remoteVidSource, "local vid source:", this.state.userVidSource);
         return (
             <div id="single-player">
                 <p>To play this game you have to match the emojis when the border turns green grab the coins</p>
@@ -219,16 +236,23 @@ class Main extends Component {
 
                     <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion} 
                     socket = {socket}
+                    roomName = {this.state.roomName}
                     />
                 }
                 {
                     this.state.remoteVidSource &&
-                    <video 
-                        width = '600px'
-                        height = '480px'
-                        autoPlay="true"
-                        src={this.state.remoteVidSource} 
-                    />
+                    <div>
+                        <video 
+                            width = '600px'
+                            height = '480px'
+                            autoPlay="true"
+                            src={this.state.remoteVidSource} 
+                        />
+                        <div id='gameScore'>
+                        opponenet score
+                        {this.props.opponentScore}
+                        </div>
+                    </div>
                 }
                 </div>
                 <div className='targetEmotion'>
@@ -244,10 +268,7 @@ class Main extends Component {
                         <input id='startGame' type='submit' disabled={this.props.gameState === 'active' ? true : false} value='Start Game' />
                     </form>
                 </div>
-                <div id='gameScore'>
-                    your score
-                    {this.props.score}
-                </div>
+
                 <div className='center-items' >
                 {this.state.volume ? 
                     <img src ='images/002-speaker.png' className="audio-controller" onClick={this.handleVolume}></img>
@@ -277,10 +298,12 @@ const mapStateToProps = state => {
         positions: state.roundReducer.coinPositions,
         rounds: state.roundReducer.rounds,
         score: state.roundReducer.score,
+        opponentScore: state.roundReducer.opponentScore,
         emotions: state.roundReducer.emotions,
         interval: state.roundReducer.interval,
         numberOfCoins: state.roundReducer.numberOfCoins,
-        targetEmotion: state.roundReducer.targetEmotion
+        targetEmotion: state.roundReducer.targetEmotion,
+        user: state.user.userName
     }
 }
 
@@ -312,6 +335,15 @@ const mapDispatchToProps = dispatch => {
         },
         setOpponentScore: (user, score) => {
             dispatch(setOpponentScore(score))
+        },
+        blackoutScreen: () => {
+            dispatch(blackoutScreen())
+        },
+        reviveScreen: () => {
+            dispatch(reviveScreen())
+        },
+        decreaseScore: (num) => {
+            dispatch(decreaseScore(num))
         }
     }
 }

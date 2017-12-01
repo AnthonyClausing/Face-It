@@ -11,6 +11,7 @@ const initialState = {
   opponentScore: 0,
   count: 0,
   interval: 0,
+  blackout: false,
   emotions: ['angry', 'happy', 'sad', 'surprised']
 }
 
@@ -19,6 +20,7 @@ const SET_ROUNDS = 'SET_ROUNDS';
 const DECREMENT_ROUNDS = "DECREMENT ROUNDS";
 const CHECK_ROUND = "CHECK_ROUND";
 const INCREMENT_SCORE = "INCREMENT_SCORE";
+const DECREASE_SCORE = "DECREASE_SCORE"
 const SET_OPPONENT_SCORE = "SET_OPPONENT_SCORE";
 const SET_NUMBER_COINS = "SET_NUMBER_COINS";
 const SET_COINS = "SET_COINS";
@@ -28,6 +30,8 @@ const DESTROY_INTERVAL = "DESTROY_INTERVAL";
 const SET_EMOTION = "SET_EMOTION";
 const SET_GAME_STATE = "SET_GAME_STATE";
 const TOGGLE_CANVAS_CLASS = "TOGGLE_CANVAS_CLASS";
+const BLACKOUT_SCREEN = "BLACKOUT_SCREEN";
+const REVIVE_SCREEN = "REVIVE_SCREEN";
 
 //ACTION CREATORS
 export function setRounds(num){
@@ -46,8 +50,12 @@ export function incrementScore(){
   return {type: INCREMENT_SCORE}
 }
 
-export function setOpponentScore(score){
-  return {type: SET_OPPONENT_SCORE, score:score}
+export function decreaseScore(num){
+  return {type: DECREASE_SCORE, num: num}
+}
+
+export function setOpponentScore(opponentScore){
+  return {type: SET_OPPONENT_SCORE, opponentScore:opponentScore}
 }
 
 export function setNumberCoins(num){
@@ -82,6 +90,14 @@ export function toggleCanvasClass(){
   return {type: TOGGLE_CANVAS_CLASS}
 }
 
+export function blackoutScreen() {
+  return {type: BLACKOUT_SCREEN}
+}
+
+export function reviveScreen() {
+  return {type: REVIVE_SCREEN}
+}
+
 //Reducer
 const reducer = function(state = initialState, action){
     switch(action.type){
@@ -93,9 +109,10 @@ const reducer = function(state = initialState, action){
         return state.rounds
       case INCREMENT_SCORE:
         return Object.assign({}, state, {score: state.score+1})
+      case DECREASE_SCORE:
+        return Object.assign({}, state, {score: state.score-action.num})
       case SET_OPPONENT_SCORE:
-        console.log('opnerent score updateing')
-        return Object.assign({}, state, {opponentScore:action.score+1})
+        return Object.assign({}, state, {opponentScore:action.opponentScore})
       case SET_NUMBER_COINS:
         return Object.assign({}, state, {numberOfCoins: action.numberOfCoins})
       case SET_COINS:
@@ -112,6 +129,11 @@ const reducer = function(state = initialState, action){
         return Object.assign({}, state, {gameState: action.state})
       case TOGGLE_CANVAS_CLASS:
         return Object.assign({}, state, {matching: !state.matching})
+      case BLACKOUT_SCREEN:
+        console.log('disatpcehd');
+        return Object.assign({}, state, {blackout: true})
+      case REVIVE_SCREEN:
+        return Object.assign({}, state, {blackout: false})
       default:
         return state;
     }
