@@ -54,7 +54,6 @@ class Training extends Component {
 
     runGame() {
         if (this.props.rounds > 1) {
-            console.log('interval', this.props.interval);
             this.props.setEmotion(this.selectRandomEmotion());
             this.props.setCoins(this.pickPositions(this.props.coinCount));
             this.props.decrementRound();
@@ -89,7 +88,6 @@ class Training extends Component {
 
 
     render() {
-        console.log(this.props.positions.length);
         return (
             <div id="single-player">
             <p className='game-rules'>Make the same face as the emoji</p>

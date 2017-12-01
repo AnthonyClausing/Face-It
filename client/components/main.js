@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import ReactAudioPlayer from 'react-audio-player'
-import VideoFeed from './videoFeed';
 import io from 'socket.io-client';
-import { createPeerConnection, doAnswer} from '../socket.js';
 
-const socket = io(window.location.origin);
-import store from '../store/index.js';
-import { collectCoin, setGameState, setNumberCoins, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval, setOpponentScore, blackoutScreen, reviveScreen, decreaseScore } from '../store/round.js';
 import { connect } from 'react-redux';
+import { createPeerConnection, doAnswer } from '../socket.js';
+import  store , {collectCoin, setGameState, setNumberCoins, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval,setOpponentScore, blackoutScreen, reviveScreen, decreaseScore} from '../store';
+import VideoFeed from './videoFeed';
+const socket = io(window.location.origin);
 
 class Main extends Component {
-    constructor () {
+    constructor() {
         super();
 
         this.pc = null;
@@ -177,6 +176,8 @@ class Main extends Component {
         this.props.setRounds(rounds);
         let interval = setInterval(this.runGame, 5000)
         this.props.createInterval(interval);
+        this.props.getPlayerOne(this.props.userId);
+        this.props.getPlayerOneScore(0);
     }
 
     runGame() {
@@ -286,7 +287,9 @@ class Main extends Component {
                         <input id='startGame' type='submit' disabled={this.props.gameState === 'active' ? true : false} value='Start Game' />
                     </form>
                 </div>
-
+                <div id='gameScore'>
+                    {this.props.score }
+                </div>
                 <div className='center-items' >
                 {this.state.volume ? 
                     <img src ='images/002-speaker.png' className="audio-controller" onClick={this.handleVolume}></img>
@@ -308,7 +311,7 @@ class Main extends Component {
             </div>
         );
     }
-}
+}//DIV ID GAMESCORE KEEP????????????????
 
 const mapStateToProps = state => {
     return {

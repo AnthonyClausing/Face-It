@@ -130,7 +130,6 @@ const reducer = function(state = initialState, action){
       case TOGGLE_CANVAS_CLASS:
         return Object.assign({}, state, {matching: !state.matching})
       case BLACKOUT_SCREEN:
-        console.log('disatpcehd');
         return Object.assign({}, state, {blackout: true})
       case REVIVE_SCREEN:
         return Object.assign({}, state, {blackout: false})

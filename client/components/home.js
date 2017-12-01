@@ -28,7 +28,6 @@ export class Home extends Component {
     componentWillUnmount() {
         navigator.getUserMedia({ audio: false, video: true },
             function (stream) {
-                console.log(stream)
                 var track = stream.getTracks()[0];  // if only one media track
                 // ...
                 track.stop();
@@ -54,7 +53,6 @@ export class Home extends Component {
 
 
     render() {
-        console.log(this.props.user)
         return (
             <div className="home">
                 <div className="sidenav">

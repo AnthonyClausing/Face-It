@@ -1,5 +1,5 @@
 const db = require('./server/db');
-const {User} = require('./server/db/models');
+const {User, Game} = require('./server/db/models');
 //const Friends = require('./server/db/models/friends');
 
 
@@ -51,13 +51,46 @@ const users = [
   }
 ]
 
+const games = [
+  {
+    winner: "NoWayJose",
+    player1Score: 50,
+    player2Score: 45
+  },
+  {
+    winner: "NoWayJose",
+    player1Score: 20,
+    player2Score: 10
+  },
+  {
+    winner: "AnxiousAnthony",
+    player1Score: 33,
+    player2Score: 32
+  },
+  {
+    winner: "NotNicholasNick",
+    player1Score: 24,
+    player2Score: 20
+  },
+  {
+    winner: "MusicalMitchell",
+    player1Score: 50,
+    player2Score: 45
+
+  }]
 
 
 
-const seed = () =>
-  Promise.all(users.map( user =>
-    User.create(user))
-  )
+
+  const seed = () =>
+    Promise.all( users.map( user =>{ 
+      return User.create(user)
+    }))
+    .then(() =>
+    Promise.all(games.map(game=> {
+       return Game.create(game)
+    })))
+    .catch( err => console.log(err))
   //How to test the Magical sequelize function addFriends and getFriends(using the Friends through table)
   // .then(users => {
   //   users[1].addFriends(users[2])

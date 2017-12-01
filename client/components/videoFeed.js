@@ -114,7 +114,6 @@ class VideoFeed extends React.Component {
 		this.lastImageData = sourceData;
 	}
 	updateScore(score,user,roomName) {
-		console.log('******SCORE:', score, user);
 		socket.emit('updateScore', {score, user, roomName} )
 		this.props.incrementScore();
 	}
@@ -190,7 +189,6 @@ class VideoFeed extends React.Component {
 				break;
 			case 'happy':
 				if ((er[3].value > .5 && !this.props.matching) || (er[3].value < .5 && this.props.matching)) {
-					console.log('togglehappy');
 					this.props.toggleCanvasClass();
 				}
 				break;
@@ -218,7 +216,6 @@ class VideoFeed extends React.Component {
 
 	render(props) {
 		let className = this.props.matching?'matching':'notMatching';
-		console.log(window.location.pathname)
 		return (
 			<div className='player-video'>
 				{

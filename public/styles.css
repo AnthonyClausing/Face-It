@@ -8,6 +8,21 @@ html, body{
     font-size: 1.25em;
 }
 
+#game-name{
+    font-size: 3.1em;
+    margin: 0em;
+    padding: 0em;
+}
+
+#game-description{
+    margin:0;
+}
+
+button{
+    color:white;
+    background-color: cornflowerblue;
+}
+
 #login-page{
     text-align: center;
     display: flex;
@@ -94,6 +109,11 @@ button.login-items:hover{
     bottom: .1em;
     left: 32px;
 }
+
+#audio-login{
+    display:none
+}
+
 
 #single-player{
     display:flex;
@@ -207,6 +227,7 @@ button.login-items:hover{
     overflow-y: scroll;
     justify-content: space-between;
     align-items: center;
+    padding-bottom: 3em;
 }
 
 #check-video{
@@ -276,6 +297,39 @@ button.login-items:hover{
 
 .notMatching{
     background-color: #deb887;
+}
+
+table {
+    width: 100%;
+    border: solid;
+    border-color: black;
+}
+
+th {
+    height: 3em;
+}
+tr{
+    display: flex;
+    justify-content: space-around;
+    border-color: black;
+    border: solid;
+    font-size: 2.2em;
+}
+#table-header{
+    display: flex;
+    justify-content: space-around;
+}
+#winner-name{
+    position: relative;
+    left:100;
+}
+#player1-points{
+ position: relative;
+ left: 150;
+}
+#player2-points{
+    position: relative;
+    left: 50;
 }
 
 #p1virtualButtons, #p2virtualButtons{
