@@ -191,7 +191,7 @@ class Main extends Component {
 
 
     render() {
-        console.log(this.props.positions.length);
+        console.log("remote vide sourse:", this.state.remoteVidSource, "local vid source:", this.state.userVidSource);
         return (
             <div id="single-player">
                 <p>To play this game you have to match the emojis when the border turns green grab the coins</p>
@@ -223,7 +223,12 @@ class Main extends Component {
                 }
                 {
                     this.state.remoteVidSource &&
-                    <VideoFeed remoteVidSource={this.state.remoteVidSource} />
+                    <video 
+                        width = '600px'
+                        height = '480px'
+                        autoPlay="true"
+                        src={this.state.remoteVidSource} 
+                    />
                 }
                 </div>
                 <div className='targetEmotion'>
