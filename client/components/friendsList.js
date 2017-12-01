@@ -10,7 +10,6 @@ class FriendsList extends Component{
     this.props.getFriends();
   }  
    render(){
-     console.log(this.props)
     const {friends} = this.props;
   return (
     <div id="friends-list">
@@ -49,7 +48,6 @@ const mapDispatch = dispatch =>{
       event.preventDefault();
       
       let friendId = event.target.alt
-      console.log("**********EVENT************",event.target.alt)
       dispatch(deleteFriend(friendId));
     }
   }

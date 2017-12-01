@@ -5,13 +5,15 @@ const initialState = [];
 
 const GET_GAMES = 'GET_GAMES';
 
-const getGames = games => {type:GET_GAMES, games};
+
+const getGames = (games) => {
+return {type: GET_GAMES, games} };
 
 
 export const getGameStats = () => dispatch =>
 axios.get('/api/users/games')
 .then(res => res.data)
-.then(games => getGames(games))
+.then(games => dispatch(getGames(games)))
 .catch(console.log);
 
 export default function (state = initialState, action) {

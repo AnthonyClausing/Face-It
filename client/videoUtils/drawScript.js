@@ -20,7 +20,6 @@ export default function buildDraw (videoSource) {
     var ctracker = new clm.tracker({useWebGL: true});
     ctracker.init(pModel);
     ctracker.start(videoSource);
-    console.log(ctracker);
 
     function drawLoop() {
         requestAnimationFrame(drawLoop);

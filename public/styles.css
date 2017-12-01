@@ -295,6 +295,23 @@ button.login-items:hover{
     background-color: #deb887;
 }
 
+table {
+    width: 100%;
+    border: solid;
+    border-color: black;
+}
+
+th {
+    height: 3em;
+}
+tr{
+    display: flex;
+    justify-content: space-around;
+    border-color: black;
+    border: solid;
+    font-size: 2.2em;
+}
+
 #p1virtualButtons, #p2virtualButtons{
     position:absolute;
     top:11;

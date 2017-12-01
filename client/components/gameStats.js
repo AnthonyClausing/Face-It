@@ -7,20 +7,20 @@ class GameStats extends Component{
     super()
   }
 
-ComponentDidMount(){
-  this.props.getGames()
+componentDidMount(){
+  this.props.getGamesList()
 }
 
 
 render(){
   return(
-    <div id="game-stats-table">
-      <table>
+    <div  id="game-stats">
+      <table className="game-stats-table">
         <thead>
           <tr>
             <th>Win/Loss</th>
             <th>Winner</th>
-            <th>Player1 Points</th>
+            <th> Player1 Points</th>
             <th>Player2 Points</th>
           </tr>
         </thead>
@@ -29,10 +29,10 @@ render(){
             this.props.games && this.props.games.map(game =>{
            return( 
              <tr key={game.id}>
-             <td>{game.winner === this.props.username ? "Win" : "Loss"  } </td>
-             <td>{game.winner}</td>
-             <td>{game.player1score}</td>
-             <td>{game.player2score}</td>
+             <td>             {game.winner === this.props.username ? "Win" : "Loss"  } </td>
+             <td>             {game.winner}</td>
+             <td>             {game.player1Score}</td>
+             <td>             {game.player2Score}</td>
              </tr>
           )})
           }
@@ -52,8 +52,8 @@ const mapState = (state) => {
 
 const mapDispatch = (dispatch) => {
   return {
-    getGames(){
-      getGameStats();
+    getGamesList() {
+      return dispatch(getGameStats())
     }
   }
 }

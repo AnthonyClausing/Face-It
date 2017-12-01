@@ -61,14 +61,15 @@ const mapDispatch = (dispatch) => {
       const email = evt.target.email.value
       const password = evt.target.password.value
       var userName;
-      if(formName === 'signup'){  userName = evt.target.userName.value
-        console.log(userName)}
+      if(formName === 'signup'){  
+      userName = evt.target.userName.value
       dispatch(authorize(email, password, userName, formName))
       evt.target.email.value = ''
       evt.target.password.value = ''
       if(userName) { evt.target.userName.value = ''}
     }
   }
+}
 }
 
 export const Loging = connect(mapLogin, mapDispatch)(AuthForm)

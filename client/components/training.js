@@ -54,7 +54,6 @@ class Training extends Component {
 
     runGame() {
         if (this.props.rounds > 1) {
-            console.log('interval', this.props.interval);
             this.props.setEmotion(this.selectRandomEmotion());
             this.props.setCoins(this.pickPositions(this.props.coinCount));
             this.props.decrementRound();
@@ -89,7 +88,6 @@ class Training extends Component {
 
 
     render() {
-        console.log(this.props.positions.length);
         return (
             <div id="single-player">
                 <p>To play this game you have to match the emojis facial expressions. You know you're doing it right if border turns green. Once green you can collect the coins :)</p>
