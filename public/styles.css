@@ -1,4 +1,344 @@
 html, body{
+    font-family: 'PT Serif', serif;
+    font-family: 'Audiowide', cursive;
+    font-family: 'Rock Salt', cursive;
+    font-family: 'Gloria Hallelujah', cursive;
     margin:0;
     padding:0;
+    font-size: 1.25em;
 }
+
+#game-name{
+    font-size: 3.1em;
+    margin: 0em;
+    padding: 0em;
+}
+
+#game-description{
+    margin:0;
+}
+
+button{
+    color:white;
+    background-color: cornflowerblue;
+}
+
+#login-page{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100vw;
+    background-color: #57ed87;
+    height: 100vh;
+    background-image: url('./images/login-background.png');
+    /* background-image: url(http://blog.portfolium.com/wp-content/uploads/2015/04/3020937-poster-1280-emoji.jpg); */
+    /* background-image: url(https://www.xmple.com/wallpaper/stripes-lines-white-pink-streaks-1920x1080-c2-ffffff-ffb6c1-l2-53-106-a-120-f-1.svg); */
+    background-size: initial;
+    background-position: 0px, 0px;
+    background-repeat: repeat-x;
+    animation: loginscroll 16s linear infinite;
+}
+
+@keyframes loginscroll {
+    from {background-position: 0, 0;}
+    to {background-position: 100%, 0 ;}
+}
+
+.login-header{
+    align-items: center;
+}
+
+.login-authorization{
+    display:flex;
+    justify-content: center;
+    margin: .2em;
+}
+
+.login-authorization-items{
+    padding: .5em;
+    margin: .1em;
+    border-radius: 10%;
+    transition: all 1.5s ease-in;
+    text-decoration: none;
+}
+.login-authorization-items-login{
+    background: rgb(30, 90, 84);
+    color: white;
+    text-shadow: black;
+    padding: 1em;
+    width: 8em;
+    margin: .2em;
+    border-radius: 10%;
+}
+.login-authorization-items-signup {
+    background: rgb(221, 177, 95);
+    color: white;
+    text-shadow: black;
+    padding: .6em;
+    width: 8em;
+    margin: .2em;
+    border-radius: 10%;
+}
+.login-authorization-items-form-button{
+    background: rgb(81, 196, 204); 
+    color: white;
+    text-shadow: black;
+    padding: .6em;
+    margin: .2em;
+    border-radius: 10%;
+}
+
+.login-items{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: .2em;
+    margin: 5em;
+}
+
+button.login-items:hover{
+    background-color: cornflowerblue;
+}
+.login-authorization-items:hover{   
+    border-color: snow
+}
+.audio-controller{
+    position: fixed;
+    bottom: .1em;
+    left: 32px;
+}
+
+#audio-login{
+    display:none
+}
+
+
+#single-player{
+    display:flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background-image: url('./images/game-background.svg');
+    /* background-size: initial;
+    background-position: 0px, 0px;
+    background-repeat: repeat-x;
+    animation: singlescroll 15s linear infinite; */
+    overflow-y:scroll;
+}
+/* 
+@keyframes singlescroll {
+    from {background-position: 0, 0;}
+    to {background-position: 100%, 0 ;}
+} */
+
+
+.sidenav {
+    height: 100%;
+    width: 20%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    color: white;
+    background-color: #111;
+    overflow-x: hidden;
+    /* overflow-y: scroll; */
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+
+.home {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 100%; 
+    text-align: center;
+    background-color: #ecffdb;
+    /* background-image: url(https://image.shutterstock.com/z/stock-photo-crazy-background-with-heap-of-yellow-smileys-73086103.jpg); */
+    background-image: url('./images/home-background.jpg');
+    background-size: cover;
+    
+}
+
+.home-greeting{
+    display:flex;
+    flex-direction: column;
+    justify-content:space-between
+}
+
+#friend-list{
+    /* position: fixed; */
+    /* width:10%; */
+    overflow-y: scroll;
+    color:white;
+    background-color:rgba(16, 16, 17, 0.863); 
+    text-shadow: black;
+}
+
+#friend-adder{
+    margin-bottom: 0px;
+}
+#friend-input{
+    padding: .5em;
+    margin-right: 1em;
+    border-radius: 10%;
+}
+.remove-friend{
+    position: relative;
+    top:.5em;
+    height: 30px;
+    width: 30px;
+    margin-left: .5em;
+    background-color:white;
+}
+
+.home-logout-btn{
+    background-color: lightskyblue;
+    padding: .3em;
+    border-radius:  10%;
+    width: 70%;
+    font-size: 1em;
+    transition: all .5s ease-in
+}
+
+.home-logout-btn:hover{
+    color:white;
+}
+
+.home-page-link{
+    text-decoration: none;
+    color: white;
+    transition: all .5s linear;
+}
+
+.home-page-link:hover{
+    background-color: darkgray;
+    text-decoration: underline;
+}
+
+.overflow-scroll{
+    display: flex;
+    flex-direction: column;
+    /* position: fixed;  */
+    font-size: 21px;
+    overflow-y: scroll;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 3em;
+}
+
+#check-video{
+    justify-content: space-between
+}
+
+/*******************  Canvas Video Feed and Virtual Buttons ************/
+
+.player-video {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.video-canvas, .blended{
+    display:none;
+}
+
+#p1canvasAndButtons, #p2canvasAndButtons {
+    position:relative;
+    width:600;    
+    height:480;
+    margin: 0 auto 30px auto;
+}
+
+#p1canvas-source, #p2canvas-source{
+    z-index:10;
+    padding:10px;
+    border: 2px ridge black;
+    width: 100%;
+    height: 100%;
+    display: inline;
+}
+
+.gameScore{
+    padding: 0 10px;
+    text-align:center;
+    margin:auto;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#opponentVideo{
+    position:relative;
+    vertical-align:top;
+    padding:9px;
+    background:#deb887;
+    border:2px ridge black;
+}
+
+#opponentVideo video{
+    border: 1px solid black;
+    object-fit: fill;
+}
+
+#opponentInfo{
+    display: inline-block;
+}
+
+.matching{
+    background-color: #57ed87;
+}
+
+.notMatching{
+    background-color: #deb887;
+}
+
+#p1virtualButtons, #p2virtualButtons{
+    position:absolute;
+    top:11;
+    left:11;
+    height:100%;
+    width:100%;
+    border:1px solid black
+}
+.blackout {
+    height:100%;
+    width:100%;
+    position: absolute;
+    top:11px;
+    left:11px;
+    background-color: black;
+}
+/* .center-items{
+    display: flex;
+    justify-content: center;
+} */
+
+/********************Game Controls *****************/
+.targetEmotion {
+    height: 200;
+    width: 200px;
+    position: relative;
+    bottom: 220;
+}
+
+#left{
+    left:100px
+}
+
+#right{
+    right: 100px
+}
+
+
+.audio-login {
+    display: none
+}
+
+#single-player-video-feed{
+    width: 100%;
+    height: 30em;
+}
+
