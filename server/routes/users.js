@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const {User} = require('../db/models')
+const {User,Game} = require('../db/models')
 
 module.exports = router;
 
@@ -24,6 +24,14 @@ router.get('/friends', function(req,res,next){
   .catch(next);
   }
 })
+router.get('/games', function(req,res,next){
+  if(req.user){
+    User.findById(req.user.id)
+    .then(user => user.getGames())
+    .then(games => res.json(games))
+    .catch(next);
+  }
+})
 
 router.post('/addFriend', function(req,res,next){
   Promise.all([User.findById(req.user.id),User.findOne({ where:{ userName: req.body.friendName }})])
@@ -31,9 +39,9 @@ router.post('/addFriend', function(req,res,next){
      let friender = users.find(user => user.id === req.user.id)
      let friendee = users.find(user => user.id !== req.user.id)
      return friender.addFriends(friendee)
-   })
-   .then(newfriend =>  res.json(newfriend))
-   .catch(next)
+    })
+     .then(newfriend =>  res.json(newfriend))
+     .catch(next)
 })
 
 router.delete('/friends/:id', function(req,res,next){

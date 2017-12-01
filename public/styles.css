@@ -8,6 +8,21 @@ html, body{
     font-size: 1.25em;
 }
 
+#game-name{
+    font-size: 3.1em;
+    margin: 0em;
+    padding: 0em;
+}
+
+#game-description{
+    margin:0;
+}
+
+button{
+    color:white;
+    background-color: cornflowerblue;
+}
+
 #login-page{
     text-align: center;
     display: flex;
@@ -94,6 +109,11 @@ button.login-items:hover{
     bottom: .1em;
     left: 32px;
 }
+
+#audio-login{
+    display:none
+}
+
 
 #single-player{
     display:flex;
@@ -207,6 +227,7 @@ button.login-items:hover{
     overflow-y: scroll;
     justify-content: space-between;
     align-items: center;
+    padding-bottom: 3em;
 }
 
 #check-video{

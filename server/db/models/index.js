@@ -1,9 +1,7 @@
 const User = require('./user');
-//const Friends =require('./friends');
+const Game = require('./game');
 
 User.belongsToMany(User,{as: 'Friends', through: 'friends', constraints:false});
-// User.belongsToMany(User,{as: 'Frienders', through: 'friends', foreignKey:'userId', constraints:false});
-
-
-
-module.exports = { User }
+Game.belongsToMany(User,{as: 'Players' ,through: 'UserGames'});
+User.belongsToMany(Game,{as: 'Games', through: 'UserGames'});
+module.exports = { User, Game }
