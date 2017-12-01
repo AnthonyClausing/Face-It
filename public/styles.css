@@ -49,18 +49,20 @@ html, body{
     text-decoration: none;
 }
 .login-authorization-items-login{
-    background: rgb(30, 90, 84); 
+    background: rgb(30, 90, 84);
     color: white;
     text-shadow: black;
-    padding: .6em;
+    padding: 1em;
+    width: 8em;
     margin: .2em;
     border-radius: 10%;
 }
-.login-authorization-items-signup{
-    background: rgb(221, 177, 95); 
+.login-authorization-items-signup {
+    background: rgb(221, 177, 95);
     color: white;
     text-shadow: black;
     padding: .6em;
+    width: 8em;
     margin: .2em;
     border-radius: 10%;
 }
@@ -78,8 +80,7 @@ html, body{
     flex-direction: column;
     justify-content: space-between;
     padding: .2em;
-    margin: .1em;
-  
+    margin: 5em;
 }
 
 button.login-items:hover{
@@ -90,8 +91,8 @@ button.login-items:hover{
 }
 .audio-controller{
     position: fixed;
-    top:650px;
-    left:32px;
+    bottom: .1em;
+    left: 32px;
 }
 
 #single-player{

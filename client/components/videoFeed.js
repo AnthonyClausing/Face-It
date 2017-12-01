@@ -218,10 +218,12 @@ class VideoFeed extends React.Component {
 
 	render(props) {
 		let className = this.props.matching?'matching':'notMatching';
+		console.log(window.location.pathname)
 		return (
 			<div className='player-video'>
 				{
 					<div className='vid-size'>
+
 						<div>Your score
 							{this.props.score}
 						</div>
