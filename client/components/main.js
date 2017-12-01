@@ -1,14 +1,8 @@
 import React, { Component } from 'react';
 import ReactAudioPlayer from 'react-audio-player'
 import io from 'socket.io-client';
-<<<<<<< HEAD
-=======
-import { createPeerConnection, doAnswer} from '../socket.js';
 
 const socket = io(window.location.origin);
-import store from '../store/index.js';
-import { collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval, setOpponentScore } from '../store/round.js';
->>>>>>> b3af3a40c9a426c6b45db33a4b897c337e5c4137
 import { connect } from 'react-redux';
 import { createPeerConnection, doAnswer } from '../socket.js';
 
@@ -27,11 +21,6 @@ class Main extends Component {
             userVidSource: '',
             userMediaObject: {},
             remoteVidSource: '',
-<<<<<<< HEAD
-            isCreateClicked: false,
-            isJoinClicked: false,
-=======
->>>>>>> b3af3a40c9a426c6b45db33a4b897c337e5c4137
             volume: 0.5
         };
 
@@ -46,14 +35,7 @@ class Main extends Component {
         this.roomTaken = this.roomTaken.bind(this);
         this.createPeerConnection = createPeerConnection.bind(this);
         this.doAnswer = doAnswer.bind(this);
-<<<<<<< HEAD
-        this.joinClicked = this.joinClicked.bind(this);
-        this.createClicked = this.createClicked.bind(this);
         this.handleVolume = this.handleVolume.bind(this)
-        
-=======
-        this.handleVolume = this.handleVolume.bind(this)
->>>>>>> b3af3a40c9a426c6b45db33a4b897c337e5c4137
     }
 
     componentDidMount() {
@@ -78,12 +60,8 @@ class Main extends Component {
             this.createPeerConnection(this.state, socket);
             console.log('pc after someone joined:', this.pc);
         });
-<<<<<<< HEAD
-        socket.on('otherScore', ({ user, score }) => {
-=======
         socket.on('otherScore', ({user,score}) =>{
             this.props.setOpponentScore(user, score)
->>>>>>> b3af3a40c9a426c6b45db33a4b897c337e5c4137
             console.log('this is user:', user)
             console.log('this is score: ', score)
         })
@@ -186,16 +164,6 @@ class Main extends Component {
         this.setState({ matching: true });
     }
 
-<<<<<<< HEAD
-    createClicked(){
-        this.setState({isCreateClicked: true, isJoinClicked: false });
-    }
-
-    joinClicked(){
-        this.setState({isJoinClicked:true, isCreateClicked: false});
-    }
-=======
->>>>>>> b3af3a40c9a426c6b45db33a4b897c337e5c4137
     handleVolume(){
         this.state.volume ? this.setState({volume : 0}) : this.setState({volume: 0.5})
         this.rap.audioEl.volume = this.rap.audioEl.volume ? 0 : 0.5; 
@@ -206,11 +174,8 @@ class Main extends Component {
         console.log(this.props.positions.length);
         return (
             <div id="single-player">
-<<<<<<< HEAD
-                { this.state.isCreateClicked ? <form onSubmit={this.handleNewRoom}>
-=======
+            <p>Match The Emojis That Appear At The Bottom, When The Edge Of The Screen Turns Green Grab The Coins</p>
                 {/* <form onSubmit={this.handleNewRoom}>
->>>>>>> b3af3a40c9a426c6b45db33a4b897c337e5c4137
                     <label>
                         Create Room:
             <input type="text" name="newRoom" />
@@ -226,14 +191,7 @@ class Main extends Component {
                         <input type="text" name="joinRoom" />
                     </label>
                     <input type="submit" name="submitJoin" />
-<<<<<<< HEAD
-                </form>
-                :
-                    <button onClick={this.joinClicked}>Join A Room</button>
-                }
-=======
                 </form> */}
->>>>>>> b3af3a40c9a426c6b45db33a4b897c337e5c4137
                 {
                     this.state.userVidSource &&
 
@@ -267,11 +225,7 @@ class Main extends Component {
                     :
                     <img src ='images/001-speaker-1.png' onClick={this.handleVolume}></img> 
                 }
-<<<<<<< HEAD
-                <div id = 'audio-login'>
-=======
                 <div className = 'audio-login'>
->>>>>>> b3af3a40c9a426c6b45db33a4b897c337e5c4137
                     <ReactAudioPlayer
                         ref={element => this.rap = element}
                         src="pokemon-black-white.mp3"
@@ -325,16 +279,8 @@ const mapDispatchToProps = dispatch => {
         setGameState: (gameState) => {
             dispatch(setGameState(gameState));
         },
-<<<<<<< HEAD
-        getPlayerOne: (id) => {
-            dispatch(getP1(id))
-        },
-        getPlayerOneScore: (points) => {
-            dispatch(getP1Score(points))
-=======
         setOpponentScore: (user, score) => {
             dispatch(setOpponentScore(score))
->>>>>>> b3af3a40c9a426c6b45db33a4b897c337e5c4137
         }
     }
 }

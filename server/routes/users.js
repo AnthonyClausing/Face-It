@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const {User} = require('../db/models')
+const {User,Game} = require('../db/models')
 
 module.exports = router;
 
@@ -22,6 +22,14 @@ router.get('/friends', function(req,res,next){
   .then(user => user.getFriends())
   .then(friends => res.json(friends))
   .catch(next);
+  }
+})
+router.get('/games', function(req,res,next){
+  if(req.user){
+    User.findById(req.user.id)
+    .then(user => user.getGames())
+    .then(games => res.json(games))
+    .catch(next);
   }
 })
 

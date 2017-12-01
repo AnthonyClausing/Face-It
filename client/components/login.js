@@ -58,11 +58,7 @@ class Login extends Component  {
                             <img src ='images/001-speaker-1.png' onClick={this.handleVolume}></img> 
                         }
                         </div>
-<<<<<<< HEAD
-                    <div id = 'audio-login'>
-=======
                     <div className = 'audio-login'>
->>>>>>> b3af3a40c9a426c6b45db33a4b897c337e5c4137
                     <ReactAudioPlayer
                         ref = { element => this.rap = element}
                         src="pokemon-black-white.mp3"

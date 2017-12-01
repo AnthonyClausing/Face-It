@@ -170,16 +170,8 @@ button.login-items:hover{
 
 .player-video {
     display: inline-block;
-<<<<<<< HEAD
-    width: 40%
 }
 
-
-
-=======
-}
-
->>>>>>> b3af3a40c9a426c6b45db33a4b897c337e5c4137
 .video-canvas, .blended{
     display:none;
 }

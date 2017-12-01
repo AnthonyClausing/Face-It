@@ -212,11 +212,7 @@ class VideoFeed extends React.Component {
 					<div className='vid-size'>
 						<div id='p2canvasAndButtons'>
 							<canvas id='p2canvas-source'
-<<<<<<< HEAD
-								height='600px' width='480px'
-=======
 								width='600px' height='480px'
->>>>>>> b3af3a40c9a426c6b45db33a4b897c337e5c4137
 								ref={(canvas) => this.canvas = canvas}
 								className={className}>
 							</canvas>
@@ -224,13 +220,8 @@ class VideoFeed extends React.Component {
 						</div>
 						<video
 							className = 'video-canvas'
-<<<<<<< HEAD
-							width="480"
-							height="600"
-=======
 							width="600"
 							height="480"
->>>>>>> b3af3a40c9a426c6b45db33a4b897c337e5c4137
 							id='remoteVidFeed'
 							src={this.props.remoteVidSource}
 							ref={(video) => { this.video = video }}
@@ -242,11 +233,7 @@ class VideoFeed extends React.Component {
 					<div className='vid-size'>
 						<div id='p1canvasAndButtons'>
 							<canvas id='p1canvas-source'
-<<<<<<< HEAD
-								height='600px' width='480px'
-=======
 								width='600px' height='480px'
->>>>>>> b3af3a40c9a426c6b45db33a4b897c337e5c4137
 								ref={(canvas) => this.canvas = canvas}
 								className={className}>
 							</canvas>
@@ -270,13 +257,8 @@ class VideoFeed extends React.Component {
 						</div>
 						<video
 							className = 'video-canvas'
-<<<<<<< HEAD
-							width="480"
-							height="600"
-=======
 							width="600"
 							height="480"
->>>>>>> b3af3a40c9a426c6b45db33a4b897c337e5c4137
 							id={this.props.id}
 							src={this.props.videoSource}
 							autoPlay="true"
