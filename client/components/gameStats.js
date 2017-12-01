@@ -17,11 +17,11 @@ render(){
     <div  id="game-stats">
       <table className="game-stats-table">
         <thead>
-          <tr>
+          <tr id="table-header">
             <th>Win/Loss</th>
-            <th>Winner</th>
-            <th> Player1 Points</th>
-            <th>Player2 Points</th>
+            <th id="winner-name">Winner</th>
+            <th id="player1-points"> Player1 Points</th>
+            <th id="player2-points">Player2 Points</th>
           </tr>
         </thead>
         <tbody>

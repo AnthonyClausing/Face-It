@@ -311,6 +311,22 @@ tr{
     border: solid;
     font-size: 2.2em;
 }
+#table-header{
+    display: flex;
+    justify-content: space-around;
+}
+#winner-name{
+    position: relative;
+    left:100;
+}
+#player1-points{
+ position: relative;
+ left: 150;
+}
+#player2-points{
+    position: relative;
+    left: 50;
+}
 
 #p1virtualButtons, #p2virtualButtons{
     position:absolute;
