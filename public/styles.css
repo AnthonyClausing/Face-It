@@ -255,6 +255,14 @@ button.login-items:hover{
     width:100%;
     border:1px solid black
 }
+#blackout {
+    height:100%;
+    width:100%;
+    position: absolute;
+    top:11px;
+    left:11px;
+    background-color: black;
+}
 /* .center-items{
     display: flex;
     justify-content: center;
