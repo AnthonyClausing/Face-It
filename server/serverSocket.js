@@ -43,6 +43,11 @@ module.exports = io => {
             socket.broadcast.emit('blackoutScreen');
         })
 
+        socket.on('newEmotion', (emotion) => {
+            console.log('newEmotion');
+            socket.broadcast.emit('opponentEmotion', emotion)
+        })
+
         socket.on('signal', message => {
             socket.broadcast.emit('signal', message);
         });

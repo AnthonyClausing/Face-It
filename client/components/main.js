@@ -22,7 +22,9 @@ class Main extends Component {
             userMediaObject: {},
             remoteVidSource: '',
             volume: 0.5,
-            roomName: ''
+            roomName: '',
+            opponentBlack: false,
+            opponentEmotion: ''
         };
 
         this.handleVideoSource = this.handleVideoSource.bind(this);
@@ -76,6 +78,10 @@ class Main extends Component {
             this.props.blackoutScreen();
             setTimeout(this.props.reviveScreen, 2000);
         })
+        socket.on('opponentEmotion', (emotion) => {
+            this.setState({opponentEmotion: emotion})
+            console.log('emotion:::::', emotion);
+        })
         socket.on('startGame', (rounds) => {
             console.log('emitting start')
             this.startGame(rounds);
@@ -124,6 +130,8 @@ class Main extends Component {
             if (this.props.score >= 5){
                 this.props.decreaseScore(5)
                 socket.emit('blackoutOpponent');
+                this.setState({opponentBlack:true})
+                setTimeout(() => {this.setState({opponentBlack:false})}, 2000)
             }
         }
     }
@@ -163,6 +171,7 @@ class Main extends Component {
     startGame(rounds) {
         this.props.setGameState('active')
         this.props.setEmotion(this.selectRandomEmotion());
+        socket.emit('newEmotion', this.props.targetEmotion);
         let coinString = this.pickPositions(this.props.numberOfCoins);
         this.props.setCoins(coinString);
         this.props.setRounds(rounds);
@@ -175,6 +184,7 @@ class Main extends Component {
             console.log('interval', this.props.interval);
             this.props.setNumberCoins(1);
             this.props.setEmotion(this.selectRandomEmotion());
+            socket.emit('newEmotion', this.props.targetEmotion);
             this.props.setCoins(this.pickPositions(this.props.numberOfCoins));
             this.props.decrementRound();
         } else {
@@ -211,25 +221,27 @@ class Main extends Component {
     render() {
         return (
             <div id="single-player">
-                <p>To play this game you have to match the emojis when the border turns green grab the coins</p>
-                <form onSubmit={this.handleNewRoom}>
-                    <label>
-                        Create Room:
-                        <input type="text" name="newRoom" />
-                    </label>
-                    <input type="submit" name="submitNew" />
-                </form>
-                <form onSubmit={this.handleJoinRoom}>
-                    <label>
-                        Join Room:
-                        <input type="text" name="joinRoom" />
-                    </label>
-                    <label>
-                        Name:
-                        <input type="text" name="userName" />
-                    </label>
-                    <input type="submit" name="submitJoin" />
-                </form>
+                <p>Once you collect 5 coins, try out the spacebar (for a cosmic drink :)</p>
+                {this.state.roomName ?
+                <div> Your are in the {this.state.roomName} room </div>
+                :
+                <div className='roomForms'>
+                    <form onSubmit={this.handleNewRoom}>
+                        <label>
+                            Create Room:
+                            <input type="text" name="newRoom" />
+                        </label>
+                        <input type="submit" name="submitNew" />
+                    </form>
+                    <form onSubmit={this.handleJoinRoom}>
+                        <label>
+                            Join Room:
+                            <input type="text" name="joinRoom" />
+                        </label>
+                        <input type="submit" name="submitJoin" />
+                    </form>
+                </div>
+                }
                 <div id = "multiplayer-feed">
                 {
                     this.state.userVidSource &&
@@ -241,24 +253,30 @@ class Main extends Component {
                 }
                 {
                     this.state.remoteVidSource &&
-                    <div>
-                        <video 
-                            width = '600px'
-                            height = '480px'
-                            autoPlay="true"
-                            src={this.state.remoteVidSource} 
-                        />
-                        <div id='gameScore'>
-                        opponenet score
-                        {this.props.opponentScore}
+                    <div id='opponentInfo'>
+                        <div className='gameScore'>
+                            {this.state.opponentEmotion ?
+							<img height='80em' width='80em' src={'/images/' + this.state.opponentEmotion + '.png'} /> : null}
+                            Opponent score:
+                            {this.props.opponentScore}
+                            {this.state.opponentEmotion ?
+                                <img height='80em' width='80em' src={'/images/' + this.state.opponentEmotion + '.png'} /> : null}
+                        </div>                      
+                        <div id='opponentVideo'>                
+                            <video 
+                                width = '600px'
+                                height = '480px'
+                                autoPlay="true"
+                                src={this.state.remoteVidSource} 
+                            /> 
+                            {this.state.opponentBlack &&
+                                <div className='blackout'> </div> 
+                            } 
                         </div>
                     </div>
                 }
                 </div>
-                <div className='targetEmotion'>
-                    {this.props.targetEmotion ?
-                        <img src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
-                </div>
+                
                 <div id='gameControls'>
                     <form onSubmit={this.handleStart}>
                         <label>

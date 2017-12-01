@@ -223,9 +223,13 @@ class VideoFeed extends React.Component {
 			<div className='player-video'>
 				{
 					<div className='vid-size'>
-
-						<div>Your score
+						<div className='gameScore'>
+							{this.props.targetEmotion ?
+							<img height='80em' width='80em' src={'/images/' + this.props.targetEmotion + '.png'} /> : null}	
+							Your score: 
 							{this.props.score}
+							{this.props.targetEmotion ?
+								<img height='80em' width='80em' src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
 						</div>
 						<div id='p1canvasAndButtons'>
 							<canvas id='p1canvas-source'
@@ -251,7 +255,7 @@ class VideoFeed extends React.Component {
 								}
 							</div>
 							{this.props.blackout && 
-								<div id='blackOut'></div>
+								<div className='blackOut'></div>
 							}
 						</div>
 			
@@ -267,7 +271,6 @@ class VideoFeed extends React.Component {
 						</video>
 					</div>
 			}
-				<div>{this.props.targetEmotion}</div>
 				<canvas className='blended'
 					width='600px' height='480px'
 					ref={(canvas) => this.blended = canvas}>
