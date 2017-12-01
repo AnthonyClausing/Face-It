@@ -18,6 +18,7 @@ render(){
       <table>
         <thead>
           <tr>
+            <th>Win/Loss</th>
             <th>Winner</th>
             <th>Player1 Points</th>
             <th>Player2 Points</th>
@@ -28,6 +29,7 @@ render(){
             this.props.games && this.props.games.map(game =>{
            return( 
              <tr key={game.id}>
+             <td>{game.winner === this.props.username ? "Win" : "Loss"  } </td>
              <td>{game.winner}</td>
              <td>{game.player1score}</td>
              <td>{game.player2score}</td>
@@ -55,3 +57,4 @@ const mapDispatch = (dispatch) => {
     }
   }
 }
+export default connect(mapState,mapDispatch)(GameStats)
