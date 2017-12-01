@@ -22,7 +22,7 @@ class FriendsList extends Component{
    <ul>
     {
        friends && friends.map( friend =>{
-       return (<li key={friend.id}>{friend.userName}<img className="remove-friend" src="./images/trash-friends.png" key={friend.id} onClick={this.props.handleRemoveFriend} value={friend.id}/></li>)
+       return (<li key={friend.id}>{friend.userName}<img className="remove-friend" src="./images/trash-friends.png" key={friend.id} onClick={this.props.handleRemoveFriend} alt={friend.id}/></li>)
       })
      }
     </ul>
@@ -47,7 +47,9 @@ const mapDispatch = dispatch =>{
     },
     handleRemoveFriend(event){
       event.preventDefault();
-      let friendId = event.target.value
+      
+      let friendId = event.target.alt
+      console.log("**********EVENT************",event.target.alt)
       dispatch(deleteFriend(friendId));
     }
   }

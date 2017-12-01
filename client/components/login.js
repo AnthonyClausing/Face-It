@@ -53,9 +53,9 @@ class Login extends Component  {
                     {this.props.user && <NavLink to='/home' className='login-items'>EnterGame</NavLink>}
                     <div className = 'center-items'>
                         {this.state.volume ? 
-                            <img src ='images/002-speaker.png' onClick={this.handleVolume}></img>
+                            <img src ='images/002-speaker.png' className="audio-controller" onClick={this.handleVolume}></img>
                             :
-                            <img src ='images/001-speaker-1.png' onClick={this.handleVolume}></img> 
+                            <img src ='images/001-speaker-1.png' className="audio-controller" onClick={this.handleVolume}></img> 
                         }
                         </div>
                     <div className = 'audio-login'>

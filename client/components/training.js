@@ -92,17 +92,15 @@ class Training extends Component {
         console.log(this.props.positions.length);
         return (
             <div id="single-player">
-                <p>To play this game you have to match the emojis when the border turns green grab the coins</p>
+                <p>To play this game you have to match the emojis facial expressions. You know you're doing it right if border turns green. Once green you can collect the coins :)</p>
                 <div id = 'single-player-video-feed'>
                 {this.props.targetEmotion ?
                         <img className='targetEmotion' id = "right" src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
-                {
-                    this.state.userVidSource &&
-
+        
                     <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion} 
                     socket = {socket}
                     />
-                }
+        
                     {this.props.targetEmotion ?
                         <img className='targetEmotion' id = "left" src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
                 </div>
@@ -120,9 +118,9 @@ class Training extends Component {
                 </div>
                 <div className='center-items' >
                 {this.state.volume ? 
-                    <img src ='images/002-speaker.png' onClick={this.handleVolume}></img>
+                    <img src ='images/002-speaker.png' className="audio-controller" onClick={this.handleVolume}></img>
                     :
-                    <img src ='images/001-speaker-1.png' onClick={this.handleVolume}></img> 
+                    <img src ='images/001-speaker-1.png' className="audio-controller" onClick={this.handleVolume}></img> 
                 }
                 <div className = 'audio-login'>
                     <ReactAudioPlayer
@@ -136,7 +134,6 @@ class Training extends Component {
                     </div>
                     
                 </div>
-                <p>bottom</p>
             </div>
         );
     }

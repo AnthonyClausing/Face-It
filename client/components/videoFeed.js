@@ -218,6 +218,7 @@ class VideoFeed extends React.Component {
 
 	render(props) {
 		let className = this.props.matching?'matching':'notMatching';
+		console.log(window.location.pathname)
 		return (
 			<div className='player-video'>
 				{
@@ -261,9 +262,9 @@ class VideoFeed extends React.Component {
 					</div>
 					:
 					<div className='vid-size'>
-						<div>opponent score
+						{window.location.pathname == '/training'? null:<div>opponent score
 							{this.props.opponentScore}
-						</div>
+						</div>}
 						<div id='p1canvasAndButtons'>
 							<canvas id='p1canvas-source'
 								width='600px' height='480px'
