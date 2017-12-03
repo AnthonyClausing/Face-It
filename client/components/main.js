@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import ReactAudioPlayer from 'react-audio-player'
 import io from 'socket.io-client';
+import {NavLink} from 'react-router-dom';
 
 import { connect } from 'react-redux';
 import { createPeerConnection, doAnswer } from '../socket.js';
 import  store , {collectCoin, setGameState, setNumberCoins, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval,setOpponentScore, blackoutScreen, reviveScreen, decreaseScore} from '../store';
 import VideoFeed from './videoFeed';
+
 const socket = io(window.location.origin);
 
 class Main extends Component {
@@ -235,6 +237,7 @@ class Main extends Component {
     render() {
         return (
             <div id="single-player">
+                <NavLink to = 'home'><img className = 'home-button' src = "./images/home-icon.png"></img></NavLink>
                 <p>Once you collect 5 coins, try out the spacebar for a cosmic drink :)</p>
                 { this.state.roomName ?
                 <div> Your are in the {this.state.roomName} room </div>
