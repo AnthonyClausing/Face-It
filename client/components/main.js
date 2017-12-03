@@ -5,7 +5,7 @@ import {NavLink} from 'react-router-dom';
 
 import { connect } from 'react-redux';
 import { createPeerConnection, doAnswer } from '../socket.js';
-import  store , {collectCoin, setGameState, setNumberCoins, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval,setOpponentScore, blackoutScreen, reviveScreen, decreaseScore} from '../store';
+import  store , {collectCoin, setGameState, setNumberCoins, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval,setOpponentScore, blackoutScreen, reviveScreen, decreaseScore, setUserScore} from '../store';
 import VideoFeed from './videoFeed';
 
 const socket = io(window.location.origin);
@@ -154,6 +154,8 @@ class Main extends Component {
     }
 
     handleNewRoom(event) {
+        this.props.setUserScore(0);
+        this.props.setOpponentScore(0);
         event.preventDefault();
         this.setState({roomName: event.target.newRoom.value})
         document.getElementById('roomTaken').innerHTML = '';
@@ -163,6 +165,8 @@ class Main extends Component {
     }
 
     handleJoinRoom(event) {
+        this.props.setUserScore(0);
+        this.props.setOpponentScore(0);
         event.preventDefault();
         this.createPeerConnection(this.state);
         this.setState({roomName: event.target.joinRoom.value})
@@ -183,9 +187,11 @@ class Main extends Component {
     }
 
     startGame(rounds) {
+        this.props.setUserScore(0);
+        this.props.setOpponentScore(0);
         this.props.setGameState('active')
         this.props.setEmotion(this.selectRandomEmotion());
-        socket.emit('newEmotion', this.props.targetEmotion);
+        socket.emit('newEmotion', this.props.targetEmotion, this.state.roomName);
         let coinString = this.pickPositions(this.props.numberOfCoins);
         this.props.setCoins(coinString);
         this.props.setRounds(rounds);
@@ -200,7 +206,7 @@ class Main extends Component {
             console.log('interval', this.props.interval);
             this.props.setNumberCoins(1);
             this.props.setEmotion(this.selectRandomEmotion());
-            socket.emit('newEmotion', this.props.targetEmotion);
+            socket.emit('newEmotion', this.props.targetEmotion, this.state.roomName);
             this.props.setCoins(this.pickPositions(this.props.numberOfCoins));
             this.props.decrementRound();
         } else {
@@ -379,6 +385,9 @@ const mapDispatchToProps = dispatch => {
         },
         decreaseScore: (num) => {
             dispatch(decreaseScore(num))
+        },
+        setUserScore: (num) => {
+            dispatch(setUserScore(num))
         }
     }
 }

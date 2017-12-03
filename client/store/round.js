@@ -20,7 +20,8 @@ const SET_ROUNDS = 'SET_ROUNDS';
 const DECREMENT_ROUNDS = "DECREMENT ROUNDS";
 const CHECK_ROUND = "CHECK_ROUND";
 const INCREMENT_SCORE = "INCREMENT_SCORE";
-const DECREASE_SCORE = "DECREASE_SCORE"
+const DECREASE_SCORE = "DECREASE_SCORE";
+const SET_USER_SCORE = "SET_USER_SCORE";
 const SET_OPPONENT_SCORE = "SET_OPPONENT_SCORE";
 const SET_NUMBER_COINS = "SET_NUMBER_COINS";
 const SET_COINS = "SET_COINS";
@@ -52,6 +53,10 @@ export function incrementScore(){
 
 export function decreaseScore(num){
   return {type: DECREASE_SCORE, num: num}
+}
+
+export function setUserScore(num){
+  return {type: SET_USER_SCORE, num: num}
 }
 
 export function setOpponentScore(opponentScore){
@@ -111,6 +116,8 @@ const reducer = function(state = initialState, action){
         return Object.assign({}, state, {score: state.score+1})
       case DECREASE_SCORE:
         return Object.assign({}, state, {score: state.score-action.num})
+      case SET_USER_SCORE:
+        return Object.assign({}, state, {score: action.num}) 
       case SET_OPPONENT_SCORE:
         return Object.assign({}, state, {opponentScore:action.opponentScore})
       case SET_NUMBER_COINS:

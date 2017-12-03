@@ -50,9 +50,9 @@ module.exports = io => {
             socket.broadcast.to(roomName).emit('blackoutScreen');
         })
 
-        socket.on('newEmotion', (emotion) => {
+        socket.on('newEmotion', (emotion, roomName) => {
             console.log('newEmotion');
-            socket.broadcast.emit('opponentEmotion', emotion)
+            socket.broadcast.to(roomName).emit('opponentEmotion', emotion)
         })
     
         //changed things here
