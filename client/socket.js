@@ -1,8 +1,20 @@
 const config = {
-    iceServers: [{ url: 'stun:stun2.1.google.com:19302' }]
+    iceServers: [{ url: 'stun:stun2.1.google.com:19302' },
+    {url:'stun:stun01.sipphone.com'},
+    {url:'stun:stun.ekiga.net'},
+    {url:'stun:stun.fwdnet.net'},
+    {url:'stun:stun.ideasip.com'},
+    {url:'stun:stun.iptel.org'},
+    {url:'stun:stun.rixtelecom.se'},
+    {url:'stun:stun.schlund.de'},
+    {url:'stun:stun.l.google.com:19302'},
+    {url:'stun:stun1.l.google.com:19302'},
+    {url:'stun:stun2.l.google.com:19302'},
+    {url:'stun:stun3.l.google.com:19302'},
+    {url:'stun:stun4.l.google.com:19302'}]
 };
 
-function createPeerConnection (state, socket) {
+function createPeerConnection (state, socket, roomName) {
     this.pc = new RTCPeerConnection(config);
     this.pc.onicecandidate = handleIceCandidate;
     this.pc.onaddstream = handleRemoteStreamAdded;
@@ -14,7 +26,7 @@ function createPeerConnection (state, socket) {
             return this.pc.setLocalDescription(offer);
         }).then(() => {
             console.log('localdes:', this.pc.localDescription);
-            socket.emit('signal', this.pc.localDescription);
+            socket.emit('signal', this.pc.localDescription, this.state.roomName);
         });
     } else {
         console.log('not initiator pc:', this.pc);
@@ -35,11 +47,11 @@ function handleIceCandidate (event) {
     }
 }
 
-function doAnswer (socket) {
+function doAnswer (socket, roomName) {
     this.pc.createAnswer().then(answer => {
         return this.pc.setLocalDescription(answer);
     }).then(() => {
-        socket.emit('signal', this.pc.localDescription);
+        socket.emit('signal', this.pc.localDescription, roomName);
     });
 }
 
@@ -142,32 +154,3 @@ module.exports = {
 };
 
 
-// import io from 'socket.io-client';
-
-// function connectToSite (roomTaken) {
-//     const socket = io(window.location.origin)
-
-//     socket.on('connect', () => {
-//         console.log('Connected!, My Socket Id:', socket.id)
-//     })
-
-//     socket.on('roomTaken', (msg) => {
-//         console.log(msg);
-//         roomTaken(msg);
-//     })
-
-//     return socket;
-// }
-
-// function joinRoom (socket, roomName) {
-//     console.log('joing Room')
-//     socket.emit('joinRoom', roomName)
-// }
-
-// function newRoom (socket, roomName) {
-//     socket.emit('newRoom', roomName, socket.id)
-// }
-
-// module.exports = {
-//     connectToSite, joinRoom, newRoom
-// }

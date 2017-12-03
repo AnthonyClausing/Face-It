@@ -23,7 +23,8 @@ class Main extends Component {
             volume: 0.5,
             roomName: '',
             opponentBlack: false,
-            opponentEmotion: ''
+            opponentEmotion: '',
+            roomTaken: false
         };
 
         this.handleVideoSource = this.handleVideoSource.bind(this);
@@ -57,12 +58,13 @@ class Main extends Component {
         });
         socket.on('roomTaken', (msg) => {
             console.log(msg);
+            this.setState({roomName: ''})
             document.getElementById('roomTaken').innerHTML = msg;
         });
         socket.on('someoneJoinedTheRoom', () => {
             console.log('someone joined');
             this.isInitiator = true;
-            this.createPeerConnection(this.state, socket);
+            this.createPeerConnection(this.state, socket, this.state.roomName);
             console.log('pc after someone joined:', this.pc);
         });
         socket.on('opponentScored', ({user,score}) =>{
@@ -89,7 +91,9 @@ class Main extends Component {
             if (message.type === 'offer') {
                 console.log('received offer:', message);
                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
-                this.doAnswer(socket);
+                //Added things here
+
+                this.doAnswer(socket,this.state.roomName);
                 this.pc.onaddstream = e => {
                     console.log('onaddstream', e);
                     this.remoteStream = e.stream;
@@ -128,7 +132,14 @@ class Main extends Component {
         if (event.keycode == 32 || event.key == ' '){
             if (this.props.score >= 5){
                 this.props.decreaseScore(5)
-                socket.emit('blackoutOpponent');
+
+                //ADDED THINGS HERE
+
+                var user =this.props.user
+                var roomName = this.state.roomName
+                var score = this.props.score
+                socket.emit('blackoutOpponent', roomName);
+                socket.emit('updateScore', {score, user, roomName} )
                 this.setState({opponentBlack:true})
                 setTimeout(() => {this.setState({opponentBlack:false})}, 2000)
             }
@@ -137,11 +148,13 @@ class Main extends Component {
 
     roomTaken(msg) {
         document.getElementById('roomTaken').innerHTML = msg;
+        this.setState({roomTaken: true})
     }
 
     handleNewRoom(event) {
         event.preventDefault();
         this.setState({roomName: event.target.newRoom.value})
+        document.getElementById('roomTaken').innerHTML = '';
         socket.emit('newRoom', event.target.newRoom.value, socket.id);
         console.log('NEW ROOM', event.target.newRoom.value);
         event.target.newRoom.value = '';
@@ -223,7 +236,7 @@ class Main extends Component {
         return (
             <div id="single-player">
                 <p>Once you collect 5 coins, try out the spacebar for a cosmic drink :)</p>
-                {this.state.roomName ?
+                { this.state.roomName ?
                 <div> Your are in the {this.state.roomName} room </div>
                 :
                 <div className='roomForms'>
@@ -243,6 +256,7 @@ class Main extends Component {
                     </form>
                 </div>
                 }
+                <p id = "roomTaken"></p>
                 <div id = "multiplayer-feed">
                 {
                     this.state.userVidSource &&
@@ -286,9 +300,6 @@ class Main extends Component {
                         </label>
                         <input id='startGame' type='submit' disabled={this.props.gameState === 'active' ? true : false} value='Start Game' />
                     </form>
-                </div>
-                <div id='gameScore'>
-                    {this.props.score }
                 </div>
                 <div className='center-items' >
                 {this.state.volume ? 

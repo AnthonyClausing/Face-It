@@ -95,7 +95,7 @@ button{
     flex-direction: column;
     justify-content: space-between;
     padding: .2em;
-    margin: 5em;
+    margin: 3.5em;
 }
 
 button.login-items:hover{
