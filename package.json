@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node server",
     "build-watch": "webpack -w",
     "start-dev": "npm run build-watch & npm run start-server",
     "seed": "node ./seed.js",
