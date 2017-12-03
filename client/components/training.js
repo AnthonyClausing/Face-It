@@ -1,10 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import ReactAudioPlayer from 'react-audio-player'
-import VideoFeed from './videoFeed';
+import {NavLink} from 'react-router-dom'
+import { connect } from 'react-redux'
 
-import store from '../store/index.js';
-import { collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval, setOpponentScore } from '../store/round.js';
-import { connect } from 'react-redux';
+import VideoFeed from './videoFeed'
+import store from '../store/index.js'
+import { collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval, setOpponentScore } from '../store/round.js'
+
 
 class Training extends Component {
     constructor () {
@@ -90,6 +92,7 @@ class Training extends Component {
     render() {
         return (
             <div id="single-player">
+            <NavLink to = 'home'><img className = 'home-button' src = "./images/home-icon.png"></img></NavLink>
             <p className='game-rules'>Make the same face as the emoji</p>
             <p className='game-rules'>Collect coins when the border is green :)</p>
             <div id = 'single-player-video-feed'>

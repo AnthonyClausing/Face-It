@@ -20,13 +20,15 @@ dispatch =>
     .catch(err => console.log(err))
 
 export const authorize = (email, password, userName, method) => dispatch =>
-  axios
+    {
+    console.log("HITEERSER")
+    return  axios
     .post(`/auth/${method}`, { email, password, userName })
     .then(res => {  
       dispatch(getUser(res.data));
       // history.push("/home");
     })
-    .catch(error => dispatch(getUser({ error })));
+    .catch(error => dispatch(getUser({ error })));}
 
 export const logout = () => dispatch =>
   axios

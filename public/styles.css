@@ -95,7 +95,7 @@ button{
     flex-direction: column;
     justify-content: space-between;
     padding: .2em;
-    margin: 5em;
+    margin: 3.5em;
 }
 
 button.login-items:hover{
@@ -107,7 +107,7 @@ button.login-items:hover{
 .audio-controller{
     position: fixed;
     bottom: .1em;
-    left: 32px;
+    left: 2.5em;
 }
 
 #audio-login{
@@ -167,6 +167,14 @@ button.login-items:hover{
     display:flex;
     flex-direction: column;
     justify-content:space-between
+}
+
+.home-button{
+    position: fixed;
+    top:.1em;
+    right: .5em;
+    width: 1.5em;
+    height: 1.5em;
 }
 
 #friend-list{
