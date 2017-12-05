@@ -16,7 +16,7 @@ module.exports = io => {
             }
         });
 
-        //changed things here
+        //room joining
         socket.on('joinRoom', (roomName) => {
             console.log('rooms', io.nsps['/'].adapter.rooms);
             if (io.nsps['/'].adapter.rooms.hasOwnProperty(roomName)){
@@ -44,9 +44,9 @@ module.exports = io => {
             socket.broadcast.to(roomName).emit('opponentScored', {user,score})
         })
         
-        //changed things here
+        //helps change screen
         socket.on('blackoutOpponent', (roomName) => {
-            console.log('blaking out');
+            console.log('blacking out');
             socket.broadcast.to(roomName).emit('blackoutScreen');
         })
 
@@ -55,11 +55,10 @@ module.exports = io => {
             socket.broadcast.to(roomName).emit('opponentEmotion', emotion)
         })
     
-        //changed things here
+        //allowing peer connection signal
         socket.on('signal', (message, roomName) => {
             console.log("signal!!!! ", roomName, message)
             socket.broadcast.to(roomName).emit('signal', message);
-            // socket.broadcast.emit('signal', message);
         });
     });
 };

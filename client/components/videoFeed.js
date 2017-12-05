@@ -1,14 +1,17 @@
+
+
 import React from 'react';
+import {connect} from 'react-redux';
 import getUserMedia from 'getusermedia';
+import _ from 'lodash';
+import PubSub from 'pubsub-js';
+
+
 import emotionClassifier from './models/emotionclassifier.js';
 import emotionModel from './models/emotionmodel.js';
 import pModel from './models/pmodel.js';
 import clm from '../../public/ClamTracker/build/clmtrackr.js';
-import _ from 'lodash';
-import PubSub from 'pubsub-js';
-import store from '../store/index.js';
-import {connect} from 'react-redux';
-import {setNumberCoins, setCoins, incrementScore, toggleCanvasClass, incrementCoins} from '../store/round.js';
+import store, {setNumberCoins, setCoins, incrementScore, toggleCanvasClass, incrementCoins} from '../store';
 
 const coinCoords = [{x:0, y:0}, {x:300, y:0}, {x:568, y:0}, {x:0, y:230}, {x:568, y:230}, {x:0, y:450}, {x:568, y:450}]
 
@@ -45,12 +48,6 @@ function pickPositions(num) {
 	}
 	return positions;
 }
-
-//  Cross-Browser Implementierung von der URL-Funktion, eher unwichtig
-// window.URL = window.URL ||
-// window.webkitURL ||
-// window.msURL ||
-// window.mozURL;
 
 class VideoFeed extends React.Component {
 
@@ -169,7 +166,7 @@ class VideoFeed extends React.Component {
 		let cp = this.state.tracker.getCurrentParameters();
 
 		this.canvasCtx.clearRect(0, 0, 600, 480);
-		this.canvasCtx.drawImage(this.video, 0, 0, this.video.width, this.video.height);
+		this.video && this.canvasCtx.drawImage(this.video, 0, 0, this.video.width, this.video.height);
 
 		//only run the motion detection functions if the game is active
 		if (this.props.gameState === 'active'){
@@ -203,15 +200,6 @@ class VideoFeed extends React.Component {
 				}
 				break;
 		}
-
-		// if(er) {
-		// 	//these are just for development purposes, easy read out of status
-			// document.getElementById('angry').innerHTML = '<span> Anger </span>' + er[0].value;
-			// document.getElementById('happy').innerHTML = '<span> Happy </span>' + er[3].value;
-			// document.getElementById('sad').innerHTML = '<span> Sad </span>' + er[1].value;
-			// document.getElementById('surprised').innerHTML = '<span> Surprised </span>' + er[2].value;
-		// }
-       
 	}
 
 	render(props) {
@@ -310,23 +298,3 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(VideoFeed);
-
-
-
-// <div id='p2virtualButtons'>
-// {
-// 	this.props.coinPositions.split('').map((position, index) => {
-// 		let coinStyles = {
-// 			position: 'absolute',
-// 			height: '32px',
-// 			width: '32px',
-// 			top: coinCoords[position].y,
-// 			left: coinCoords[position].x
-// 		}
-// 		return (
-// 			<img src='/images/coin.gif' style={coinStyles}
-// 				key={index} />
-// 		)
-// 	})
-// }
-// </div>

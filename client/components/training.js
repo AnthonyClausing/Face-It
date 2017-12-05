@@ -1,22 +1,19 @@
 import React, { Component } from 'react'
-import ReactAudioPlayer from 'react-audio-player'
-import {NavLink} from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { connect } from 'react-redux'
 
 import VideoFeed from './videoFeed'
-import store from '../store/index.js'
-import { collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval, setOpponentScore } from '../store/round.js'
-
+import store, { collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval, setOpponentScore } from '../store'
+import AudioPlayer from './audioPlayer'
 
 class Training extends Component {
-    constructor () {
+    constructor() {
         super();
 
-    
+
         this.state = {
             userVidSource: '',
             userMediaObject: {},
-            volume: 0.5
         };
 
         this.handleVideoSource = this.handleVideoSource.bind(this);
@@ -25,7 +22,6 @@ class Training extends Component {
         this.matchedEmotion = this.matchedEmotion.bind(this);
         this.startGame = this.startGame.bind(this);
         this.runGame = this.runGame.bind(this);
-        this.handleVolume = this.handleVolume.bind(this)
     }
 
     componentDidMount() {
@@ -83,28 +79,24 @@ class Training extends Component {
         this.setState({ matching: true });
     }
 
-    handleVolume(){
-        this.state.volume ? this.setState({volume : 0}) : this.setState({volume: 0.5})
-        this.rap.audioEl.volume = this.rap.audioEl.volume ? 0 : 0.5; 
-    }
+
 
 
     render() {
         return (
             <div id="single-player">
-            <NavLink to = 'home'><img className = 'home-button' src = "./images/home-icon.png"></img></NavLink>
-            <p className='game-rules'>Make the same face as the emoji</p>
-            <p className='game-rules'>Collect coins when the border is green :)</p>
-            <div id = 'single-player-video-feed'>
-                {this.props.targetEmotion ?
-                        <img className='targetEmotion' id = "right" src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
-        
-                    <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion} 
-                    socket = {socket}
-                    />
-        
+                <NavLink to='home'><img className='home-button' src="./images/home-icon.png"></img></NavLink>
+                <p className='game-rules'>Make the same face as the emoji</p>
+                <p className='game-rules'>Collect coins when the border is green :)</p>
+                <div id='single-player-video-feed'>
                     {this.props.targetEmotion ?
-                        <img className='targetEmotion' id = "left" src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
+                        <img className='targetEmotion' id="right" src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
+                    <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion}
+                        socket={socket}
+                    />
+
+                    {this.props.targetEmotion ?
+                        <img className='targetEmotion' id="left" src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
                 </div>
                 <div id='gameControls'>
                     <form onSubmit={this.startGame}>
@@ -115,24 +107,7 @@ class Training extends Component {
                         <input id='startGame' type='submit' disabled={this.props.gameState === 'active' ? true : false} value='Start Game' />
                     </form>
                 </div>
-                <div className='center-items' >
-                {this.state.volume ? 
-                    <img src ='images/002-speaker.png' className="audio-controller" onClick={this.handleVolume}></img>
-                    :
-                    <img src ='images/001-speaker-1.png' className="audio-controller" onClick={this.handleVolume}></img> 
-                }
-                <div className = 'audio-login'>
-                    <ReactAudioPlayer
-                        ref={element => this.rap = element}
-                        src="pokemon-black-white.mp3"
-                        loop
-                        autoPlay
-                        controls
-                        volume="0.5"
-                    />
-                    </div>
-                    
-                </div>
+                <AudioPlayer />
             </div>
         );
     }
@@ -146,7 +121,7 @@ const mapStateToProps = state => {
         score: state.roundReducer.score,
         emotions: state.roundReducer.emotions,
         interval: state.roundReducer.interval,
-        coinCount: state.roundReducer.numberOfCoins + 3,
+        coinCount: state.roundReducer.numberOfCoins,
         targetEmotion: state.roundReducer.targetEmotion
     }
 }

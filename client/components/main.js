@@ -1,12 +1,13 @@
+
 import React, { Component } from 'react';
-import ReactAudioPlayer from 'react-audio-player'
 import io from 'socket.io-client';
 import {NavLink} from 'react-router-dom';
-
 import { connect } from 'react-redux';
+
 import { createPeerConnection, doAnswer } from '../socket.js';
 import  store , {collectCoin, setGameState, setNumberCoins, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval,setOpponentScore, blackoutScreen, reviveScreen, decreaseScore, setUserScore} from '../store';
 import VideoFeed from './videoFeed';
+import AudioPlayer from './audioPlayer';
 
 const socket = io(window.location.origin);
 
@@ -22,7 +23,6 @@ class Main extends Component {
             userVidSource: '',
             userMediaObject: {},
             remoteVidSource: '',
-            volume: 0.5,
             roomName: '',
             opponentBlack: false,
             opponentEmotion: '',
@@ -41,7 +41,6 @@ class Main extends Component {
         this.roomTaken = this.roomTaken.bind(this);
         this.createPeerConnection = createPeerConnection.bind(this);
         this.doAnswer = doAnswer.bind(this);
-        this.handleVolume = this.handleVolume.bind(this);
         this.handleSpacebar = this.handleSpacebar.bind(this);
     }
 
@@ -93,8 +92,8 @@ class Main extends Component {
             if (message.type === 'offer') {
                 console.log('received offer:', message);
                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
-                //Added things here
 
+            
                 this.doAnswer(socket,this.state.roomName);
                 this.pc.onaddstream = e => {
                     console.log('onaddstream', e);
@@ -234,11 +233,6 @@ class Main extends Component {
         this.setState({ matching: true });
     }
 
-    handleVolume(){
-        this.state.volume ? this.setState({volume : 0}) : this.setState({volume: 0.5})
-        this.rap.audioEl.volume = this.rap.audioEl.volume ? 0 : 0.5; 
-    }
-
 
     render() {
         return (
@@ -310,28 +304,11 @@ class Main extends Component {
                         <input id='startGame' type='submit' disabled={this.props.gameState === 'active' ? true : false} value='Start Game' />
                     </form>
                 </div>
-                <div className='center-items' >
-                {this.state.volume ? 
-                    <img src ='images/002-speaker.png' className="audio-controller" onClick={this.handleVolume}></img>
-                    :
-                    <img src ='images/001-speaker-1.png' className="audio-controller" onClick={this.handleVolume}></img> 
-                }
-                <div className = 'audio-login'>
-                    <ReactAudioPlayer
-                        ref={element => this.rap = element}
-                        src="pokemon-black-white.mp3"
-                        loop
-                        autoPlay
-                        controls
-                        volume="0.5"
-                    />
-                    </div>
-                    
-                </div>
+                <AudioPlayer/>
             </div>
         );
     }
-}//DIV ID GAMESCORE KEEP????????????????
+}
 
 const mapStateToProps = state => {
     return {
