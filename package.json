@@ -9,7 +9,7 @@
     "start-dev": "npm run build-watch & npm run start-server",
     "seed": "node ./seed.js",
     "start-server": "NODE_ENV='development' nodemon ./server -e html,js,scss --ignore public",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "db-init": "createdb face_it"
   },
   "author": "",
@@ -42,6 +42,7 @@
     "redux-devtools-extension": "^2.13.2",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.2.0",
+    "request": "^2.83.0",
     "sequelize": "^4.22.15",
     "session": "^0.1.0",
     "socketio": "^1.0.0",
@@ -55,6 +56,9 @@
     "babel-preset-react": "^6.22.0",
     "babel-preset-stage-2": "^6.24.1",
     "babel-register": "^6.24.1",
+    "chai": "^4.1.2",
+    "jasmine": "^2.8.0",
+    "mocha": "^4.0.1",
     "redux-devtools-extension": "^2.13.2",
     "video.js": "^6.4.0"
   },
