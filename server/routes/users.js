@@ -11,7 +11,7 @@ router.get('/', function(req,res,next){
     .then(users =>res.json(users))
     .catch(next);
   }else{
-  res.send('YOU DO NOT BELONG')
+    res.send('YOU DO NOT BELONG')
   }
 });
 
