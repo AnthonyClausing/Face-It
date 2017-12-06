@@ -13,7 +13,6 @@ export class Home extends Component {
             open: false
         }
         this.handleVideoSource = this.handleVideoSource.bind(this)
-        // this.changeNav = this.changeNav.bind(this)
     }
 
     componentDidMount() {
@@ -40,17 +39,6 @@ export class Home extends Component {
     handleVideoSource(mediaStream) {
         this.setState({ videoSource: window.URL.createObjectURL(mediaStream) })
     }
-
-    // changeNav() {
-    //     if(!this.state.open) {document.getElementById("mySidenav").style.width = "20%";
-    //     this.setState({open:true})}
-    //    else {document.getElementById("mySidenav").style.width = "0";
-    //     this.setState({open:false})}
-    // }
-    
-
-    
-
 
     render() {
         return (
