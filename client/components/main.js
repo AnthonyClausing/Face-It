@@ -130,7 +130,7 @@ class Main extends Component {
 
     handleSpacebar(event) {
         event.preventDefault();
-        if (event.keycode == 32 || event.key == ' '){
+        if (event.keyCode == 32 || event.key == ' '){
             if (this.props.score >= 5){
                 this.props.decreaseScore(5)
 
@@ -196,8 +196,6 @@ class Main extends Component {
         this.props.setRounds(rounds);
         let interval = setInterval(this.runGame, 5000)
         this.props.createInterval(interval);
-        this.props.getPlayerOne(this.props.userId);
-        this.props.getPlayerOneScore(0);
     }
 
     runGame() {
