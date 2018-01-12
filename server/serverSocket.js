@@ -41,13 +41,18 @@ module.exports = io => {
 
         socket.on('updateScore', ({user,score,roomName}) =>{
             console.log('score update', score, user)
-            socket.broadcast.to(roomName).emit('opponentScored', {user,score})
+            roomName && socket.broadcast.to(roomName).emit('opponentScored', {user,score})
         })
         
         //helps change screen
         socket.on('blackoutOpponent', (roomName) => {
             console.log('blacking out');
             socket.broadcast.to(roomName).emit('blackoutScreen');
+        })
+
+        socket.on('changeScreen', ({roomName, user})=>{
+            console.log('making upSideDown', user)
+            socket.broadcast.to(roomName).emit('upSideDown')
         })
 
         socket.on('newEmotion', (emotion, roomName) => {

@@ -5,7 +5,7 @@ import {NavLink} from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { createPeerConnection, doAnswer } from '../socket.js';
-import  store , {collectCoin, setGameState, setNumberCoins, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval,setOpponentScore, blackoutScreen, reviveScreen, decreaseScore, setUserScore} from '../store';
+import  store , {collectCoin, setGameState, setNumberCoins, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval,setOpponentScore, blackoutScreen, reviveScreen, decreaseScore, setUserScore, upSideDown} from '../store';
 import VideoFeed from './videoFeed';
 import AudioPlayer from './audioPlayer';
 
@@ -42,6 +42,7 @@ class Main extends Component {
         this.createPeerConnection = createPeerConnection.bind(this);
         this.doAnswer = doAnswer.bind(this);
         this.handleSpacebar = this.handleSpacebar.bind(this);
+        // this.handleQ = this.handleQ.bind(this);
     }
 
     componentDidMount() {
@@ -53,6 +54,7 @@ class Main extends Component {
         }
 
         window.addEventListener('keyup', this.handleSpacebar, false);
+        // window.addEventListener('keydown', this.handleQ, false)
 
         socket.on('connect', () => {
             console.log('Connected!, My Socket Id:', socket.id);
@@ -80,6 +82,19 @@ class Main extends Component {
             this.props.blackoutScreen();
             setTimeout(this.props.reviveScreen, 2000);
         })
+
+        
+        // probably have to move this to main because it doesn't stick because of all the re-renders.
+		//-- so maybe either have to target video feed directly or something else
+	    socket.on('upSideDown', () => {
+            console.log('------------------------------------------hit by q-------')
+			this.props.upSideDown();
+			setTimeout(this.props.upSideDown, 5000)
+
+		})
+      
+      
+
         socket.on('opponentEmotion', (emotion) => {
             this.setState({opponentEmotion: emotion})
             console.log('emotion:::::', emotion);
@@ -130,7 +145,9 @@ class Main extends Component {
 
     handleSpacebar(event) {
         event.preventDefault();
-        if (event.keycode == 32 || event.key == ' '){
+        console.log(event.keyCode, event.key)
+        if (event.keyCode == 32 || event.key == ' '){
+            console.log("spacebar",event.key)
             if (this.props.score >= 5){
                 this.props.decreaseScore(5)
 
@@ -145,7 +162,40 @@ class Main extends Component {
                 setTimeout(() => {this.setState({opponentBlack:false})}, 2000)
             }
         }
+        else if (event.keyCode == 81 || event.key == 'q'){
+            if (this.props.score >= 0){
+                this.props.decreaseScore(0)
+                console.log('Hit Q')
+                //ADDED THINGS HERE
+                var user =this.props.user
+                var roomName = this.state.roomName
+                var score = this.props.score
+                socket.emit('changeScreen', {roomName, user});
+                socket.emit('updateScore', {score, user, roomName}) 
+                this.opponentFeed.classList.add('transform-rotate')
+                setTimeout(() => {this.opponentFeed.classList.remove('transform-rotate')}, 5000)
+            }
+        }
     }
+
+    
+    // handleQ(event) {
+    //     event.preventDefault();      
+    //     if (event.keyCode == 81 || event.key == 'q'){
+    //         if (this.props.score >= 0){
+    //             this.props.decreaseScore(0)
+    //             console.log('Hit Q')
+    //             //ADDED THINGS HERE
+    //             var user =this.props.user
+    //             var roomName = this.state.roomName
+    //             var score = this.props.score
+    //             socket.emit('changeScreen', roomName);
+    //             socket.emit('updateScore', {score, user, roomName}) 
+    //             this.opponentFeed.classList.add('transform-rotate')
+    //             setTimeout(() => {this.opponentFeed.classList.remove('transform-rotate')}, 2000)
+    //         }
+    //     }
+    // }
 
     roomTaken(msg) {
         document.getElementById('roomTaken').innerHTML = msg;
@@ -196,8 +246,6 @@ class Main extends Component {
         this.props.setRounds(rounds);
         let interval = setInterval(this.runGame, 5000)
         this.props.createInterval(interval);
-        this.props.getPlayerOne(this.props.userId);
-        this.props.getPlayerOneScore(0);
     }
 
     runGame() {
@@ -282,6 +330,7 @@ class Main extends Component {
                         </div>                      
                         <div id='opponentVideo'>                
                             <video 
+                                ref = {(opponent) => this.opponentFeed = opponent}
                                 width = '600px'
                                 height = '480px'
                                 autoPlay="true"
@@ -365,6 +414,9 @@ const mapDispatchToProps = dispatch => {
         },
         setUserScore: (num) => {
             dispatch(setUserScore(num))
+        },
+        upSideDown : () =>{
+            dispatch(upSideDown())
         }
     }
 }

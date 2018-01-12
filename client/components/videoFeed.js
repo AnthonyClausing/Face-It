@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import getUserMedia from 'getusermedia';
 import _ from 'lodash';
 import PubSub from 'pubsub-js';
@@ -11,13 +11,15 @@ import emotionClassifier from './models/emotionclassifier.js';
 import emotionModel from './models/emotionmodel.js';
 import pModel from './models/pmodel.js';
 import clm from '../../public/ClamTracker/build/clmtrackr.js';
-import store, {setNumberCoins, setCoins, incrementScore, toggleCanvasClass, incrementCoins} from '../store';
+import store, { setNumberCoins, setCoins, incrementScore, toggleCanvasClass, incrementCoins } from '../store';
 
-const coinCoords = [{x:0, y:0}, {x:300, y:0}, {x:568, y:0}, {x:0, y:230}, {x:568, y:230}, {x:0, y:450}, {x:568, y:450}]
+
+//If change canvas to upside down, have new area for that that just flips it? 
+const coinCoords = [{ x: 0, y: 0 }, { x: 300, y: 0 }, { x: 568, y: 0 }, { x: 0, y: 230 }, { x: 568, y: 230 }, { x: 0, y: 450 }, { x: 568, y: 450 }]
 
 const audio = new Audio('coin.WAV');
 
-function fastAbs (value) {
+function fastAbs(value) {
 	return (value ^ (value >> 31)) - (value >> 31);
 }
 
@@ -25,13 +27,13 @@ function differenceAccuracy(target, data1, data2) {
 	if (data1.length != data2.length) return null;
 	var i = 0;
 	while (i < (data1.length * 0.25)) {
-		var average1 = (data1[4*i] + data1[4*i+1] + data1[4*i+2]) / 3;
-		var average2 = (data2[4*i] + data2[4*i+1] + data2[4*i+2]) / 3;
+		var average1 = (data1[4 * i] + data1[4 * i + 1] + data1[4 * i + 2]) / 3;
+		var average2 = (data2[4 * i] + data2[4 * i + 1] + data2[4 * i + 2]) / 3;
 		var diff = threshold(fastAbs(average1 - average2));
-		target[4*i] = diff;
-		target[4*i+1] = diff;
-		target[4*i+2] = diff;
-		target[4*i+3] = 0xFF;
+		target[4 * i] = diff;
+		target[4 * i + 1] = diff;
+		target[4 * i + 2] = diff;
+		target[4 * i + 3] = 0xFF;
 		++i;
 	}
 }
@@ -58,7 +60,9 @@ class VideoFeed extends React.Component {
 		this.blend = this.blend.bind(this);
 		this.lastImageData;
 		this.checkAreas = this.checkAreas.bind(this);
-		this.state = {}
+		this.state = {
+			upSideDown: false
+		}
 	}
 
 	componentDidMount() {
@@ -69,10 +73,10 @@ class VideoFeed extends React.Component {
 
 		// getUserMedia({ video : true}, this.getUserMediaCallback.bind(this) );
 
-		let ctrack = new clm.tracker({useWebGL : true});
+		let ctrack = new clm.tracker({ useWebGL: true });
 		ctrack.init(pModel);
 		this.ctrack = ctrack;
-		this.setState({tracker: ctrack});
+		this.setState({ tracker: ctrack });
 
 		this.blendedCtx = this.blended.getContext('2d');
 		this.canvasCtx = this.canvas.getContext('2d');
@@ -81,14 +85,24 @@ class VideoFeed extends React.Component {
 
 		let self = this;
 
+		// probably have to move this to main because it doesn't stick because of all the re-renders.
+		//-- so maybe either have to target video feed directly or something else
+		// this.props.socket.on('upSideDown', () => {
+		// 	console.log('Make it upside down!')
+		// 	var p1canvas = document.getElementById('p1canvas-source')
+		// 	p1canvas.classList.add('transform-rotate')
+		// 	this.setState({ upSideDown: true })
+		// 	setTimeout(() => { this.setState({ upSideDown: false }); p1canvas.classList.remove('transform-rotate') }, 5000)
+
+		// })
 		this.video.addEventListener('canplay', (this.startVideo).bind(this), false);
 	}
 
-	startVideo(){
+	startVideo() {
 		//seems to work fine without calling play
-//		this.video.play();
+		//		this.video.play();
 		this.state.tracker.start(this.video);
-		
+
 		//this.ctrack.start(this.video);
 		// start loop to draw face
 		this.drawLoop();
@@ -110,15 +124,17 @@ class VideoFeed extends React.Component {
 		// store the current webcam image
 		this.lastImageData = sourceData;
 	}
-	updateScore(score,user,roomName) {
-		socket.emit('updateScore', {score, user, roomName} )
+	updateScore(score, user, roomName) {
+		socket.emit('updateScore', { score, user, roomName })
 		this.props.incrementScore();
 	}
+
+	//If change canvas to upside down, change check areas
 	checkAreas() {
 		// loop over the coin areas
 		let coinArr = this.props.coinPositions.split('');
 		let newPositions = '';
-		for (var r=0; r<coinArr.length; ++r) {
+		for (var r = 0; r < coinArr.length; ++r) {
 			//get the pixels in a button area from the blended image
 			var blendedData = this.blendedCtx.getImageData(
 				coinCoords[coinArr[r]].x,
@@ -131,7 +147,7 @@ class VideoFeed extends React.Component {
 			// loop over the pixels
 			while (i < (blendedData.data.length / 4)) {
 				// make an average between the color channel
-				average += (blendedData.data[i*4] + blendedData.data[i*4+1] + blendedData.data[i*4+2]) / 3;
+				average += (blendedData.data[i * 4] + blendedData.data[i * 4 + 1] + blendedData.data[i * 4 + 2]) / 3;
 				++i;
 			}
 			// calculate an average between the color values of the note area
@@ -139,9 +155,9 @@ class VideoFeed extends React.Component {
 			// over a small limit, consider that a movement is detected
 			if (average > 10) {
 				// slice out the touched coin from the positions
-				newPositions = this.props.coinPositions.slice(0,this.props.coinPositions.indexOf(coinArr[r])) + this.props.coinPositions.slice(this.props.coinPositions.indexOf(coinArr[r])+1);
+				newPositions = this.props.coinPositions.slice(0, this.props.coinPositions.indexOf(coinArr[r])) + this.props.coinPositions.slice(this.props.coinPositions.indexOf(coinArr[r]) + 1);
 				//if they have gotten all the coins, make more appear, up until 7
-				if (newPositions.length === 0){
+				if (newPositions.length === 0) {
 					if (this.props.numberOfCoins < 7) {
 						this.props.setNumberCoins(this.props.numberOfCoins + 1)
 					}
@@ -150,18 +166,18 @@ class VideoFeed extends React.Component {
 				//update the coin positions in the store
 				this.props.setCoins(newPositions);
 				//update score
-				this.updateScore(this.props.score+1,this.props.user, this.props.roomName)
+				this.updateScore(this.props.score + 1, this.props.user, this.props.roomName)
 				//play an audio cue
 				audio.pause();
-				audio.currentTime = 0;	
-				audio.play();		
+				audio.currentTime = 0;
+				audio.play();
 			}
 		}
 	}
 
-	drawLoop(){
+	drawLoop() {
 		requestAnimationFrame((this.drawLoop).bind(this));
-    
+
 		//let cp = this.ctrack.getCurrentParameters();
 		let cp = this.state.tracker.getCurrentParameters();
 
@@ -169,9 +185,9 @@ class VideoFeed extends React.Component {
 		this.video && this.canvasCtx.drawImage(this.video, 0, 0, this.video.width, this.video.height);
 
 		//only run the motion detection functions if the game is active
-		if (this.props.gameState === 'active'){
+		if (this.props.gameState === 'active') {
 			this.blend();
-			if (this.props.matching){
+			if (this.props.matching) {
 				this.checkAreas();
 			}
 		}
@@ -203,15 +219,18 @@ class VideoFeed extends React.Component {
 	}
 
 	render(props) {
-		let className = this.props.matching?'matching':'notMatching';
+		let className = this.props.matching ? 'matching ' : 'notMatching';
+		console.log(this.props.upSideDown)
+		let flip = this.props.upSideDown ? 'transform-rotate': '';
+		
 		return (
 			<div className='player-video'>
 				{
 					<div className='vid-size'>
 						<div className='gameScore'>
 							{this.props.targetEmotion ?
-							<img height='80em' width='80em' src={'/images/' + this.props.targetEmotion + '.png'} /> : null}	
-							{'Your score: '} 
+								<img height='80em' width='80em' src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
+							{'Your score: '}
 							{this.props.score}
 							{this.props.targetEmotion ?
 								<img height='80em' width='80em' src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
@@ -220,32 +239,39 @@ class VideoFeed extends React.Component {
 							<canvas id='p1canvas-source'
 								width='600px' height='480px'
 								ref={(canvas) => this.canvas = canvas}
-								className={className}>
+								className={`${className} ${flip}`}>
 							</canvas>
 							<div id='p1virtualButtons'>
-								{
-									this.props.coinPositions.split('').map((position, index) => {
-										let coinStyles = {
-											position: 'absolute',
-											height: '32px',
-											width: '32px',
-											top: coinCoords[position].y,
-											left: coinCoords[position].x
-										}
-										return (
-											<img src='/images/coin.gif' style={coinStyles}
-												key={index} />
-										)
-									})
+								{this.props.coinPositions.split('').map((position, index) => {
+									let coinStyles = !this.props.upSideDown ? {
+										position: 'absolute',
+										height: '32px',
+										width: '32px',
+										top: coinCoords[position].y,
+										left: coinCoords[position].x
+									}:{
+										position: 'absolute',
+										height: '32px',
+										width: '32px',
+										bottom: coinCoords[position].y,
+										right: coinCoords[position].x
+									}
+
+									return (
+										<img src='/images/coin.gif' style={coinStyles}
+											key={index} />
+									)
+								})
+
 								}
 							</div>
-							{this.props.blackout && 
+							{this.props.blackout &&
 								<div className='blackOut'></div>
 							}
 						</div>
-			
+
 						<video
-							className = 'video-canvas'
+							className='video-canvas'
 							width="600"
 							height="480"
 							id={this.props.id}
@@ -255,7 +281,7 @@ class VideoFeed extends React.Component {
 							ref={(video) => { this.video = video }}>
 						</video>
 					</div>
-			}
+				}
 				<canvas className='blended'
 					width='600px' height='480px'
 					ref={(canvas) => this.blended = canvas}>
@@ -266,7 +292,7 @@ class VideoFeed extends React.Component {
 }
 
 const mapStateToProps = state => {
-    return {
+	return {
 		coinPositions: state.roundReducer.coinPositions,
 		numberOfCoins: state.roundReducer.numberOfCoins,
 		gameState: state.roundReducer.gameState,
@@ -276,8 +302,9 @@ const mapStateToProps = state => {
 		opponentScore: state.roundReducer.opponentScore,
 		opponentCoinPositions: state.roundReducer.opponentCoinPositions,
 		user: state.user.userName,
-		blackout: state.roundReducer.blackout
-    }
+		blackout: state.roundReducer.blackout,
+		upSideDown: state.roundReducer.upSideDown
+	}
 }
 
 const mapDispatchToProps = dispatch => {
@@ -298,3 +325,32 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(VideoFeed);
+
+// this.state.upSideDown===false ? this.props.coinPositions.split('').map((position, index) => {
+									// 	let coinStyles = {
+									// 		position: 'absolute',
+									// 		height: '32px',
+									// 		width: '32px',
+									// 		top: coinCoords[position].y,
+									// 		left: coinCoords[position].x
+									// 	}
+									// 	return (
+									// 		<img src='/images/coin.gif' style={coinStyles}
+									// 			key={index} />
+									// 	)
+									// }):this.props.coinPositions.split('').map((position, index) => {
+									// 	let coinStyles = {
+									// 		position: 'absolute',
+									// 		height: '32px',
+									// 		width: '32px',
+									// 		bottom: coinCoords[position].y,
+									// 		right: coinCoords[position].x
+									// 	}
+									// 	return (
+									// 		<img src='/images/coin.gif' style={coinStyles}
+									// 			key={index} />
+									// 	)
+									// })
+
+									//So what happens when upside down is called? 
+									//it adds the className to the canvas but once it has to remount, it changes its own . 

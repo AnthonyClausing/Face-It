@@ -12,7 +12,8 @@ const initialState = {
   count: 0,
   interval: 0,
   blackout: false,
-  emotions: ['angry', 'happy', 'sad', 'surprised']
+  emotions: ['angry', 'happy', 'sad', 'surprised'],
+  upSideDown: false
 }
 
 //ACTIONS
@@ -33,6 +34,15 @@ const SET_GAME_STATE = "SET_GAME_STATE";
 const TOGGLE_CANVAS_CLASS = "TOGGLE_CANVAS_CLASS";
 const BLACKOUT_SCREEN = "BLACKOUT_SCREEN";
 const REVIVE_SCREEN = "REVIVE_SCREEN";
+
+
+const TOGGLE_UPSIDE_DOWN = "TOGGLE_UPSIDE_DOWN"
+
+export function upSideDown(){
+  return {type: TOGGLE_UPSIDE_DOWN}
+}
+
+
 
 //ACTION CREATORS
 export function setRounds(num){
@@ -136,6 +146,8 @@ const reducer = function(state = initialState, action){
         return Object.assign({}, state, {gameState: action.state})
       case TOGGLE_CANVAS_CLASS:
         return Object.assign({}, state, {matching: !state.matching})
+      case TOGGLE_UPSIDE_DOWN:
+        return Object.assign({}, state, {upSideDown: !state.upSideDown})
       case BLACKOUT_SCREEN:
         return Object.assign({}, state, {blackout: true})
       case REVIVE_SCREEN:

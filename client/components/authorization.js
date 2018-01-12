@@ -26,7 +26,7 @@ const AuthForm = (props) => {
             {name === 'signup' ? <input className='login-authorization-items' name="userName" type="text" placeholder='userName' /> : null}
             <button className='login-authorization-items-form-button' type="submit">{displayName}</button>
           </div>
-          {error && error.response && <div> {error.response.data} </div>}
+          {error && error.response && <div> {error.response.data==='User already exists'? error.response.data:'Invalid email'} </div>}
           {user.userName && <div>Hey {user.userName}!</div>}
         </div>
       </form>
