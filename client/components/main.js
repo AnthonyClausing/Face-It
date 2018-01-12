@@ -196,8 +196,6 @@ class Main extends Component {
         this.props.setRounds(rounds);
         let interval = setInterval(this.runGame, 5000)
         this.props.createInterval(interval);
-        this.props.getPlayerOne(this.props.userId);
-        this.props.getPlayerOneScore(0);
     }
 
     runGame() {
