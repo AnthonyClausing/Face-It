@@ -130,7 +130,7 @@ class Main extends Component {
 
     handleSpacebar(event) {
         event.preventDefault();
-        if (event.keycode == 32 || event.key == ' '){
+        if (event.keyCode == 32 || event.key == ' '){
             if (this.props.score >= 5){
                 this.props.decreaseScore(5)
 
