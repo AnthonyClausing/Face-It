@@ -105,7 +105,7 @@ class VideoFeed extends React.Component {
 
 		//this.ctrack.start(this.video);
 		// start loop to draw face
-		this.drawLoop();
+		this.canvas && this.drawLoop();
 	}
 
 	blend() {
@@ -182,10 +182,10 @@ class VideoFeed extends React.Component {
 		let cp = this.state.tracker.getCurrentParameters();
 
 		this.canvasCtx.clearRect(0, 0, 600, 480);
-		this.video && this.canvasCtx.drawImage(this.video, 0, 0, this.video.width, this.video.height);
+		this.canvas && this.video && this.canvasCtx.drawImage(this.video, 0, 0, this.video.width, this.video.height);
 
 		//only run the motion detection functions if the game is active
-		if (this.props.gameState === 'active') {
+		if (this.props.gameState === 'active' && this.canvas) {
 			this.blend();
 			if (this.props.matching) {
 				this.checkAreas();

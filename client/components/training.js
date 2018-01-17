@@ -25,15 +25,18 @@ class Training extends Component {
     }
 
     componentDidMount() {
-
+       
+        this.props.setEmotion(null)
+        this.props.setCoins('')
+        this.props.setGameState('stopped')
         let videoSource;
         if (navigator.mediaDevices) {
             navigator.mediaDevices.getUserMedia({ video: true, audio: true })
                 .then(this.handleVideoSource)
                 .catch(console.log);
         }
+        
     }
-
 
     handleVideoSource(mediaStream) {
         this.setState({ userVidSource: window.URL.createObjectURL(mediaStream), userMediaObject: mediaStream });

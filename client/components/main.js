@@ -47,11 +47,16 @@ class Main extends Component {
 
     componentDidMount() {
         let videoSource;
+        
+        this.props.setEmotion(null)
+        this.props.setCoins('')
+        this.props.setGameState('stopped')
+
         if (navigator.mediaDevices) {
             navigator.mediaDevices.getUserMedia({ video: true, audio: true })
                 .then(this.handleVideoSource)
                 .catch(console.log);
-        }
+        }    
 
         window.addEventListener('keyup', this.handleSpacebar, false);
         // window.addEventListener('keydown', this.handleQ, false)
@@ -142,6 +147,13 @@ class Main extends Component {
             }
         });
     }
+
+    componentWillUnmount(){
+        clearInterval(this.props.interval);
+        this.props.setCoins('');
+        this.props.setGameState('stopped');
+    }
+
 
     handleSpacebar(event) {
         event.preventDefault();
