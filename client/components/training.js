@@ -38,9 +38,14 @@ class Training extends Component {
         
     }
 
+    componentWillUnmount(){
+        this.props.rounds>1 ? clearInterval(this.props.interval): null;
+    }
+
     handleVideoSource(mediaStream) {
         this.setState({ userVidSource: window.URL.createObjectURL(mediaStream), userMediaObject: mediaStream });
     }
+
 
     startGame(event) {
         event.preventDefault();
