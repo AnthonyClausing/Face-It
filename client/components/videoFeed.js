@@ -51,6 +51,8 @@ function pickPositions(num) {
 	return positions;
 }
 
+var reqId;
+
 class VideoFeed extends React.Component {
 
 	constructor(props) {
@@ -95,7 +97,13 @@ class VideoFeed extends React.Component {
 		// 	setTimeout(() => { this.setState({ upSideDown: false }); p1canvas.classList.remove('transform-rotate') }, 5000)
 
 		// })
+
+		reqId = true;
 		this.video.addEventListener('canplay', (this.startVideo).bind(this), false);
+	}
+
+	componentWillUnmount(){
+		reqId= false;
 	}
 
 	startVideo() {
@@ -176,7 +184,7 @@ class VideoFeed extends React.Component {
 	}
 
 	drawLoop() {
-		requestAnimationFrame((this.drawLoop).bind(this));
+		reqId ?	requestAnimationFrame((this.drawLoop).bind(this)): null;
 
 		//let cp = this.ctrack.getCurrentParameters();
 		let cp = this.state.tracker.getCurrentParameters();
