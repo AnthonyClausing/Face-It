@@ -1,4 +1,5 @@
-module.exports = {
+const config = {
+    mode: "development",
     entry: './client/index.js',
     output: {
       path: __dirname.toLowerCase(),
@@ -14,3 +15,5 @@ module.exports = {
         ]
     }
 }
+
+module.exports = config

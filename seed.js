@@ -96,7 +96,7 @@ const games = [
   //   users[1].addFriends(users[2])
   //  return users[1].addFriends(users[3])
   // })
-  // .then(() => User.findById(2))
+  // .then(() => User.findByPk(2))
   // .then(user => user.getFriends())
   // .then(friends => console.log(friends))
 

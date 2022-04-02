@@ -44,7 +44,7 @@ class Login extends Component  {
                 </div>}
                 {!this.props.user && this.state.LoginForm && <Loging/>}
                 {!this.props.user && this.state.SignupForm && <Signup/>}
-                    {this.props.user && <NavLink to='/home' className='login-items'>EnterGame</NavLink>}
+                    {this.props.user && <NavLink to='home' className='login-items' end>EnterGame</NavLink>}
                   <AudioPlayer/>
                 </div>
             </div>

@@ -1,5 +1,5 @@
 import { createStore, combineReducers, applyMiddleware } from "redux";
-import {composeWithDevTools} from 'redux-devtools-extension';
+// import {composeWithDevTools} from 'redux-devtools-extension';
 import thunkMiddleWare from "redux-thunk";
 import logger from 'redux-logger';
 import roundReducer from './round';
@@ -11,7 +11,7 @@ import games from './games';
 
 const reducer = combineReducers({roundReducer, queue,user, friends, gameState, games});
 
-let middleware = composeWithDevTools(applyMiddleware(thunkMiddleWare, logger));
+let middleware = applyMiddleware(thunkMiddleWare, logger);
 
 const store = createStore(reducer,middleware);
 

@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import io from 'socket.io-client';
+import { io } from 'socket.io-client';
 import {NavLink} from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -282,7 +282,7 @@ class Main extends Component {
                             <video 
                                 width = '600px'
                                 height = '480px'
-                                autoPlay="true"
+                                autoPlay={true}
                                 src={this.state.remoteVidSource} 
                             /> 
                             {this.state.opponentBlack &&

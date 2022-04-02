@@ -1,0 +1,17 @@
+{
+    "development": {
+      "username": "postgres",
+      "password": "coderboy123",
+      "database": "face_it",
+      "host": "localhost",
+      "port": 5433,
+      "dialect": "postgres"
+    },
+    "production": {
+      "username": null,
+      "password": null,
+      "database": "DATABASE_URL",
+      "dialect": "postgres",
+      "use_env_variable": "DATABASE_URL"
+    }
+  }

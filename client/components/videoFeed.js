@@ -250,7 +250,7 @@ class VideoFeed extends React.Component {
 							height="480"
 							id={this.props.id}
 							src={this.props.videoSource}
-							autoPlay="true"
+							autoPlay={true}
 							muted
 							ref={(video) => { this.video = video }}>
 						</video>

@@ -1,68 +1,51 @@
-import React, { Component } from 'react'
+import React, { Component, useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { connect } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import VideoFeed from './videoFeed'
 import store, { collectCoin, setGameState, setCoins, setEmotion, setRounds, decrementRound, createInterval, destroyInterval, setOpponentScore } from '../store'
 import AudioPlayer from './audioPlayer'
 
-class Training extends Component {
-    constructor() {
-        super();
+const Training = function(){
+    const dispatch = useDispatch()
+    const [userMediaObject, setMediaObject] = useState({})
+    const [matchingEmotion, setmatchingEmotion] = useState(false)
+    const gameState = useSelector(state =>state.roundReducer.gameState)
+    const positions = useSelector(state =>state.roundReducer.positions)
+    const rounds = useSelector(state =>state.roundReducer.rounds)
+    const score = useSelector(state =>state.roundReducer.score)
+    const emotions = useSelector(state =>state.roundReducer.emotions)
+    const interval = useSelector(state =>state.roundReducer.interval)
+    const coinCount = useSelector(state =>state.roundReducer.coinCount)
+    const targetEmotion = useSelector(state => state.roundReducer.targetEmotion)
 
-
-        this.state = {
-            userVidSource: '',
-            userMediaObject: {},
-        };
-
-        this.handleVideoSource = this.handleVideoSource.bind(this);
-        this.selectRandomEmotion = this.selectRandomEmotion.bind(this);
-        this.pickPositions = this.pickPositions.bind(this);
-        this.matchedEmotion = this.matchedEmotion.bind(this);
-        this.startGame = this.startGame.bind(this);
-        this.runGame = this.runGame.bind(this);
-    }
-
-    componentDidMount() {
-
-        let videoSource;
-        if (navigator.mediaDevices) {
-            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                .then(this.handleVideoSource)
-                .catch(console.log);
-        }
-    }
-
-
-    handleVideoSource(mediaStream) {
-        this.setState({ userVidSource: window.URL.createObjectURL(mediaStream), userMediaObject: mediaStream });
-    }
-
-    startGame(event) {
+    const startGame = function (event) {
         event.preventDefault();
-        this.props.setGameState('active')
-        this.props.setEmotion(this.selectRandomEmotion());
-        let coinString = this.pickPositions(this.props.coinCount);
-        this.props.setCoins(coinString);
-        this.props.setRounds(event.target.numRounds.value);
-        let interval = setInterval(this.runGame, 5000)
-        this.props.createInterval(interval);
+        dispatch(setGameState('active'))
+        dispatch(setEmotion(selectRandomEmotion()))
+        let coinString = pickPositions(coinCount)
+        dispatch(setCoins(coinString))
+        dispatch(setRounds(event.target.numRounds.value))
+        let interval = setInterval(runGame, 5000)
+        dispatch(createInterval(interval))
     }
-
-    runGame() {
-        if (this.props.rounds > 1) {
-            this.props.setEmotion(this.selectRandomEmotion());
-            this.props.setCoins(this.pickPositions(this.props.coinCount));
-            this.props.decrementRound();
+    const runGame = function() {
+        if (rounds > 1) {
+            dispatch(setEmotion(selectRandomEmotion()))
+            dispatch(setCoins(pickPositions(coinCount)))
+            dispatch(decrementRound())
         } else {
-            clearInterval(this.props.interval);
-            this.props.setCoins('');
-            this.props.setGameState('stopped');
+            clearInterval(interval);
+            dispatch(setCoins(''))
+            dispatch(setGameState('stopped'))
         }
     }
 
-    pickPositions(num) {
+    const selectRandomEmotion = function() {
+        return emotions[Math.floor(Math.random() * emotions.length)];
+    }
+
+    const pickPositions = function(num) {
         let positions = '';
         let possiblePositions = [0, 1, 2, 3, 4, 5, 6];
         for (let i = 0; i < num; i++) {
@@ -71,88 +54,54 @@ class Training extends Component {
         return positions;
     }
 
-    selectRandomEmotion() {
-        return this.props.emotions[Math.floor(Math.random() * this.props.emotions.length)];
-    }
-
-    matchedEmotion() {
-        this.setState({ matching: true });
-    }
-
-
-
-
-    render() {
-        return (
-            <div id="single-player">
-                <NavLink to='home'><img className='home-button' src="./images/home-icon.png"></img></NavLink>
-                <p className='game-rules'>Make the same face as the emoji</p>
-                <p className='game-rules'>Collect coins when the border is green :)</p>
-                <div id='single-player-video-feed'>
-                    {this.props.targetEmotion ?
-                        <img className='targetEmotion' id="right" src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
-                    <VideoFeed matchedEmotion={this.matchedEmotion} videoSource={this.state.userVidSource} target={this.state.targetEmotion}
-                        socket={socket}
-                    />
-
-                    {this.props.targetEmotion ?
-                        <img className='targetEmotion' id="left" src={'/images/' + this.props.targetEmotion + '.png'} /> : null}
-                </div>
-                <div id='gameControls'>
-                    <form onSubmit={this.startGame}>
-                        <label>
-                            Number of Rounds to Play:
-                            <input name="numRounds" type="text" />
-                        </label>
-                        <input id='startGame' type='submit' disabled={this.props.gameState === 'active' ? true : false} value='Start Game' />
-                    </form>
-                </div>
-                <AudioPlayer />
-            </div>
-        );
-    }
-}
-
-const mapStateToProps = state => {
-    return {
-        gameState: state.roundReducer.gameState,
-        positions: state.roundReducer.coinPositions,
-        rounds: state.roundReducer.rounds,
-        score: state.roundReducer.score,
-        emotions: state.roundReducer.emotions,
-        interval: state.roundReducer.interval,
-        coinCount: state.roundReducer.numberOfCoins,
-        targetEmotion: state.roundReducer.targetEmotion
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        setCoins: (pos) => {
-            dispatch(setCoins(pos))
-        },
-        setEmotion: (emotion) => {
-            dispatch(setEmotion(emotion))
-        },
-        setRounds: (rounds) => {
-            dispatch(setRounds(rounds))
-        },
-        decrementRound: () => {
-            dispatch(decrementRound());
-        },
-        createInterval: (interval) => {
-            dispatch(createInterval(interval))
-        },
-        destroyInterval: () => {
-            dispatch(destroyInterval());
-        },
-        setGameState: (gameState) => {
-            dispatch(setGameState(gameState));
-        },
-        setOpponentScore: (user, score) => {
-            dispatch(setOpponentScore(score))
+    useEffect(() => {
+        async function getUserMedia(videoBool, audioBool, callback){
+            try {
+                if (navigator.mediaDevices) {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: videoBool, audio: audioBool })
+                    callback(stream)
+                } 
+            } catch(e) {
+                console.log('getUserMedia() error', e)
+            }
         }
-    }
+        if (navigator.mediaDevices) {
+            getUserMedia(true, true, (stream) => { setMediaObject(stream) })
+        }
+        return () => {
+            getUserMedia(true, false, (stream) => {
+                let [track] = stream.getTracks()
+                track.stop();
+                setMediaObject({})
+            })
+        }
+    }, [])
+    return (
+        <div id="single-player">
+            <NavLink to='/home'><img className='home-button' src="./images/home-icon.png"></img></NavLink>
+            <p className='game-rules'>Make the same face as the emoji</p>
+            <p className='game-rules'>Collect coins when the border is green :)</p>
+            <div id='single-player-video-feed'>
+                {targetEmotion ?
+                    <img className='targetEmotion' id="right" src={'/images/' + targetEmotion + '.png'} /> : null}
+                <VideoFeed matchedEmotion={() => setmatchingEmotion(true)} videoSource={userMediaObject} target={targetEmotion}
+                    socket={socket}
+                />
+                {targetEmotion ?
+                    <img className='targetEmotion' id="left" src={'/images/' + targetEmotion + '.png'} /> : null}
+            </div>
+            <div id='gameControls'>
+                <form onSubmit={startGame}>
+                    <label>
+                        Number of Rounds to Play:
+                        <input name="numRounds" type="text" />
+                    </label>
+                    <input id='startGame' type='submit' disabled={gameState === 'active' ? true : false} value='Start Game' />
+                </form>
+            </div>
+            <AudioPlayer />
+        </div>
+    );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Training);
+export default Training;

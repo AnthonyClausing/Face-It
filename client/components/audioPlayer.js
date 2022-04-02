@@ -5,7 +5,7 @@ export default class AudioPlayer extends Component {
     constructor () {
         super();
         this.state = {
-            volume: 0.5
+            volume: 0
         };
         this.handleVolume = this.handleVolume.bind(this)
     }
@@ -29,7 +29,7 @@ export default class AudioPlayer extends Component {
                     loop
                     autoPlay
                     controls
-                    volume="0.5"
+                    volume={0.3}
                 />
             </div>
         </div>)

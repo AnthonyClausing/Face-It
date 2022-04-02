@@ -1,82 +1,54 @@
-import React, { Component } from 'react'
+import React, { Component, useState, useEffect } from 'react'
 import Main from './main'
 import { NavLink } from 'react-router-dom'
-import {connect} from 'react-redux'
-import {logout} from '../store/user'
+import { useSelector, useDispatch } from 'react-redux'
+import { logout } from '../store/user'
 import Friends from './friendsList'
 
-export class Home extends Component {
-    constructor(props) {
-        super();
-        this.state = {
-            videoSource: {},
-            open: false
+const Home = function() {
+    const [videoStream, setvideoStream] = useState({})
+    const user = useSelector((state) => state.user)
+    const dispatch = useDispatch()
+    useEffect(() => {
+        console.log(location, 'location')
+        async function getUserMedia(videoBool, audioBool, callback){
+            try {
+                if (navigator.mediaDevices) {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: videoBool ? { width: 1280, height: 720 } : false, audio: audioBool })
+                    callback(stream)
+                } 
+            } catch(e) {
+                console.log('getUserMedia() error', e)
+            }
         }
-        this.handleVideoSource = this.handleVideoSource.bind(this)
-    }
-
-    componentDidMount() {
-        let videoSource;
         if (navigator.mediaDevices) {
-            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                .then(this.handleVideoSource)
-                .catch(console.log)
+            getUserMedia(true, false, (stream) => { setvideoStream(stream) })
         }
-    }
-
-    componentWillUnmount() {
-        navigator.getUserMedia({ audio: false, video: true },
-            function (stream) {
-                var track = stream.getTracks()[0];  // if only one media track
-                // ...
+        return () => {
+            getUserMedia(true, false, (stream) => {
+                let [track] = stream.getTracks()
                 track.stop();
-            },
-            function (error) {
-                console.log('getUserMedia() error', error);
-            });
-    }
-
-    handleVideoSource(mediaStream) {
-        this.setState({ videoSource: window.URL.createObjectURL(mediaStream) })
-    }
-
-    render() {
-        return (
-            <div className="home">
-                <div className="sidenav">
-                    {this.props.username && <div className = "center-items" ><button className = "home-logout-btn" onClick = {this.props.handleClick}>Logout</button></div>}
-                    {/* <h3>User gameStats</h3> */}
-                    <NavLink to='training' style={{ textDecoration: 'none' }}><h3 className = "home-page-link" >Training</h3></NavLink>
-                    <NavLink to = 'multiplayer' style={{ textDecoration: 'none' }}><h3 className = "home-page-link" >Face-to-Face</h3></NavLink>
-                    {/* <NavLink to = 'friends'>Friends</NavLink> */}
-                    <div id='friend-list' ><Friends/></div>
-                </div>
-                <div className ='home-greeting'>
-                <h1>Hi {this.props.username ? this.props.username: 'Guest'}</h1>
-                <video src = {this.state.videoSource} autoPlay />
-                <p>Just checking if your browser supports our game.</p>
-                </div>
-            </div>
-        )
-    }
-
-}
-
-const mapState = (state) => {
-    return {
-        user: state.user,
-        username: state.user.userName
-    }
-}
-
-const mapDispatch = dispatch =>{
-    return{
-        handleClick(){
-            dispatch(logout());
+            })
         }
-    }
+    }, [])
+    const handleClick = () => dispatch(logout())
+    return (
+        <div className="home">
+            <div className="sidenav">
+                {user.username && <div className = "center-items" ><button className = "home-logout-btn" onClick = {handleClick}>Logout</button></div>}
+                {/* <h3>User gameStats</h3> */}
+                <NavLink to='/training' style={{ textDecoration: 'none' }}><h3 className = "home-page-link" >Training</h3></NavLink>
+                <NavLink to = '/multiplayer' style={{ textDecoration: 'none' }}><h3 className = "home-page-link" >Face-to-Face</h3></NavLink>
+                {/* <NavLink to = 'friends'>Friends</NavLink> */}
+                <div id='friend-list' ><Friends/></div>
+            </div>
+            <div className ='home-greeting'>
+            <h1>Hi {user.username ? user.username: 'Guest'}</h1>
+            <video src = {videoStream} autoPlay />
+            <p>Just checking if your browser supports our game.</p>
+            </div>
+        </div>
+    )
 }
 
-const HomePage =  connect(mapState, mapDispatch )(Home)
-
-export default HomePage
+export default Home

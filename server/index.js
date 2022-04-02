@@ -8,24 +8,30 @@ const session = require('express-session');
 const passport = require('passport');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const bodyParser = require('body-parser');
-
-
-
 const db = require('./db');
+const { ConsoleReporter } = require('jasmine');
+
 const sessionStore = new SequelizeStore({ model: db.models.Session, db })
 
 const port = process.env.PORT || 3000;
 const app = express();
 
+const sslSever = https.createServer({
+  key: '',
+  cert: ''
+}, app)
 
 passport.serializeUser((user, done) => { return done(null, user.id)})
 passport.deserializeUser((id, done) =>
-    db.models.user.findById(id)
+    db.models.user.findByPk(id)
     .then(user => { return done(null, user)})
     .catch(done));
 
 app.use(morgan('dev'));
-
+// app.use((req,res, next) => {
+//   res.set("Feature-Policy", "camera '*'")
+//   next()
+// })
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -51,7 +57,7 @@ app.use(express.static(path.join(__dirname, '..', '/public')))
     res.sendFile(path.join(__dirname, '..', 'public/index.html'))
   })
 
-
+  'grinsgs'
 const server = app.listen(port, () => {
   console.log('Facing It')
   db.sync({force:false})
